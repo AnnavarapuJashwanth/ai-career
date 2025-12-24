@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import CareerGuidanceCursor from '../components/CareerGuidanceCursor';
@@ -14,6 +14,13 @@ import PhaseTimeline from '../components/landing/PhaseTimeline';
 
 export default function Landing() {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // Always clear auth when landing page loads
+    // This ensures everyone sees a fresh landing page
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('careerai_user');
+  }, []);
 
   return (
     <>
