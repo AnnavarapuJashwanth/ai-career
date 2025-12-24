@@ -34,12 +34,32 @@ export default function Header() {
 
   const user = (() => {
     try {
+      // Validate token before showing logged-in state
+      const token = localStorage.getItem('authToken');
+      if (token) {
+        const parts = token.split('.');
+        if (parts.length === 3) {
+          const payload = JSON.parse(atob(parts[1]));
+          const expirationTime = payload.exp * 1000;
+          const currentTime = Date.now();
+          
+          if (currentTime >= expirationTime) {
+            // Token expired, clear everything
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('careerai_user');
+            return null;
+          }
+        }
+      }
+      
       return JSON.parse(localStorage.getItem('careerai_user')) || null;
     } catch {
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('careerai_user');
       return null;
     }
   })();
-  const isLoggedIn = !!localStorage.getItem('authToken');
+  const isLoggedIn = !!localStorage.getItem('authToken') && !!user;
 
   return (
     <header className="bg-white shadow-md sticky top-0 z-50 border-b border-gray-200 relative overflow-hidden">

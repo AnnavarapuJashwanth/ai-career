@@ -1,4 +1,5 @@
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+import { useEffect } from 'react';
 import Header from './components/common/Header';
 import Footer from './components/common/Footer';
 import Landing from './pages/Landing';
@@ -12,6 +13,34 @@ import SkillGapPage from './pages/SkillGapPage';
 import MarketTrendsPage from './pages/MarketTrendsPage';
 import CoursesPage from './pages/CoursesPage';
 import './index.css';
+
+// Token validation and cleanup on app load
+const validateAndCleanupAuth = () => {
+  try {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      // Decode JWT to check expiration
+      const parts = token.split('.');
+      if (parts.length === 3) {
+        const payload = JSON.parse(atob(parts[1]));
+        const expirationTime = payload.exp * 1000; // Convert to milliseconds
+        const currentTime = Date.now();
+        
+        // If token expired, clear everything
+        if (currentTime >= expirationTime) {
+          console.log('Token expired, clearing auth...');
+          localStorage.removeItem('authToken');
+          localStorage.removeItem('careerai_user');
+        }
+      }
+    }
+  } catch (error) {
+    // If token is invalid or corrupted, clear it
+    console.log('Invalid token, clearing auth...');
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('careerai_user');
+  }
+};
 
 const router = createBrowserRouter(
   [
@@ -121,6 +150,16 @@ const router = createBrowserRouter(
 );
 
 function App() {
+  useEffect(() => {
+    // Validate and cleanup auth on initial mount
+    validateAndCleanupAuth();
+    
+    // Set up periodic check every 5 minutes
+    const interval = setInterval(validateAndCleanupAuth, 5 * 60 * 1000);
+    
+    return () => clearInterval(interval);
+  }, []);
+
   return <RouterProvider router={router} />;
 }
 

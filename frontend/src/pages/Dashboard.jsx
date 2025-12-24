@@ -43,6 +43,33 @@ export default function Dashboard() {
     // If no roadmap passed from navigation, try to load latest from backend
     if (!roadmapData) {
       const token = localStorage.getItem('authToken');
+      
+      // Validate token expiration
+      if (token) {
+        try {
+          const parts = token.split('.');
+          if (parts.length === 3) {
+            const payload = JSON.parse(atob(parts[1]));
+            const expirationTime = payload.exp * 1000;
+            const currentTime = Date.now();
+            
+            if (currentTime >= expirationTime) {
+              // Token expired
+              localStorage.removeItem('authToken');
+              localStorage.removeItem('careerai_user');
+              navigate('/login');
+              return;
+            }
+          }
+        } catch (error) {
+          // Invalid token
+          localStorage.removeItem('authToken');
+          localStorage.removeItem('careerai_user');
+          navigate('/login');
+          return;
+        }
+      }
+      
       if (!token) {
         // No token, redirect to login
         navigate('/login');
