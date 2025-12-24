@@ -19,6 +19,26 @@ def load_required_skills(target_role: str) -> List[str]:
 
 
 def generate_roadmap(current_skills: List[str], target_role: str, market_trends: List[Dict]) -> Dict:
+    # Define phase helper function first
+    def phase(skills: List[str], name: str, duration: str, importance: str):
+        # dummy resource generator
+        resources = []
+        for s in skills:
+            resources.append({
+                "type": "course",
+                "title": f"Master {s}",
+                "provider": "Coursera",
+                "duration_hours": 8,
+                "url": f"https://www.google.com/search?q={s.replace(' ', '+')}+course"
+            })
+            resources.append({
+                "type": "project",
+                "title": f"Build a {s} mini-project",
+                "provider": "Self-paced",
+                "duration_hours": 6
+            })
+        return {"name": name, "duration": duration, "skills": skills, "importance_level": importance, "resources": resources}
+    
     req = load_required_skills(target_role)
     current = {s.lower() for s in current_skills}
 
@@ -86,25 +106,6 @@ def generate_roadmap(current_skills: List[str], target_role: str, market_trends:
     p1 = missing[:chunk]
     p2 = missing[chunk: 2*chunk]
     p3 = missing[2*chunk:]
-
-    def phase(skills: List[str], name: str, duration: str, importance: str):
-        # dummy resource generator
-        resources = []
-        for s in skills:
-            resources.append({
-                "type": "course",
-                "title": f"Master {s}",
-                "provider": "Coursera",
-                "duration_hours": 8,
-                "url": f"https://www.google.com/search?q={s.replace(' ', '+')}+course"
-            })
-            resources.append({
-                "type": "project",
-                "title": f"Build a {s} mini-project",
-                "provider": "Self-paced",
-                "duration_hours": 6
-            })
-        return {"name": name, "duration": duration, "skills": skills, "importance_level": importance, "resources": resources}
 
     phases = [
         phase(p1, "Foundation", "0-3 months", "High"),
