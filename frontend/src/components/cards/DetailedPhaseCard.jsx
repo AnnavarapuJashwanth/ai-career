@@ -20,10 +20,10 @@ export default function DetailedPhaseCard({ phase, index, isUnlocked = true }) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
-      className={`relative bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl rounded-2xl border-2 ${colors.border} overflow-hidden ${!isUnlocked ? 'opacity-60' : ''}`}
+      className={`relative bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl rounded-xl sm:rounded-2xl border-2 ${colors.border} overflow-hidden ${!isUnlocked ? 'opacity-60' : ''} h-full flex flex-col`}
     >
       {/* Phase Header */}
-      <div className={`bg-gradient-to-r ${colors.bg} p-6`}>
+      <div className={`bg-gradient-to-r ${colors.bg} p-4 sm:p-6`}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             {isUnlocked ? (
@@ -46,7 +46,7 @@ export default function DetailedPhaseCard({ phase, index, isUnlocked = true }) {
       </div>
 
       {/* Phase Content */}
-      <div className="p-6 space-y-6">
+      <div className="p-4 sm:p-6 space-y-4 sm:space-y-6 flex-1">
         {/* Skills to Learn */}
         <div>
           <div className="flex items-center gap-2 mb-4">

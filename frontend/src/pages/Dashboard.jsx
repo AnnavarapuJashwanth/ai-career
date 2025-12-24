@@ -211,7 +211,7 @@ export default function Dashboard() {
       </div>
 
       <Sidebar user={user} onSignOut={handleSignOut} />
-      <main className="relative z-10 flex-1 p-4 sm:p-6 lg:p-8 overflow-auto">
+      <main className="relative z-10 flex-1 p-3 sm:p-4 md:p-6 lg:p-8 overflow-y-auto overflow-x-hidden">
         {/* Welcome Banner with Modern Design */}
         <motion.div 
           initial={{ opacity: 0, y: -20 }}
@@ -623,7 +623,7 @@ export default function Dashboard() {
             </div>
           </div>
           {roadmapData?.phases && roadmapData.phases.length > 0 ? (
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 auto-rows-max">
               {roadmapData.phases.map((phase, idx) => (
                 <DetailedPhaseCard 
                   key={idx} 
