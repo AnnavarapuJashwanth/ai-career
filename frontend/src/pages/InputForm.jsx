@@ -51,12 +51,45 @@ export default function InputForm() {
       .catch(() => {});
   }, []);
 
-  const handleResumeUpload = (e) => {
+  const handleResumeUpload = async (e) => {
     const file = e.target.files[0];
-    if (file) {
+    if (!file) return;
+
+    // Check if it's a PDF
+    if (file.type === 'application/pdf') {
+      // Upload PDF to backend for processing
+      const formData = new FormData();
+      formData.append('file', file);
+      
+      toast.info('📄 Processing PDF...');
+      
+      try {
+        const token = localStorage.getItem('authToken');
+        const headers = token ? { Authorization: `Bearer ${token}` } : {};
+        
+        const response = await api.post('/upload_resume', formData, {
+          headers: {
+            ...headers,
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+        
+        // Auto-analyze after successful upload
+        if (response.data) {
+          setPrefilledSkills(response.data.skills || []);
+          toast.success('✅ Resume analyzed successfully!');
+          setStep(2);
+        }
+      } catch (err) {
+        console.error('PDF upload error:', err);
+        toast.error('Failed to process PDF. Please try again or paste text.');
+      }
+    } else {
+      // Handle text files
       const reader = new FileReader();
       reader.onload = (event) => {
         setResumeText(event.target.result);
+        toast.success('✅ Resume uploaded!');
       };
       reader.readAsText(file);
     }
@@ -165,17 +198,22 @@ export default function InputForm() {
             {/* Resume Upload Area */}
             <div className="mb-8">
               <label className="block">
-                <div className="border-2 border-dashed border-blue-300 rounded-lg p-12 text-center cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition duration-300">
+                <div className="border-2 border-dashed border-blue-300 rounded-lg p-8 sm:p-12 text-center cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition duration-300">
                   <div className="flex justify-center mb-2">
                     <CloudUpload style={{ fontSize: 48 }} className="text-blue-500" />
                   </div>
-                  <p className="text-lg font-semibold text-gray-900 mb-2">Drag and drop your resume</p>
-                  <p className="text-gray-600 text-sm">or click to browse (PDF, DOCX, or TXT)</p>
+                  <p className="text-base sm:text-lg font-semibold text-gray-900 mb-2">
+                    {window.innerWidth < 640 ? 'Tap to upload resume' : 'Drag and drop your resume'}
+                  </p>
+                  <p className="text-gray-600 text-xs sm:text-sm">
+                    PDF, DOCX, or TXT • Works on mobile & desktop
+                  </p>
                   <input
                     type="file"
                     className="hidden"
                     onChange={handleResumeUpload}
-                    accept=".pdf,.docx,.txt"
+                    accept=".pdf,.docx,.txt,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain"
+                    capture="environment"
                   />
                 </div>
               </label>

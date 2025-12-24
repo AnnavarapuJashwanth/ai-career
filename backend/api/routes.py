@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Query, Depends, Header
+from fastapi import APIRouter, HTTPException, Query, Depends, Header, UploadFile, File
 from backend.models.schemas import (
     AnalyzeResumeRequest, AnalyzeResumeResponse,
     MarketTrendsResponse, MarketTrendsResponseItem,
@@ -14,12 +14,78 @@ from backend.utils.security import decode_token
 from backend.api.auth_routes import get_current_user
 from datetime import datetime
 from bson import ObjectId
+import pdfplumber
+import io
 
 router = APIRouter()
 
 @router.get("/ping")
 def ping():
     return {"status": "ok"}
+
+
+@router.post("/upload_resume", response_model=AnalyzeResumeResponse)
+async def upload_resume(
+    file: UploadFile = File(...),
+    authorization: str | None = Header(default=None)
+):
+    """Upload and analyze PDF resume - works from mobile and desktop"""
+    if not file:
+        raise HTTPException(status_code=400, detail="No file uploaded")
+    
+    # Check file type
+    if not file.filename.lower().endswith('.pdf'):
+        raise HTTPException(status_code=400, detail="Only PDF files are supported")
+    
+    try:
+        # Read PDF content
+        pdf_bytes = await file.read()
+        resume_text = ""
+        
+        # Extract text from PDF using pdfplumber
+        with pdfplumber.open(io.BytesIO(pdf_bytes)) as pdf:
+            for page in pdf.pages:
+                text = page.extract_text()
+                if text:
+                    resume_text += text + "\n"
+        
+        if not resume_text.strip():
+            raise HTTPException(status_code=400, detail="Could not extract text from PDF")
+        
+        # Analyze the resume
+        skills = extract_skills(resume_text)
+        role = guess_current_role(resume_text)
+        years = extract_experience_years(resume_text)
+        
+        resp = AnalyzeResumeResponse(
+            skills=skills,
+            current_role=role,
+            experience_years=years,
+            education=None
+        )
+        
+        # Try to persist if user provided
+        try:
+            if authorization and authorization.lower().startswith("bearer "):
+                payload_token = authorization.split(" ", 1)[1]
+                payload_decoded = decode_token(payload_token)
+                if payload_decoded and payload_decoded.get("sub"):
+                    db = get_db()
+                    col = db["analyses"]
+                    col.create_index([("user_id", 1), ("created_at", -1)])
+                    col.insert_one({
+                        "user_id": payload_decoded["sub"],
+                        "analysis": resp.model_dump(),
+                        "resume_text": resume_text,
+                        "created_at": datetime.utcnow(),
+                    })
+        except Exception:
+            pass
+        
+        return resp
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error processing PDF: {str(e)}")
 
 
 @router.post("/analyze_resume", response_model=AnalyzeResumeResponse)
