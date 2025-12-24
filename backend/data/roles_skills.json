@@ -1,0 +1,27 @@
+[
+  {
+    "role": "Frontend Developer",
+    "required_skills": ["javascript", "react", "html", "css", "typescript", "tailwindcss", "three.js", "redux", "webpack", "git", "rest apis", "node.js", "next.js"],
+    "experience_level": "intermediate"
+  },
+  {
+    "role": "Backend Developer",
+    "required_skills": ["python", "fastapi", "sql", "mongodb", "docker", "aws", "redis", "postgresql", "rest apis", "microservices", "git", "linux"],
+    "experience_level": "intermediate"
+  },
+  {
+    "role": "Data Scientist",
+    "required_skills": ["python", "pandas", "numpy", "scikit-learn", "machine learning", "sql", "tableau", "statistics", "data analysis", "tensorflow", "pytorch"],
+    "experience_level": "intermediate"
+  },
+  {
+    "role": "ML Engineer",
+    "required_skills": ["python", "tensorflow", "pytorch", "docker", "aws", "mlops", "kubernetes", "ci/cd", "deep learning", "nlp"],
+    "experience_level": "advanced"
+  },
+  {
+    "role": "Full Stack Developer",
+    "required_skills": ["javascript", "typescript", "react", "node.js", "express", "sql", "mongodb", "docker", "git", "rest apis", "aws"],
+    "experience_level": "intermediate"
+  }
+]

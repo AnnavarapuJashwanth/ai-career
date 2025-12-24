@@ -1,0 +1,54 @@
+from typing import List, Optional
+from pydantic import BaseModel, Field
+
+class AnalyzeResumeRequest(BaseModel):
+    resume_text: str = Field(..., description="Raw resume text; PDF upload to be added later")
+
+class AnalyzeResumeResponse(BaseModel):
+    skills: List[str]
+    current_role: Optional[str] = None
+    experience_years: Optional[int] = None
+    education: Optional[List[str]] = None
+
+class MarketTrendsResponseItem(BaseModel):
+    name: str
+    importance: float
+    job_count: int
+
+class MarketTrendsResponse(BaseModel):
+    trending_skills: List[MarketTrendsResponseItem]
+
+class GenerateRoadmapRequest(BaseModel):
+    current_skills: Optional[List[str]] = None
+    resume_text: Optional[str] = None
+    target_role: str
+    years_of_experience: int
+    location: Optional[str] = None
+
+class ResourceItem(BaseModel):
+    type: str  # course, project, certification
+    title: str
+    provider: Optional[str] = None
+    duration_hours: Optional[int] = None
+    url: Optional[str] = None
+
+class RoadmapPhase(BaseModel):
+    name: str  # Foundation, Intermediate, Advanced
+    duration: str  # "0-3 months"
+    skills: List[str]
+    importance_level: str  # High, Medium, Low
+    resources: List[ResourceItem]
+
+class GenerateRoadmapResponse(BaseModel):
+    phases: List[RoadmapPhase]
+    target_role: Optional[str] = None
+    current_skills: Optional[List[str]] = None
+    readiness_score: Optional[int] = None
+    skill_gap_percentage: Optional[int] = None
+
+class ExplainRoadmapRequest(BaseModel):
+    roadmap: GenerateRoadmapResponse
+
+class ExplainRoadmapResponse(BaseModel):
+    narrative: str
+    project_ideas: List[str]

@@ -1,0 +1,16 @@
+[
+  "python", "java", "javascript", "typescript", "react", "node.js", "express", "fastapi", "django", "flask",
+  "sql", "nosql", "mongodb", "postgresql", "mysql", "redis", "sqlite",
+  "machine learning", "deep learning", "nlp", "pandas", "numpy", "scikit-learn", "tensorflow", "pytorch", "keras",
+  "docker", "kubernetes", "aws", "azure", "gcp", "ci/cd", "jenkins", "github actions",
+  "data structures", "algorithms", "system design", "microservices", "rest apis", "graphql",
+  "git", "linux", "bash", "powershell",
+  "html", "css", "tailwindcss", "bootstrap", "sass", "scss",
+  "three.js", "next.js", "vue.js", "angular", "redux", "webpack", "vite",
+  "c++", "c#", ".net", "go", "rust", "php", "ruby", "rails",
+  "agile", "scrum", "jira", "testing", "unit testing", "integration testing",
+  "api", "restful", "oauth", "jwt", "security", "authentication",
+  "frontend", "backend", "full stack", "devops", "mlops",
+  "excel", "tableau", "power bi", "data analysis", "statistics",
+  "communication", "teamwork", "problem solving", "leadership"
+]
