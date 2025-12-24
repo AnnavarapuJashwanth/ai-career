@@ -10,17 +10,19 @@
 
 ## Step 1: Update Frontend API URL
 
-Before deploying, update your API endpoint:
-
-**File**: `frontend/src/utils/api.js`
-
-```javascript
-// Change this line:
-const API_BASE_URL = 'http://localhost:8000';
-
-// To your Render backend URL:
-const API_BASE_URL = 'https://careerai-backend.onrender.com';
+**IMPORTANT**: Your backend is already deployed at:
 ```
+https://ai-career-hect.onrender.com
+```
+
+The frontend is already configured to auto-detect the environment:
+- **Local Development**: Uses `http://localhost:8000/api`
+- **Production (Netlify)**: Uses `https://ai-career-hect.onrender.com/api`
+
+**File**: `frontend/src/utils/api.js` ✅ Already configured!
+
+You can optionally set environment variable in Netlify:
+- `VITE_API_URL` = `https://ai-career-hect.onrender.com/api`
 
 ---
 
@@ -48,9 +50,10 @@ Already created in your project:
    Publish directory: frontend/dist
    ```
 
-6. **Environment Variables** (if needed):
+6. **Environment Variables** (Optional - auto-detected):
    - Click "Show advanced"
-   - Add: `VITE_API_URL` = `https://YOUR-BACKEND.onrender.com`
+   - Add: `VITE_API_URL` = `https://ai-career-hect.onrender.com/api`
+   - *Note: Frontend auto-detects Netlify and uses correct URL*
 
 7. Click **"Deploy site"**
 
@@ -87,13 +90,13 @@ netlify deploy --prod
 
 After getting your Netlify URL (e.g., `https://careerai.netlify.app`):
 
-1. Go to **Render Dashboard** → Your backend service
+1. Go to **Render Dashboard** → Your backend service (ai-career-hect)
 2. **Environment** tab
-3. Update `ALLOWED_ORIGINS`:
+3. Update `ALLOWED_ORIGINS` to include your Netlify URL:
    ```
-   https://careerai.netlify.app,https://www.careerai.netlify.app
+   http://localhost:5173,http://localhost:5174,https://careerai.netlify.app,https://www.careerai.netlify.app
    ```
-4. Service will auto-redeploy
+4. Service will auto-redeploy (~2 minutes)
 
 ---
 

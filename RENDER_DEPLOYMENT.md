@@ -44,7 +44,7 @@ Click **"Advanced"** and add these environment variables:
 | `GEMINI_API_KEY` | `YOUR_GEMINI_API_KEY` | From Google AI Studio |
 | `RAPIDAPI_KEY` | `YOUR_RAPIDAPI_KEY` | If using RapidAPI (optional) |
 | `JWT_SECRET_KEY` | `YOUR_RANDOM_SECRET` | Generate with: `openssl rand -hex 32` |
-| `ALLOWED_ORIGINS` | `https://your-app.netlify.app` | Will update after frontend deploy |
+| `ALLOWED_ORIGINS` | `http://localhost:5173,http://localhost:5174,https://your-app.netlify.app` | Update with actual Netlify URL after frontend deploy |
 | `PYTHONPATH` | `/opt/render/project/src` | Required for absolute imports |
 
 ### Step 5: Deploy
