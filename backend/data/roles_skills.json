@@ -2,26 +2,235 @@
   {
     "role": "Frontend Developer",
     "required_skills": ["javascript", "react", "html", "css", "typescript", "tailwindcss", "three.js", "redux", "webpack", "git", "rest apis", "node.js", "next.js"],
-    "experience_level": "intermediate"
+    "experience_level": "intermediate",
+    "category": "technical"
   },
   {
     "role": "Backend Developer",
     "required_skills": ["python", "fastapi", "sql", "mongodb", "docker", "aws", "redis", "postgresql", "rest apis", "microservices", "git", "linux"],
-    "experience_level": "intermediate"
+    "experience_level": "intermediate",
+    "category": "technical"
   },
   {
     "role": "Data Scientist",
     "required_skills": ["python", "pandas", "numpy", "scikit-learn", "machine learning", "sql", "tableau", "statistics", "data analysis", "tensorflow", "pytorch"],
-    "experience_level": "intermediate"
+    "experience_level": "intermediate",
+    "category": "technical"
   },
   {
     "role": "ML Engineer",
     "required_skills": ["python", "tensorflow", "pytorch", "docker", "aws", "mlops", "kubernetes", "ci/cd", "deep learning", "nlp"],
-    "experience_level": "advanced"
+    "experience_level": "advanced",
+    "category": "technical"
   },
   {
     "role": "Full Stack Developer",
     "required_skills": ["javascript", "typescript", "react", "node.js", "express", "sql", "mongodb", "docker", "git", "rest apis", "aws"],
-    "experience_level": "intermediate"
+    "experience_level": "intermediate",
+    "category": "technical"
+  },
+  {
+    "role": "DevOps Engineer",
+    "required_skills": ["docker", "kubernetes", "aws", "azure", "ci/cd", "jenkins", "terraform", "linux", "bash", "git", "monitoring", "networking"],
+    "experience_level": "intermediate",
+    "category": "technical"
+  },
+  {
+    "role": "Mobile Developer",
+    "required_skills": ["react native", "flutter", "swift", "kotlin", "java", "mobile ui", "rest apis", "firebase", "app store", "git"],
+    "experience_level": "intermediate",
+    "category": "technical"
+  },
+  {
+    "role": "Cloud Architect",
+    "required_skills": ["aws", "azure", "gcp", "cloud security", "terraform", "kubernetes", "microservices", "networking", "cost optimization", "disaster recovery"],
+    "experience_level": "advanced",
+    "category": "technical"
+  },
+  {
+    "role": "Chemical Engineer",
+    "required_skills": ["chemical processes", "process design", "thermodynamics", "mass transfer", "aspen plus", "process safety", "quality control", "lab techniques", "matlab", "autocad"],
+    "experience_level": "intermediate",
+    "category": "engineering"
+  },
+  {
+    "role": "Civil Engineer",
+    "required_skills": ["structural design", "autocad", "revit", "project management", "construction management", "surveying", "geotechnical engineering", "concrete design", "steel design", "building codes"],
+    "experience_level": "intermediate",
+    "category": "engineering"
+  },
+  {
+    "role": "Mechanical Engineer",
+    "required_skills": ["solidworks", "autocad", "catia", "thermodynamics", "fluid mechanics", "manufacturing processes", "fea analysis", "design for manufacturing", "cad cam", "mechanical design"],
+    "experience_level": "intermediate",
+    "category": "engineering"
+  },
+  {
+    "role": "Electrical Engineer",
+    "required_skills": ["circuit design", "plc programming", "electrical systems", "power systems", "control systems", "autocad electrical", "matlab", "embedded systems", "pcb design", "power distribution"],
+    "experience_level": "intermediate",
+    "category": "engineering"
+  },
+  {
+    "role": "Environmental Engineer",
+    "required_skills": ["environmental impact assessment", "water treatment", "waste management", "air quality", "sustainability", "environmental regulations", "gis", "soil remediation", "green engineering", "pollution control"],
+    "experience_level": "intermediate",
+    "category": "engineering"
+  },
+  {
+    "role": "Medical Doctor",
+    "required_skills": ["clinical diagnosis", "patient care", "medical procedures", "anatomy", "physiology", "pharmacology", "medical ethics", "medical records", "emergency medicine", "clinical reasoning"],
+    "experience_level": "advanced",
+    "category": "healthcare"
+  },
+  {
+    "role": "Registered Nurse",
+    "required_skills": ["patient care", "vital signs monitoring", "medication administration", "nursing procedures", "medical records", "patient assessment", "infection control", "healthcare compliance", "patient education", "clinical skills"],
+    "experience_level": "intermediate",
+    "category": "healthcare"
+  },
+  {
+    "role": "Pharmacist",
+    "required_skills": ["pharmaceutical care", "drug interactions", "medication dispensing", "patient counseling", "clinical pharmacy", "pharmacology", "pharmaceutical calculations", "healthcare regulations", "prescription review", "drug information"],
+    "experience_level": "advanced",
+    "category": "healthcare"
+  },
+  {
+    "role": "Clinical Psychologist",
+    "required_skills": ["psychological assessment", "psychotherapy", "cognitive behavioral therapy", "counseling techniques", "mental health diagnosis", "research methods", "psychological testing", "patient confidentiality", "clinical documentation", "treatment planning"],
+    "experience_level": "advanced",
+    "category": "healthcare"
+  },
+  {
+    "role": "Medical Lab Technician",
+    "required_skills": ["laboratory procedures", "specimen collection", "medical equipment", "quality control", "lab safety", "hematology", "microbiology", "clinical chemistry", "lab information systems", "diagnostic testing"],
+    "experience_level": "intermediate",
+    "category": "healthcare"
+  },
+  {
+    "role": "High School Teacher",
+    "required_skills": ["lesson planning", "classroom management", "subject knowledge", "teaching methods", "student assessment", "curriculum development", "educational technology", "classroom technology", "student engagement", "parent communication"],
+    "experience_level": "intermediate",
+    "category": "education"
+  },
+  {
+    "role": "University Professor",
+    "required_skills": ["research methodology", "academic writing", "grant writing", "curriculum development", "teaching pedagogy", "student mentoring", "research supervision", "publication", "conference presentations", "academic leadership"],
+    "experience_level": "advanced",
+    "category": "education"
+  },
+  {
+    "role": "Education Administrator",
+    "required_skills": ["educational leadership", "budget management", "policy development", "staff management", "strategic planning", "compliance", "stakeholder engagement", "educational assessment", "program evaluation", "facility management"],
+    "experience_level": "advanced",
+    "category": "education"
+  },
+  {
+    "role": "Curriculum Developer",
+    "required_skills": ["instructional design", "curriculum planning", "learning outcomes", "assessment design", "educational standards", "learning management systems", "educational technology", "content development", "pedagogy", "program evaluation"],
+    "experience_level": "intermediate",
+    "category": "education"
+  },
+  {
+    "role": "Agricultural Scientist",
+    "required_skills": ["crop science", "research methods", "soil science", "plant genetics", "pest management", "agricultural technology", "data analysis", "field research", "experimental design", "agricultural chemistry"],
+    "experience_level": "advanced",
+    "category": "agriculture"
+  },
+  {
+    "role": "Farm Manager",
+    "required_skills": ["crop management", "livestock management", "farm equipment", "agricultural economics", "budget management", "supply chain", "sustainable farming", "farm safety", "team management", "precision agriculture"],
+    "experience_level": "intermediate",
+    "category": "agriculture"
+  },
+  {
+    "role": "Agricultural Engineer",
+    "required_skills": ["agricultural machinery", "irrigation systems", "farm equipment design", "autocad", "precision agriculture", "soil mechanics", "drainage systems", "agricultural automation", "renewable energy", "sustainable design"],
+    "experience_level": "intermediate",
+    "category": "agriculture"
+  },
+  {
+    "role": "Soil Scientist",
+    "required_skills": ["soil analysis", "soil chemistry", "soil classification", "soil fertility", "gis", "field sampling", "laboratory analysis", "soil conservation", "environmental science", "sustainable land use"],
+    "experience_level": "intermediate",
+    "category": "agriculture"
+  },
+  {
+    "role": "UI/UX Designer",
+    "required_skills": ["figma", "sketch", "adobe xd", "user research", "wireframing", "prototyping", "visual design", "usability testing", "design systems", "interaction design"],
+    "experience_level": "intermediate",
+    "category": "non-technical"
+  },
+  {
+    "role": "Product Manager",
+    "required_skills": ["product strategy", "roadmap planning", "agile", "user stories", "market research", "stakeholder management", "data analysis", "competitive analysis", "prioritization", "product lifecycle"],
+    "experience_level": "advanced",
+    "category": "non-technical"
+  },
+  {
+    "role": "Project Manager",
+    "required_skills": ["project planning", "agile", "scrum", "risk management", "stakeholder communication", "budget management", "ms project", "team leadership", "change management", "quality assurance"],
+    "experience_level": "intermediate",
+    "category": "non-technical"
+  },
+  {
+    "role": "Business Analyst",
+    "required_skills": ["requirements gathering", "process mapping", "data analysis", "sql", "business intelligence", "stakeholder management", "documentation", "problem solving", "system analysis", "agile methodologies"],
+    "experience_level": "intermediate",
+    "category": "non-technical"
+  },
+  {
+    "role": "Cloud Architect",
+    "required_skills": ["aws", "azure", "gcp", "cloud architecture", "microservices", "serverless", "security", "networking", "terraform", "kubernetes"],
+    "experience_level": "advanced",
+    "category": "technical"
+  },
+  {
+    "role": "UI/UX Designer",
+    "required_skills": ["figma", "sketch", "adobe xd", "wireframing", "prototyping", "user research", "design thinking", "html", "css", "responsive design"],
+    "experience_level": "intermediate",
+    "category": "non-technical"
+  },
+  {
+    "role": "Product Manager",
+    "required_skills": ["product strategy", "roadmapping", "agile", "scrum", "stakeholder management", "data analysis", "market research", "communication", "jira", "user stories"],
+    "experience_level": "intermediate",
+    "category": "non-technical"
+  },
+  {
+    "role": "Project Manager",
+    "required_skills": ["project management", "agile", "scrum", "risk management", "budgeting", "resource planning", "stakeholder management", "communication", "jira", "microsoft project"],
+    "experience_level": "intermediate",
+    "category": "non-technical"
+  },
+  {
+    "role": "Business Analyst",
+    "required_skills": ["business analysis", "requirements gathering", "data analysis", "sql", "excel", "power bi", "process modeling", "stakeholder management", "documentation", "communication"],
+    "experience_level": "intermediate",
+    "category": "non-technical"
+  },
+  {
+    "role": "Scrum Master",
+    "required_skills": ["scrum", "agile", "facilitation", "coaching", "conflict resolution", "jira", "sprint planning", "retrospectives", "communication", "leadership"],
+    "experience_level": "intermediate",
+    "category": "non-technical"
+  },
+  {
+    "role": "Technical Writer",
+    "required_skills": ["technical writing", "documentation", "markdown", "api documentation", "user guides", "content management", "editing", "communication", "git", "html"],
+    "experience_level": "beginner",
+    "category": "non-technical"
+  },
+  {
+    "role": "Sales Engineer",
+    "required_skills": ["technical sales", "product demos", "solution design", "communication", "presentation", "crm", "customer success", "problem solving", "networking"],
+    "experience_level": "intermediate",
+    "category": "non-technical"
+  },
+  {
+    "role": "IT Support Specialist",
+    "required_skills": ["troubleshooting", "customer service", "networking", "windows", "linux", "hardware support", "ticketing systems", "active directory", "communication"],
+    "experience_level": "beginner",
+    "category": "technical"
   }
 ]

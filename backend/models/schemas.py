@@ -25,6 +25,26 @@ class GenerateRoadmapRequest(BaseModel):
     years_of_experience: int
     location: Optional[str] = None
 
+class ChatbotRequest(BaseModel):
+    message: str = Field(..., description="User's message to the chatbot")
+    user_role: Optional[str] = Field(None, description="User's current or target role")
+
+class ChatbotResponse(BaseModel):
+    success: bool
+    response: str
+    user_role: Optional[str] = None
+
+class TranslationRequest(BaseModel):
+    text: str = Field(..., description="Text to translate")
+    target_language: str = Field(..., description="Target language code (e.g., 'es', 'fr', 'de', 'zh', 'ja', 'hi', 'ar', 'pt', 'ru')")
+    source_language: str = Field(default="en", description="Source language code")
+
+class TranslationResponse(BaseModel):
+    success: bool
+    translated_text: str
+    source_language: str
+    target_language: str
+
 class ResourceItem(BaseModel):
     type: str  # course, project, certification
     title: str

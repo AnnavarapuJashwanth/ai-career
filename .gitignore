@@ -65,3 +65,9 @@ build/
 *.tmp
 *.temp
 .cache/
+# Documentation files - development/internal notes only (not for GitHub)
+*.md
+!README.md
+!QUICKSTART.md
+!DEPLOYMENT_GUIDE.md
+!frontend/README.md

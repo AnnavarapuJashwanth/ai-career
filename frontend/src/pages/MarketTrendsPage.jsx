@@ -1,18 +1,38 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import Sidebar from '../components/common/Sidebar';
 import { useNavigate } from 'react-router-dom';
 import MarketTrendsBar from '../components/cards/MarketTrendsBar';
 import { useMarketTrends } from '../hooks/useMarketTrends';
+import api from '../utils/api';
+import AIChatbot from '../components/AIChatbot';
 
 export default function MarketTrendsPage() {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem('careerai_user') || '{"email":"sravanthivarikuti233@gmail.com","name":"Sravanthivarikuti"}');
   const { fetch: fetchTrends, data: trendsData } = useMarketTrends();
+  const [userRole, setUserRole] = useState('Data Scientist');
+  const [isLoading, setIsLoading] = useState(true);
   
-  // Fetch market trends on component mount
+  // Fetch user's actual target role and market trends
   useEffect(() => {
-    fetchTrends('Data Scientist', '').catch(() => {});
+    const fetchUserRoleAndTrends = async () => {
+      try {
+        const response = await api.get('/roadmaps/latest');
+        if (response.data && response.data.target_role) {
+          setUserRole(response.data.target_role);
+          await fetchTrends(response.data.target_role, '');
+        } else {
+          await fetchTrends('Data Scientist', '');
+        }
+      } catch (error) {
+        console.log('Using default role: Data Scientist');
+        await fetchTrends('Data Scientist', '').catch(() => {});
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchUserRoleAndTrends();
   }, [fetchTrends]);
   
   const handleSignOut = () => {
@@ -58,7 +78,9 @@ export default function MarketTrendsPage() {
             <span className="text-6xl">📈</span>
             Market Insights
           </h1>
-          <p className="text-gray-400 text-lg">Real-time job market trends and demand analysis</p>
+          <p className="text-gray-400 text-lg">
+            {isLoading ? 'Loading...' : `Real-time job market trends for ${userRole} - Updated daily`}
+          </p>
         </motion.div>
 
         {/* Main Trends Chart */}
@@ -71,13 +93,13 @@ export default function MarketTrendsPage() {
           <div className="flex items-center justify-between mb-8">
             <div>
               <h2 className="text-3xl font-bold text-white mb-2">Job Market Demand</h2>
-              <p className="text-gray-400">Monthly trends for Data Scientist roles</p>
+              <p className="text-gray-400">{isLoading ? 'Loading...' : `Monthly trends for ${userRole} roles`}</p>
             </div>
             <div className="px-4 py-2 bg-green-500/20 border border-green-500/30 rounded-full text-green-300 text-sm font-semibold">
               Updated Daily
             </div>
           </div>
-          <MarketTrendsBar trends={trendsData?.trending_skills || []} role="Data Scientist" />
+          <MarketTrendsBar trends={trendsData?.trending_skills || []} role={userRole} />
         </motion.div>
 
         {/* Stats Cards */}
@@ -230,6 +252,9 @@ export default function MarketTrendsPage() {
           </div>
         </motion.div>
       </main>
+      
+      {/* AI Chatbot */}
+      <AIChatbot />
     </div>
   );
 }

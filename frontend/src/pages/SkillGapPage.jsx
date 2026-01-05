@@ -1,12 +1,33 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Sidebar from '../components/common/Sidebar';
 import { useNavigate } from 'react-router-dom';
 import SkillGapRadar from '../components/cards/SkillGapRadar';
+import api from '../utils/api';
+import AIChatbot from '../components/AIChatbot';
 
 export default function SkillGapPage() {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem('careerai_user') || '{"email":"sravanthivarikuti233@gmail.com","name":"Sravanthivarikuti"}');
+  const [userRole, setUserRole] = useState('Data Scientist');
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Fetch user's actual target role
+  useEffect(() => {
+    const fetchUserRole = async () => {
+      try {
+        const response = await api.get('/roadmaps/latest');
+        if (response.data && response.data.target_role) {
+          setUserRole(response.data.target_role);
+        }
+      } catch (error) {
+        console.log('Using default role: Data Scientist');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchUserRole();
+  }, []);
   
   const handleSignOut = () => {
     localStorage.removeItem('careerai_logged_in');
@@ -58,7 +79,9 @@ export default function SkillGapPage() {
             </motion.span>
             Skill Gap Analysis
           </h1>
-          <p className="text-gray-400 text-xl">Comprehensive analysis of your current skills vs market demand</p>
+          <p className="text-gray-400 text-xl">
+            {isLoading ? 'Loading...' : `Comprehensive analysis for ${userRole} - Current skills vs market demand`}
+          </p>
         </motion.div>
 
         {/* Main Chart Section */}
@@ -80,8 +103,8 @@ export default function SkillGapPage() {
           <div className="relative z-10">
             <div className="flex items-center justify-between mb-8">
               <div>
-                <h2 className="text-3xl font-bold text-white mb-2">Your Skills Overview</h2>
-                <p className="text-blue-200">Compare your current expertise with market requirements</p>
+                <h2 className="text-3xl font-bold text-white mb-2">Your Skills Overview - {userRole}</h2>
+                <p className="text-blue-200">Compare your current expertise with {userRole} market requirements</p>
               </div>
               <div className="px-5 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-xl text-white text-sm font-bold shadow-lg">
                 Live Analysis
@@ -155,6 +178,9 @@ export default function SkillGapPage() {
           </div>
         </motion.div>
       </main>
+      
+      {/* AI Chatbot */}
+      <AIChatbot />
     </div>
   );
 }

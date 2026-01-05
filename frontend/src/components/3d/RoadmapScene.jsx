@@ -139,14 +139,14 @@ export default function RoadmapScene({ phases = [] }) {
 
   return (
     <motion.div 
-  initial={{ opacity: 0, scale: 0.95 }}
-  animate={{ opacity: 1, scale: 1 }}
-  transition={{ duration: 0.8, ease: 'easeOut' }}
-  className="w-[1150px] mx-auto rounded-3xl overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.15)] 
-             bg-gradient-to-br from-white via-blue-50/50 to-purple-50/50 
-             p-8 md:p-12 relative border-2 border-white/60 backdrop-blur-xl" 
-  style={{ minHeight: height }}
->
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.8, ease: 'easeOut' }}
+      className="w-[1150px] mx-auto rounded-3xl overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.15)] 
+                 bg-gradient-to-br from-white via-blue-50/50 to-purple-50/50 
+                 p-8 md:p-12 relative border-2 border-white/60 backdrop-blur-xl" 
+      style={{ minHeight: height }}
+    >
 
 
       {/* Animated gradient mesh background */}
@@ -240,22 +240,34 @@ export default function RoadmapScene({ phases = [] }) {
                 {phase.duration}
               </div>
               
-              {/* Skill badges below - show ALL skills from phase */}
+              {/* Skill badges below - show ALL skills from phase - CLICKABLE for YouTube courses */}
               {phase.skills && phase.skills.length > 0 ? (
                 <div className="mt-6 flex flex-wrap justify-center gap-2 w-[220px]">
-                  {phase.skills.map((skill, skillIdx) => (
-                    <motion.div
-                      key={skillIdx}
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.3, delay: idx * 0.1 + skillIdx * 0.05 }}
-                      className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white text-xs font-bold text-gray-900 shadow-lg border-2 border-gray-300 hover:scale-105 transition-transform backdrop-blur-sm"
-                      title={skill}
-                    >
-                      <TechLogo name={skill} size={18} />
-                      <span className="whitespace-nowrap">{skill}</span>
-                    </motion.div>
-                  ))}
+                  {phase.skills.map((skill, skillIdx) => {
+                    // Function to search YouTube for full course
+                    const openYouTubeCourse = () => {
+                      const searchQuery = encodeURIComponent(`${skill} full course tutorial`);
+                      const youtubeURL = `https://www.youtube.com/results?search_query=${searchQuery}&sp=EgIQAw%253D%253D`;
+                      window.open(youtubeURL, '_blank', 'noopener,noreferrer');
+                    };
+
+                    return (
+                      <motion.button
+                        key={skillIdx}
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.3, delay: idx * 0.1 + skillIdx * 0.05 }}
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={openYouTubeCourse}
+                        className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white text-xs font-bold text-gray-900 shadow-lg border-2 border-gray-300 hover:border-blue-400 hover:shadow-xl transition-all backdrop-blur-sm cursor-pointer"
+                        title={`Click to find ${skill} full courses on YouTube`}
+                      >
+                        <TechLogo name={skill} size={18} />
+                        <span className="whitespace-nowrap">{skill}</span>
+                      </motion.button>
+                    );
+                  })}
                 </div>
               ) : (
                 <div className="mt-6 text-xs text-gray-500 italic">No skills data</div>

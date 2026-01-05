@@ -1,0 +1,889 @@
+{
+  "Frontend Developer": [
+    {
+      "title": "React - The Complete Guide 2024",
+      "provider": "Udemy",
+      "url": "https://www.udemy.com/course/react-the-complete-guide-incl-redux/",
+      "duration_hours": 48,
+      "level": "All Levels",
+      "rating": 4.6,
+      "image": "https://img-c.udemycdn.com/course/480x270/1362070_b9a1_2.jpg",
+      "skills": ["React", "JavaScript", "Redux", "Hooks"]
+    },
+    {
+      "title": "Modern HTML & CSS From The Beginning",
+      "provider": "Udemy",
+      "url": "https://www.udemy.com/course/modern-html-css-from-the-beginning/",
+      "duration_hours": 21,
+      "level": "Beginner",
+      "rating": 4.7,
+      "image": "https://img-c.udemycdn.com/course/480x270/1026604_790b_2.jpg",
+      "skills": ["HTML", "CSS", "Flexbox", "Grid"]
+    },
+    {
+      "title": "JavaScript - The Complete Guide",
+      "provider": "Udemy",
+      "url": "https://www.udemy.com/course/javascript-the-complete-guide-2020-beginner-advanced/",
+      "duration_hours": 52,
+      "level": "All Levels",
+      "rating": 4.6,
+      "image": "https://img-c.udemycdn.com/course/480x270/2508942_11d3_3.jpg",
+      "skills": ["JavaScript", "ES6", "Async/Await", "DOM"]
+    },
+    {
+      "title": "Tailwind CSS From Scratch",
+      "provider": "Udemy",
+      "url": "https://www.udemy.com/course/tailwind-from-scratch/",
+      "duration_hours": 12,
+      "level": "Intermediate",
+      "rating": 4.8,
+      "image": "https://img-c.udemycdn.com/course/480x270/4303518_7f1b.jpg",
+      "skills": ["Tailwind CSS", "Responsive Design", "CSS"]
+    }
+  ],
+  "Backend Developer": [
+    {
+      "title": "Python and Flask Bootcamp",
+      "provider": "Udemy",
+      "url": "https://www.udemy.com/course/python-and-flask-bootcamp-create-websites-using-flask/",
+      "duration_hours": 20,
+      "level": "Intermediate",
+      "rating": 4.5,
+      "image": "https://img-c.udemycdn.com/course/480x270/1293048_f0c6_2.jpg",
+      "skills": ["Python", "Flask", "REST APIs", "SQL"]
+    },
+    {
+      "title": "FastAPI - The Complete Course",
+      "provider": "Udemy",
+      "url": "https://www.udemy.com/course/fastapi-the-complete-course/",
+      "duration_hours": 19,
+      "level": "Intermediate",
+      "rating": 4.7,
+      "image": "https://img-c.udemycdn.com/course/480x270/4594230_8df9_2.jpg",
+      "skills": ["FastAPI", "Python", "REST APIs", "PostgreSQL"]
+    },
+    {
+      "title": "Docker & Kubernetes: The Practical Guide",
+      "provider": "Udemy",
+      "url": "https://www.udemy.com/course/docker-kubernetes-the-practical-guide/",
+      "duration_hours": 23,
+      "level": "Intermediate",
+      "rating": 4.6,
+      "image": "https://img-c.udemycdn.com/course/480x270/3420026_fea6_2.jpg",
+      "skills": ["Docker", "Kubernetes", "DevOps"]
+    },
+    {
+      "title": "MongoDB - The Complete Developer's Guide",
+      "provider": "Udemy",
+      "url": "https://www.udemy.com/course/mongodb-the-complete-developers-guide/",
+      "duration_hours": 16,
+      "level": "All Levels",
+      "rating": 4.6,
+      "image": "https://img-c.udemycdn.com/course/480x270/2069984_8e0f_3.jpg",
+      "skills": ["MongoDB", "NoSQL", "Database Design"]
+    }
+  ],
+  "Full Stack Developer": [
+    {
+      "title": "The Complete Web Developer Bootcamp",
+      "provider": "Udemy",
+      "url": "https://www.udemy.com/course/the-complete-web-development-bootcamp/",
+      "duration_hours": 62,
+      "level": "All Levels",
+      "rating": 4.7,
+      "image": "https://img-c.udemycdn.com/course/480x270/1565838_e54e_16.jpg",
+      "skills": ["HTML", "CSS", "JavaScript", "Node.js", "React", "MongoDB"]
+    },
+    {
+      "title": "Node.js, Express, MongoDB & More",
+      "provider": "Udemy",
+      "url": "https://www.udemy.com/course/nodejs-express-mongodb-bootcamp/",
+      "duration_hours": 42,
+      "level": "Intermediate",
+      "rating": 4.8,
+      "image": "https://img-c.udemycdn.com/course/480x270/2297650_c790_2.jpg",
+      "skills": ["Node.js", "Express", "MongoDB", "REST APIs"]
+    }
+  ],
+  "Data Scientist": [
+    {
+      "title": "Python for Data Science and Machine Learning",
+      "provider": "Udemy",
+      "url": "https://www.udemy.com/course/python-for-data-science-and-machine-learning-bootcamp/",
+      "duration_hours": 25,
+      "level": "All Levels",
+      "rating": 4.6,
+      "image": "https://img-c.udemycdn.com/course/480x270/903744_8eb2.jpg",
+      "skills": ["Python", "Pandas", "NumPy", "Scikit-Learn", "Machine Learning"]
+    },
+    {
+      "title": "Data Science A-Z: Real-Life Data Science",
+      "provider": "Udemy",
+      "url": "https://www.udemy.com/course/datascience/",
+      "duration_hours": 21,
+      "level": "Beginner",
+      "rating": 4.5,
+      "image": "https://img-c.udemycdn.com/course/480x270/722390_ccb4_2.jpg",
+      "skills": ["Data Analysis", "Statistics", "Data Visualization"]
+    },
+    {
+      "title": "Machine Learning A-Z: AI, Python & R",
+      "provider": "Udemy",
+      "url": "https://www.udemy.com/course/machinelearning/",
+      "duration_hours": 44,
+      "level": "Intermediate",
+      "rating": 4.5,
+      "image": "https://img-c.udemycdn.com/course/480x270/950390_270f_3.jpg",
+      "skills": ["Machine Learning", "AI", "Python", "Deep Learning"]
+    }
+  ],
+  "ML Engineer": [
+    {
+      "title": "TensorFlow Developer Certificate",
+      "provider": "Udemy",
+      "url": "https://www.udemy.com/course/tensorflow-developer-certificate-machine-learning-zero-to-mastery/",
+      "duration_hours": 64,
+      "level": "Intermediate",
+      "rating": 4.7,
+      "image": "https://img-c.udemycdn.com/course/480x270/3809288_99c1_3.jpg",
+      "skills": ["TensorFlow", "Deep Learning", "Neural Networks"]
+    },
+    {
+      "title": "PyTorch for Deep Learning",
+      "provider": "Udemy",
+      "url": "https://www.udemy.com/course/pytorch-for-deep-learning-with-python-bootcamp/",
+      "duration_hours": 17,
+      "level": "Intermediate",
+      "rating": 4.6,
+      "image": "https://img-c.udemycdn.com/course/480x270/1906852_93b2.jpg",
+      "skills": ["PyTorch", "Deep Learning", "CNNs", "RNNs"]
+    }
+  ],
+  "DevOps Engineer": [
+    {
+      "title": "DevOps Beginners to Advanced with Projects",
+      "provider": "Udemy",
+      "url": "https://www.udemy.com/course/decodingdevops/",
+      "duration_hours": 32,
+      "level": "All Levels",
+      "rating": 4.5,
+      "image": "https://img-c.udemycdn.com/course/480x270/2453036_eaa3_2.jpg",
+      "skills": ["DevOps", "CI/CD", "Jenkins", "Docker", "Kubernetes"]
+    },
+    {
+      "title": "AWS Certified Solutions Architect",
+      "provider": "Udemy",
+      "url": "https://www.udemy.com/course/aws-certified-solutions-architect-associate-saa-c03/",
+      "duration_hours": 27,
+      "level": "Intermediate",
+      "rating": 4.7,
+      "image": "https://img-c.udemycdn.com/course/480x270/362070_9b0d_10.jpg",
+      "skills": ["AWS", "Cloud Architecture", "EC2", "S3", "Lambda"]
+    }
+  ],
+  "UI/UX Designer": [
+    {
+      "title": "UI & Web Design using Adobe Illustrator",
+      "provider": "Udemy",
+      "url": "https://www.udemy.com/course/web-design-creating-websites-from-scratch/",
+      "duration_hours": 10,
+      "level": "Beginner",
+      "rating": 4.6,
+      "image": "https://img-c.udemycdn.com/course/480x270/822484_a6db.jpg",
+      "skills": ["UI Design", "Adobe Illustrator", "Web Design"]
+    },
+    {
+      "title": "Figma UI UX Design Essentials",
+      "provider": "Udemy",
+      "url": "https://www.udemy.com/course/figma-ux-ui-design-user-experience-tutorial-course/",
+      "duration_hours": 7,
+      "level": "All Levels",
+      "rating": 4.7,
+      "image": "https://img-c.udemycdn.com/course/480x270/2954050_ce40_2.jpg",
+      "skills": ["Figma", "UI/UX", "Prototyping", "Wireframing"]
+    },
+    {
+      "title": "User Experience Design Fundamentals",
+      "provider": "Udemy",
+      "url": "https://www.udemy.com/course/user-experience-design-fundamentals/",
+      "duration_hours": 6,
+      "level": "Beginner",
+      "rating": 4.5,
+      "image": "https://img-c.udemycdn.com/course/480x270/1297738_8b97_2.jpg",
+      "skills": ["UX Design", "User Research", "Design Thinking"]
+    }
+  ],
+  "Product Manager": [
+    {
+      "title": "Become a Product Manager",
+      "provider": "Udemy",
+      "url": "https://www.udemy.com/course/become-a-product-manager-learn-the-skills-get-a-job/",
+      "duration_hours": 11,
+      "level": "Beginner",
+      "rating": 4.4,
+      "image": "https://img-c.udemycdn.com/course/480x270/984952_e760.jpg",
+      "skills": ["Product Management", "Product Strategy", "Roadmapping"]
+    },
+    {
+      "title": "Product Management: Building AI Products",
+      "provider": "Udemy",
+      "url": "https://www.udemy.com/course/ai-product-management/",
+      "duration_hours": 8,
+      "level": "Intermediate",
+      "rating": 4.5,
+      "image": "https://img-c.udemycdn.com/course/480x270/4381314_a0a7_2.jpg",
+      "skills": ["AI Product Management", "Product Strategy", "Data Analysis"]
+    }
+  ],
+  "Project Manager": [
+    {
+      "title": "Project Management Professional Certification",
+      "provider": "Udemy",
+      "url": "https://www.udemy.com/course/pmp-certification-exam-prep-course-pmbok-6th-edition/",
+      "duration_hours": 36,
+      "level": "All Levels",
+      "rating": 4.6,
+      "image": "https://img-c.udemycdn.com/course/480x270/756466_a177_3.jpg",
+      "skills": ["Project Management", "PMP", "Agile", "Risk Management"]
+    },
+    {
+      "title": "Agile Project Management",
+      "provider": "Udemy",
+      "url": "https://www.udemy.com/course/agile-project-management-scrum-for-beginners/",
+      "duration_hours": 5,
+      "level": "Beginner",
+      "rating": 4.5,
+      "image": "https://img-c.udemycdn.com/course/480x270/1376080_d4a1_2.jpg",
+      "skills": ["Agile", "Scrum", "Sprint Planning"]
+    }
+  ],
+  "Business Analyst": [
+    {
+      "title": "Business Analysis Fundamentals",
+      "provider": "Udemy",
+      "url": "https://www.udemy.com/course/business-analysis-ba/",
+      "duration_hours": 10,
+      "level": "Beginner",
+      "rating": 4.4,
+      "image": "https://img-c.udemycdn.com/course/480x270/1032094_a5ff_3.jpg",
+      "skills": ["Business Analysis", "Requirements Gathering", "Documentation"]
+    },
+    {
+      "title": "SQL for Data Analysis",
+      "provider": "Udemy",
+      "url": "https://www.udemy.com/course/the-complete-sql-bootcamp/",
+      "duration_hours": 9,
+      "level": "All Levels",
+      "rating": 4.7,
+      "image": "https://img-c.udemycdn.com/course/480x270/762616_7693_3.jpg",
+      "skills": ["SQL", "Data Analysis", "PostgreSQL"]
+    }
+  ],
+  "Mobile Developer": [
+    {
+      "title": "React Native - The Practical Guide",
+      "provider": "Udemy",
+      "url": "https://www.udemy.com/course/react-native-the-practical-guide/",
+      "duration_hours": 32,
+      "level": "Intermediate",
+      "rating": 4.6,
+      "image": "https://img-c.udemycdn.com/course/480x270/2022989_9a8b_5.jpg",
+      "skills": ["React Native", "Mobile Development", "iOS", "Android"]
+    },
+    {
+      "title": "Flutter & Dart - The Complete Guide",
+      "provider": "Udemy",
+      "url": "https://www.udemy.com/course/learn-flutter-dart-to-build-ios-android-apps/",
+      "duration_hours": 43,
+      "level": "All Levels",
+      "rating": 4.6,
+      "image": "https://img-c.udemycdn.com/course/480x270/1708340_7108_5.jpg",
+      "skills": ["Flutter", "Dart", "Mobile UI", "Cross-platform"]
+    }
+  ],
+  "QA Engineer": [
+    {
+      "title": "Selenium WebDriver with Java",
+      "provider": "Udemy",
+      "url": "https://www.udemy.com/course/selenium-real-time-examplesinterview-questions/",
+      "duration_hours": 52,
+      "level": "All Levels",
+      "rating": 4.6,
+      "image": "https://img-c.udemycdn.com/course/480x270/631850_eb3b_7.jpg",
+      "skills": ["Selenium", "Test Automation", "Java", "API Testing"]
+    },
+    {
+      "title": "Cypress: Web Automation Testing from Zero to Hero",
+      "provider": "Udemy",
+      "url": "https://www.udemy.com/course/cypress-web-automation-testing-from-zero-to-hero/",
+      "duration_hours": 19,
+      "level": "All Levels",
+      "rating": 4.7,
+      "image": "https://img-c.udemycdn.com/course/480x270/2545580_cd0b_3.jpg",
+      "skills": ["Cypress", "Test Automation", "JavaScript"]
+    }
+  ],
+  "Cloud Architect": [
+    {
+      "title": "AWS Solutions Architect Professional",
+      "provider": "Udemy",
+      "url": "https://www.udemy.com/course/aws-solutions-architect-professional/",
+      "duration_hours": 16,
+      "level": "Advanced",
+      "rating": 4.6,
+      "image": "https://img-c.udemycdn.com/course/480x270/1570648_c0f0.jpg",
+      "skills": ["AWS", "Cloud Architecture", "Serverless", "Microservices"]
+    },
+    {
+      "title": "Microsoft Azure Architect Technologies",
+      "provider": "Udemy",
+      "url": "https://www.udemy.com/course/microsoft-azure-certification-az-303-technologies/",
+      "duration_hours": 21,
+      "level": "Advanced",
+      "rating": 4.5,
+      "image": "https://img-c.udemycdn.com/course/480x270/2880128_dcc2_2.jpg",
+      "skills": ["Azure", "Cloud Architecture", "Networking", "Security"]
+    }
+  ],
+  "Scrum Master": [
+    {
+      "title": "Agile Scrum Master Certification Prep",
+      "provider": "Udemy",
+      "url": "https://www.udemy.com/course/scrum-certification/",
+      "duration_hours": 6,
+      "level": "All Levels",
+      "rating": 4.6,
+      "image": "https://img-c.udemycdn.com/course/480x270/1381910_eb9f_2.jpg",
+      "skills": ["Scrum", "Agile", "Facilitation", "Sprint Planning"]
+    },
+    {
+      "title": "Scrum Master Training: Scrum Methodologies",
+      "provider": "Udemy",
+      "url": "https://www.udemy.com/course/scrum-master-training/",
+      "duration_hours": 5,
+      "level": "Beginner",
+      "rating": 4.5,
+      "image": "https://img-c.udemycdn.com/course/480x270/1026256_07f7_3.jpg",
+      "skills": ["Scrum", "Agile Methodologies", "Team Management"]
+    }
+  ],
+  "Technical Writer": [
+    {
+      "title": "Technical Writing: Documentation on Software Projects",
+      "provider": "Udemy",
+      "url": "https://www.udemy.com/course/start-your-api-documentation/",
+      "duration_hours": 3,
+      "level": "Beginner",
+      "rating": 4.4,
+      "image": "https://img-c.udemycdn.com/course/480x270/1327378_8fd8_2.jpg",
+      "skills": ["Technical Writing", "API Documentation", "Markdown"]
+    },
+    {
+      "title": "Complete Technical Writing Course",
+      "provider": "Udemy",
+      "url": "https://www.udemy.com/course/technical-writing-course/",
+      "duration_hours": 4,
+      "level": "All Levels",
+      "rating": 4.3,
+      "image": "https://img-c.udemycdn.com/course/480x270/2648686_4fa3.jpg",
+      "skills": ["Technical Writing", "User Guides", "Documentation"]
+    }
+  ],
+  "Chemical Engineer": [
+    {
+      "title": "Chemical Process Engineering - Design and Economics",
+      "provider": "Coursera",
+      "url": "https://www.coursera.org/learn/chemical-engineering",
+      "duration_hours": 20,
+      "level": "Intermediate",
+      "rating": 4.5,
+      "image": "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=480&h=270&fit=crop",
+      "skills": ["Process Design", "Chemical Processes", "Economics"]
+    },
+    {
+      "title": "Thermodynamics Fundamentals",
+      "provider": "edX",
+      "url": "https://www.edx.org/learn/thermodynamics",
+      "duration_hours": 30,
+      "level": "Intermediate",
+      "rating": 4.4,
+      "image": "https://images.unsplash.com/photo-1628595351029-c2bf17511435?w=480&h=270&fit=crop",
+      "skills": ["Thermodynamics", "Heat Transfer", "Energy"]
+    },
+    {
+      "title": "Aspen Plus Process Simulation",
+      "provider": "Udemy",
+      "url": "https://www.udemy.com/course/aspen-plus-simulation/",
+      "duration_hours": 15,
+      "level": "Advanced",
+      "rating": 4.6,
+      "image": "https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=480&h=270&fit=crop",
+      "skills": ["Aspen Plus", "Process Simulation", "Chemical Engineering"]
+    }
+  ],
+  "Civil Engineer": [
+    {
+      "title": "AutoCAD for Civil Engineering",
+      "provider": "Udemy",
+      "url": "https://www.udemy.com/course/autocad-civil-engineering/",
+      "duration_hours": 18,
+      "level": "All Levels",
+      "rating": 4.5,
+      "image": "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=480&h=270&fit=crop",
+      "skills": ["AutoCAD", "Civil Engineering", "Drafting"]
+    },
+    {
+      "title": "Structural Engineering and Design",
+      "provider": "Coursera",
+      "url": "https://www.coursera.org/learn/structural-engineering",
+      "duration_hours": 25,
+      "level": "Intermediate",
+      "rating": 4.6,
+      "image": "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=480&h=270&fit=crop",
+      "skills": ["Structural Design", "Construction", "Building Codes"]
+    },
+    {
+      "title": "Revit for Civil Engineering",
+      "provider": "Udemy",
+      "url": "https://www.udemy.com/course/revit-civil-engineering/",
+      "duration_hours": 22,
+      "level": "Intermediate",
+      "rating": 4.7,
+      "image": "https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=480&h=270&fit=crop",
+      "skills": ["Revit", "BIM", "3D Modeling"]
+    }
+  ],
+  "Mechanical Engineer": [
+    {
+      "title": "SolidWorks Complete Course",
+      "provider": "Udemy",
+      "url": "https://www.udemy.com/course/solidworks-complete/",
+      "duration_hours": 35,
+      "level": "All Levels",
+      "rating": 4.7,
+      "image": "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=480&h=270&fit=crop",
+      "skills": ["SolidWorks", "CAD", "Mechanical Design"]
+    },
+    {
+      "title": "Manufacturing Processes and Systems",
+      "provider": "Coursera",
+      "url": "https://www.coursera.org/learn/manufacturing-processes",
+      "duration_hours": 20,
+      "level": "Intermediate",
+      "rating": 4.5,
+      "image": "https://images.unsplash.com/photo-1565106430482-8f6e74349ca1?w=480&h=270&fit=crop",
+      "skills": ["Manufacturing", "Production", "Quality Control"]
+    },
+    {
+      "title": "FEA Analysis with ANSYS",
+      "provider": "Udemy",
+      "url": "https://www.udemy.com/course/fea-ansys/",
+      "duration_hours": 28,
+      "level": "Advanced",
+      "rating": 4.6,
+      "image": "https://images.unsplash.com/photo-1581094271901-8022df4466f9?w=480&h=270&fit=crop",
+      "skills": ["FEA", "ANSYS", "Structural Analysis"]
+    }
+  ],
+  "Electrical Engineer": [
+    {
+      "title": "PLC Programming from Scratch",
+      "provider": "Udemy",
+      "url": "https://www.udemy.com/course/plc-programming/",
+      "duration_hours": 24,
+      "level": "Beginner",
+      "rating": 4.6,
+      "image": "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=480&h=270&fit=crop",
+      "skills": ["PLC", "Automation", "Control Systems"]
+    },
+    {
+      "title": "Power Systems Analysis",
+      "provider": "Coursera",
+      "url": "https://www.coursera.org/learn/power-systems",
+      "duration_hours": 30,
+      "level": "Advanced",
+      "rating": 4.5,
+      "image": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=480&h=270&fit=crop",
+      "skills": ["Power Systems", "Electrical Engineering", "Grid"]
+    },
+    {
+      "title": "PCB Design with Altium",
+      "provider": "Udemy",
+      "url": "https://www.udemy.com/course/pcb-design-altium/",
+      "duration_hours": 18,
+      "level": "Intermediate",
+      "rating": 4.7,
+      "image": "https://images.unsplash.com/photo-1518770660439-4636190af475?w=480&h=270&fit=crop",
+      "skills": ["PCB Design", "Electronics", "Circuit Design"]
+    }
+  ],
+  "Environmental Engineer": [
+    {
+      "title": "Environmental Engineering and Sustainability",
+      "provider": "Coursera",
+      "url": "https://www.coursera.org/learn/environmental-engineering",
+      "duration_hours": 25,
+      "level": "Intermediate",
+      "rating": 4.6,
+      "image": "https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?w=480&h=270&fit=crop",
+      "skills": ["Environmental Engineering", "Sustainability", "Green Tech"]
+    },
+    {
+      "title": "Water Treatment and Management",
+      "provider": "edX",
+      "url": "https://www.edx.org/learn/water-treatment",
+      "duration_hours": 20,
+      "level": "Intermediate",
+      "rating": 4.5,
+      "image": "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=480&h=270&fit=crop",
+      "skills": ["Water Treatment", "Waste Management", "Environmental"]
+    },
+    {
+      "title": "GIS for Environmental Applications",
+      "provider": "Udemy",
+      "url": "https://www.udemy.com/course/gis-environmental/",
+      "duration_hours": 15,
+      "level": "Beginner",
+      "rating": 4.4,
+      "image": "https://images.unsplash.com/photo-1569163139394-de4798aa62b6?w=480&h=270&fit=crop",
+      "skills": ["GIS", "Mapping", "Environmental Analysis"]
+    }
+  ],
+  "Medical Doctor": [
+    {
+      "title": "Clinical Medicine Fundamentals",
+      "provider": "Coursera",
+      "url": "https://www.coursera.org/specializations/clinical-data-science",
+      "duration_hours": 40,
+      "level": "Advanced",
+      "rating": 4.7,
+      "image": "https://d3njjcbhbojbot.cloudfront.net/api/utilities/v1/imageproxy/https://s3.amazonaws.com/coursera-course-photos/fb/8d0d70c00c11e8991f7ddc7a6c14cb/Clinical-Data-Science_Logo.png",
+      "skills": ["Clinical Medicine", "Diagnosis", "Patient Care"]
+    },
+    {
+      "title": "Medical Pharmacology",
+      "provider": "edX",
+      "url": "https://www.edx.org/course/pharmacology",
+      "duration_hours": 35,
+      "level": "Advanced",
+      "rating": 4.6,
+      "image": "https://images.unsplash.com/photo-1471864190281-a93a3070b6de?w=480&h=270&fit=crop",
+      "skills": ["Pharmacology", "Drug Therapy", "Medicine"]
+    },
+    {
+      "title": "Emergency Medicine Essentials",
+      "provider": "Coursera",
+      "url": "https://www.coursera.org/learn/medical-neuroscience",
+      "duration_hours": 30,
+      "level": "Advanced",
+      "rating": 4.8,
+      "image": "https://d3njjcbhbojbot.cloudfront.net/api/utilities/v1/imageproxy/https://coursera-course-photos.s3.amazonaws.com/29/8bb9e0457811e5b76d3d6e7e57c67f/Course1-BrainLogo2.jpg",
+      "skills": ["Emergency Medicine", "Critical Care", "Trauma"]
+    }
+  ],
+  "Registered Nurse": [
+    {
+      "title": "Fundamentals of Nursing Practice",
+      "provider": "Coursera",
+      "url": "https://www.coursera.org/learn/nursing-concepts",
+      "duration_hours": 30,
+      "level": "Beginner",
+      "rating": 4.6,
+      "image": "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=480&h=270&fit=crop",
+      "skills": ["Nursing", "Patient Care", "Clinical Skills"]
+    },
+    {
+      "title": "Pharmacology for Nurses",
+      "provider": "Udemy",
+      "url": "https://www.udemy.com/course/pharmacology-for-nurses/",
+      "duration_hours": 25,
+      "level": "Intermediate",
+      "rating": 4.5,
+      "image": "https://img-c.udemycdn.com/course/480x270/2785004_1fa7_3.jpg",
+      "skills": ["Pharmacology", "Medication", "Drug Administration"]
+    },
+    {
+      "title": "Critical Care Nursing",
+      "provider": "edX",
+      "url": "https://www.edx.org/course/vital-signs-understanding-what-the-body-is-telling-us",
+      "duration_hours": 28,
+      "level": "Advanced",
+      "rating": 4.7,
+      "image": "https://images.unsplash.com/photo-1538108149393-fbbd81895907?w=480&h=270&fit=crop",
+      "skills": ["Critical Care", "ICU", "Advanced Nursing"]
+    }
+  ],
+  "Pharmacist": [
+    {
+      "title": "Clinical Pharmacy Practice",
+      "provider": "Coursera",
+      "url": "https://www.coursera.org/learn/understanding-clinical-research",
+      "duration_hours": 35,
+      "level": "Advanced",
+      "rating": 4.7,
+      "image": "https://d3njjcbhbojbot.cloudfront.net/api/utilities/v1/imageproxy/https://coursera-course-photos.s3.amazonaws.com/1c/37dc3043d711e5b0c9e9e1e97c0c3b/logo2.jpg",
+      "skills": ["Clinical Pharmacy", "Drug Therapy", "Patient Counseling"]
+    },
+    {
+      "title": "Pharmacology and Drug Development",
+      "provider": "edX",
+      "url": "https://www.edx.org/course/drug-development",
+      "duration_hours": 30,
+      "level": "Intermediate",
+      "rating": 4.6,
+      "image": "https://images.unsplash.com/photo-1585435557343-3b092031a831?w=480&h=270&fit=crop",
+      "skills": ["Pharmacology", "Drug Development", "Research"]
+    }
+  ],
+  "Clinical Psychologist": [
+    {
+      "title": "Clinical Psychology Foundations",
+      "provider": "Coursera",
+      "url": "https://www.coursera.org/learn/psychology-health",
+      "duration_hours": 40,
+      "level": "Advanced",
+      "rating": 4.8,
+      "image": "https://d3njjcbhbojbot.cloudfront.net/api/utilities/v1/imageproxy/https://coursera-course-photos.s3.amazonaws.com/f4/53ee10d15f11e5bda1639b8bbf4c6b/Logo_Psychology_Final.png",
+      "skills": ["Clinical Psychology", "Therapy", "Mental Health"]
+    },
+    {
+      "title": "Cognitive Behavioral Therapy",
+      "provider": "Udemy",
+      "url": "https://www.udemy.com/course/cognitive-behavioral-therapy/",
+      "duration_hours": 25,
+      "level": "Intermediate",
+      "rating": 4.6,
+      "image": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=480&h=270&fit=crop",
+      "skills": ["CBT", "Psychotherapy", "Counseling"]
+    }
+  ],
+  "Medical Lab Technician": [
+    {
+      "title": "Medical Laboratory Science Fundamentals",
+      "provider": "Coursera",
+      "url": "https://www.coursera.org/learn/medical-laboratory",
+      "duration_hours": 30,
+      "level": "Intermediate",
+      "rating": 4.5,
+      "image": "https://images.unsplash.com/photo-1581595220892-b0739db3ba8c?w=480&h=270&fit=crop",
+      "skills": ["Lab Procedures", "Diagnostics", "Medical Testing"]
+    },
+    {
+      "title": "Clinical Hematology and Microbiology",
+      "provider": "edX",
+      "url": "https://www.edx.org/learn/hematology",
+      "duration_hours": 25,
+      "level": "Intermediate",
+      "rating": 4.6,
+      "image": "https://images.unsplash.com/photo-1532187643603-ba119ca4109e?w=480&h=270&fit=crop",
+      "skills": ["Hematology", "Microbiology", "Lab Analysis"]
+    }
+  ],
+  "High School Teacher": [
+    {
+      "title": "Effective Teaching Strategies",
+      "provider": "Coursera",
+      "url": "https://www.coursera.org/learn/teaching-strategies",
+      "duration_hours": 20,
+      "level": "Beginner",
+      "rating": 4.7,
+      "image": "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=480&h=270&fit=crop",
+      "skills": ["Teaching", "Pedagogy", "Classroom Management"]
+    },
+    {
+      "title": "Classroom Management Techniques",
+      "provider": "Udemy",
+      "url": "https://www.udemy.com/course/classroom-management/",
+      "duration_hours": 15,
+      "level": "All Levels",
+      "rating": 4.5,
+      "image": "https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=480&h=270&fit=crop",
+      "skills": ["Classroom Management", "Student Engagement", "Discipline"]
+    },
+    {
+      "title": "Educational Technology Integration",
+      "provider": "edX",
+      "url": "https://www.edx.org/learn/educational-technology",
+      "duration_hours": 18,
+      "level": "Intermediate",
+      "rating": 4.6,
+      "image": "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=480&h=270&fit=crop",
+      "skills": ["EdTech", "Technology", "Digital Learning"]
+    }
+  ],
+  "University Professor": [
+    {
+      "title": "Academic Research Methods",
+      "provider": "Coursera",
+      "url": "https://www.coursera.org/learn/research-methods",
+      "duration_hours": 35,
+      "level": "Advanced",
+      "rating": 4.7,
+      "image": "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=480&h=270&fit=crop",
+      "skills": ["Research", "Methodology", "Academic Writing"]
+    },
+    {
+      "title": "Grant Writing for Researchers",
+      "provider": "edX",
+      "url": "https://www.edx.org/learn/grant-writing",
+      "duration_hours": 20,
+      "level": "Advanced",
+      "rating": 4.6,
+      "image": "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=480&h=270&fit=crop",
+      "skills": ["Grant Writing", "Research Funding", "Proposals"]
+    }
+  ],
+  "Education Administrator": [
+    {
+      "title": "Educational Leadership and Management",
+      "provider": "Coursera",
+      "url": "https://www.coursera.org/learn/educational-leadership",
+      "duration_hours": 30,
+      "level": "Advanced",
+      "rating": 4.7,
+      "image": "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=480&h=270&fit=crop",
+      "skills": ["Leadership", "Administration", "Management"]
+    },
+    {
+      "title": "Strategic Planning in Education",
+      "provider": "edX",
+      "url": "https://www.edx.org/learn/strategic-planning",
+      "duration_hours": 25,
+      "level": "Advanced",
+      "rating": 4.6,
+      "image": "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=480&h=270&fit=crop",
+      "skills": ["Strategic Planning", "Policy", "Education Management"]
+    }
+  ],
+  "Curriculum Developer": [
+    {
+      "title": "Instructional Design Fundamentals",
+      "provider": "Coursera",
+      "url": "https://www.coursera.org/learn/instructional-design",
+      "duration_hours": 25,
+      "level": "Intermediate",
+      "rating": 4.7,
+      "image": "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=480&h=270&fit=crop",
+      "skills": ["Instructional Design", "Curriculum", "Learning Design"]
+    },
+    {
+      "title": "Learning Management Systems",
+      "provider": "Udemy",
+      "url": "https://www.udemy.com/course/learning-management-systems/",
+      "duration_hours": 18,
+      "level": "Intermediate",
+      "rating": 4.5,
+      "image": "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=480&h=270&fit=crop",
+      "skills": ["LMS", "E-Learning", "Online Education"]
+    }
+  ],
+  "Agricultural Scientist": [
+    {
+      "title": "Crop Science and Production",
+      "provider": "Coursera",
+      "url": "https://www.coursera.org/learn/crop-science",
+      "duration_hours": 30,
+      "level": "Intermediate",
+      "rating": 4.6,
+      "image": "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=480&h=270&fit=crop",
+      "skills": ["Crop Science", "Agriculture", "Plant Biology"]
+    },
+    {
+      "title": "Soil Science Fundamentals",
+      "provider": "edX",
+      "url": "https://www.edx.org/learn/soil-science",
+      "duration_hours": 25,
+      "level": "Intermediate",
+      "rating": 4.5,
+      "image": "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=480&h=270&fit=crop",
+      "skills": ["Soil Science", "Agriculture", "Environmental Science"]
+    },
+    {
+      "title": "Agricultural Research Methods",
+      "provider": "Coursera",
+      "url": "https://www.coursera.org/learn/agricultural-research",
+      "duration_hours": 28,
+      "level": "Advanced",
+      "rating": 4.7,
+      "image": "https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?w=480&h=270&fit=crop",
+      "skills": ["Research", "Experimental Design", "Data Analysis"]
+    }
+  ],
+  "Farm Manager": [
+    {
+      "title": "Farm Management Essentials",
+      "provider": "Coursera",
+      "url": "https://www.coursera.org/learn/farm-management",
+      "duration_hours": 22,
+      "level": "Intermediate",
+      "rating": 4.6,
+      "image": "https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=480&h=270&fit=crop",
+      "skills": ["Farm Management", "Agriculture", "Business"]
+    },
+    {
+      "title": "Precision Agriculture Technologies",
+      "provider": "Udemy",
+      "url": "https://www.udemy.com/course/precision-agriculture/",
+      "duration_hours": 18,
+      "level": "Intermediate",
+      "rating": 4.5,
+      "image": "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=480&h=270&fit=crop",
+      "skills": ["Precision Agriculture", "Technology", "Farm Management"]
+    },
+    {
+      "title": "Sustainable Farming Practices",
+      "provider": "edX",
+      "url": "https://www.edx.org/learn/sustainable-farming",
+      "duration_hours": 20,
+      "level": "All Levels",
+      "rating": 4.7,
+      "image": "https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=480&h=270&fit=crop",
+      "skills": ["Sustainable Agriculture", "Organic Farming", "Environment"]
+    }
+  ],
+  "Agricultural Engineer": [
+    {
+      "title": "Agricultural Machinery Design",
+      "provider": "Coursera",
+      "url": "https://www.coursera.org/learn/agricultural-machinery",
+      "duration_hours": 25,
+      "level": "Intermediate",
+      "rating": 4.6,
+      "image": "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=480&h=270&fit=crop",
+      "skills": ["Machinery Design", "Engineering", "Agriculture"]
+    },
+    {
+      "title": "Irrigation Systems Engineering",
+      "provider": "edX",
+      "url": "https://www.edx.org/learn/irrigation-systems",
+      "duration_hours": 22,
+      "level": "Intermediate",
+      "rating": 4.5,
+      "image": "https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?w=480&h=270&fit=crop",
+      "skills": ["Irrigation", "Water Management", "Agricultural Engineering"]
+    }
+  ],
+  "Soil Scientist": [
+    {
+      "title": "Soil Chemistry and Analysis",
+      "provider": "Coursera",
+      "url": "https://www.coursera.org/learn/soil-chemistry",
+      "duration_hours": 28,
+      "level": "Advanced",
+      "rating": 4.7,
+      "image": "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=480&h=270&fit=crop",
+      "skills": ["Soil Chemistry", "Analysis", "Research"]
+    },
+    {
+      "title": "Soil Conservation and Management",
+      "provider": "edX",
+      "url": "https://www.edx.org/learn/soil-conservation",
+      "duration_hours": 20,
+      "level": "Intermediate",
+      "rating": 4.6,
+      "image": "https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=480&h=270&fit=crop",
+      "skills": ["Soil Conservation", "Land Management", "Sustainability"]
+    }
+  ]
+}
+

@@ -13,34 +13,43 @@ import {
   EmojiEvents,
   Assessment,
   Menu,
-  Close
+  Close,
+  SmartToy
 } from '@mui/icons-material';
 import { Link, useLocation } from 'react-router-dom';
+import { useTranslate } from '../../utils/translate';
 
-const navItems = [
-  { label: 'Overview', icon: Dashboard, path: '/dashboard', gradient: 'from-cyan-500 to-blue-600' },
-  { label: 'Generate Roadmap', icon: Timeline, path: '/generate', gradient: 'from-purple-500 to-pink-600' },
-  { label: 'My Courses', icon: School, path: '/courses', gradient: 'from-orange-500 to-red-600' },
-  { label: 'Market Insights', icon: TrendingUp, path: '/market-trends', gradient: 'from-green-500 to-emerald-600' },
-  { label: 'Achievements', icon: EmojiEvents, path: '#achievements', gradient: 'from-yellow-500 to-amber-600' },
-  { label: 'Skill Gap Analysis', icon: Assessment, path: '/skill-gap', gradient: 'from-indigo-500 to-purple-600' },
-];
-
-const bottomNavItems = [
-  { label: 'Features', icon: Home, path: '/features' },
-  { label: 'About', icon: Info, path: '/about' },
-  { label: 'Settings', icon: Settings, path: '#settings' },
-];
-
-export default function Sidebar({ user, onSignOut }) {
+const Sidebar = ({ user, onSignOut }) => {
   const [activeItem, setActiveItem] = useState('Overview');
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
+  const { t } = useTranslate();
+
+  // Navigation items with translated labels
+  const navItems = [
+    { label: t('Overview'), icon: Dashboard, path: '/dashboard', gradient: 'from-cyan-500 to-blue-600' },
+    { label: t('AI Assistant'), icon: SmartToy, path: '#chatbot', gradient: 'from-blue-500 to-purple-600', special: true },
+    { label: t('Generate Roadmap'), icon: Timeline, path: '/generate', gradient: 'from-purple-500 to-pink-600' },
+    { label: t('My Courses'), icon: School, path: '/courses', gradient: 'from-orange-500 to-red-600' },
+    { label: t('Market Insights'), icon: TrendingUp, path: '/market-trends', gradient: 'from-green-500 to-emerald-600' },
+    { label: t('Skill Gap Analysis'), icon: Assessment, path: '/skill-gap', gradient: 'from-indigo-500 to-purple-600' },
+    { label: t('My Profile'), icon: Person, path: '/profile', gradient: 'from-pink-500 to-rose-600' },
+  ];
+
+  const bottomNavItems = [
+    { label: t('Features'), icon: Home, path: '/features' },
+    { label: t('About'), icon: Info, path: '/about' },
+    { label: t('Settings'), icon: Settings, path: '#settings' },
+  ];
 
   const handleNavClick = (e, label, path) => {
     setActiveItem(label);
     setIsOpen(false); // Close mobile menu after click
-    if (path.startsWith('#')) {
+    if (path === '#chatbot') {
+      e.preventDefault();
+      // Trigger chatbot open by dispatching custom event
+      window.dispatchEvent(new CustomEvent('openChatbot'));
+    } else if (path.startsWith('#')) {
       e.preventDefault();
       const element = document.querySelector(path);
       element?.scrollIntoView({ behavior: 'smooth' });
@@ -149,7 +158,7 @@ export default function Sidebar({ user, onSignOut }) {
               className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-red-500/20 to-pink-500/20 border border-red-500/30 text-red-300 rounded-xl font-medium hover:from-red-500/30 hover:to-pink-500/30 transition-all"
             >
               <ExitToApp fontSize="small" />
-              Sign Out
+              {t('Sign Out')}
             </motion.button>
           </motion.div>
         </div>
@@ -178,6 +187,7 @@ export default function Sidebar({ user, onSignOut }) {
                       ? 'bg-white/10 text-white shadow-lg backdrop-blur-xl border border-white/20' 
                       : 'text-gray-300 hover:bg-white/5 hover:text-white'
                     }
+                    ${item.special ? 'animate-pulse' : ''}
                   `}
                 >
                 {isActive && (
@@ -187,10 +197,17 @@ export default function Sidebar({ user, onSignOut }) {
                     transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                   />
                 )}
-                <div className={`relative p-2 rounded-lg ${isActive ? `bg-gradient-to-br ${item.gradient}` : 'bg-white/5'}`}>
+                <div className={`relative p-2 rounded-lg ${isActive ? `bg-gradient-to-br ${item.gradient}` : item.special ? `bg-gradient-to-br ${item.gradient}` : 'bg-white/5'}`}>
                   <Icon fontSize="small" />
                 </div>
-                <span className="relative">{item.label}</span>
+                <span className="relative flex items-center gap-2">
+                  {item.label}
+                  {item.special && (
+                    <span className="px-2 py-0.5 bg-gradient-to-r from-blue-500 to-purple-600 text-[10px] font-bold rounded-full text-white">
+                      NEW
+                    </span>
+                  )}
+                </span>
               </motion.div>
               </Link>
             );
@@ -236,4 +253,6 @@ export default function Sidebar({ user, onSignOut }) {
     </motion.aside>
     </>
   );
-}
+};
+
+export default Sidebar;

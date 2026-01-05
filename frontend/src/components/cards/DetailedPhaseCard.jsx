@@ -47,22 +47,34 @@ export default function DetailedPhaseCard({ phase, index, isUnlocked = true }) {
 
       {/* Phase Content */}
       <div className="p-4 sm:p-6 space-y-4 sm:space-y-6 flex-1">
-        {/* Skills to Learn */}
+        {/* Skills to Learn - Clickable for YouTube courses */}
         <div>
           <div className="flex items-center gap-2 mb-4">
             <Code style={{ fontSize: 20 }} className={colors.text} />
             <h4 className="font-bold text-white">Key Skills</h4>
           </div>
           <div className="flex flex-wrap gap-3">
-            {phase.skills?.map((skill, idx) => (
-              <div
-                key={idx}
-                className={`flex items-center gap-2 px-3 py-2 ${colors.light} ${colors.text} rounded-lg text-sm font-medium border ${colors.border}`}
-              >
-                <TechLogo name={skill} size={24} />
-                <span>{skill}</span>
-              </div>
-            ))}
+            {phase.skills?.map((skill, idx) => {
+              const openYouTubeCourse = () => {
+                const searchQuery = encodeURIComponent(`${skill} full course tutorial`);
+                const youtubeURL = `https://www.youtube.com/results?search_query=${searchQuery}&sp=EgIQAw%253D%253D`;
+                window.open(youtubeURL, '_blank', 'noopener,noreferrer');
+              };
+
+              return (
+                <motion.button
+                  key={idx}
+                  onClick={openYouTubeCourse}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
+                  className={`flex items-center gap-2 px-3 py-2 ${colors.light} ${colors.text} rounded-lg text-sm font-medium border ${colors.border} hover:border-white/40 transition-all cursor-pointer`}
+                  title={`Click to find ${skill} full courses on YouTube`}
+                >
+                  <TechLogo name={skill} size={24} />
+                  <span>{skill}</span>
+                </motion.button>
+              );
+            })}
           </div>
         </div>
 

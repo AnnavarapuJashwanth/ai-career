@@ -21,18 +21,31 @@ export default function PhaseCard({ phase, index }) {
 
       {/* Content */}
       <div className="p-6">
-        {/* Skills */}
+        {/* Skills - Clickable for YouTube courses */}
         <div className="mb-6">
           <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
             <CodeOutlined style={{ fontSize: 20 }} />
             Key Skills
           </h4>
           <div className="flex flex-wrap gap-2">
-            {phase.skills?.slice(0, 5).map((skill, i) => (
-              <span key={i} className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-semibold">
-                {skill}
-              </span>
-            ))}
+            {phase.skills?.slice(0, 5).map((skill, i) => {
+              const openYouTubeCourse = () => {
+                const searchQuery = encodeURIComponent(`${skill} full course tutorial`);
+                const youtubeURL = `https://www.youtube.com/results?search_query=${searchQuery}&sp=EgIQAw%253D%253D`;
+                window.open(youtubeURL, '_blank', 'noopener,noreferrer');
+              };
+
+              return (
+                <button
+                  key={i}
+                  onClick={openYouTubeCourse}
+                  className="bg-blue-100 hover:bg-blue-200 text-blue-800 px-3 py-1 rounded-full text-xs font-semibold transition-all transform hover:scale-110 hover:shadow-lg cursor-pointer"
+                  title={`Click to find ${skill} full courses on YouTube`}
+                >
+                  {skill}
+                </button>
+              );
+            })}
             {phase.skills?.length > 5 && (
               <span className="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-xs font-semibold">
                 +{phase.skills.length - 5} more

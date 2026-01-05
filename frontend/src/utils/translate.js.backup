@@ -1,0 +1,840 @@
+import { useState, useEffect } from 'react';
+import api from './api';
+
+// Cache for translated strings to avoid repeated API calls
+const translationCache = {};
+
+// Language code mapping for Gemini API
+const languageNames = {
+  en: 'English',
+  hi: 'Hindi',
+  te: 'Telugu',
+  ta: 'Tamil',
+  mr: 'Marathi',
+  bn: 'Bengali',
+  gu: 'Gujarati',
+  kn: 'Kannada',
+  ml: 'Malayalam',
+  pa: 'Punjabi',
+  or: 'Odia',
+  ur: 'Urdu',
+  es: 'Spanish',
+  fr: 'French',
+  de: 'German',
+  zh: 'Chinese',
+  ja: 'Japanese',
+  ar: 'Arabic',
+  pt: 'Portuguese',
+  ru: 'Russian'
+};
+
+// Translate text using Gemini AI API
+const translateWithAI = async (text, targetLang) => {
+  // Return original text if target is English
+  if (targetLang === 'en') {
+    return text;
+  }
+
+  // Check cache first
+  const cacheKey = `${text}_${targetLang}`;
+  if (translationCache[cacheKey]) {
+    return translationCache[cacheKey];
+  }
+
+  try {
+    const response = await api.post('/translate', {
+      text: text,
+      target_language: languageNames[targetLang] || 'English'
+    });
+
+    const translated = response.data.translated_text;
+    // Cache the translation
+    translationCache[cacheKey] = translated;
+    return translated;
+  } catch (error) {
+    console.error('Translation error:', error);
+    // Return original text if translation fails
+    return text;
+  }
+};
+
+// Main translate function
+export const translate = async (text, targetLang = 'en') => {
+  return await translateWithAI(text, targetLang);
+};
+  // Navigation - Sidebar
+  'Overview': {
+    hi: 'अवलोकन',
+    te: 'అవలోకనం',
+    ta: 'கண்ணோட்டம்',
+    mr: 'आढावा',
+    bn: 'সংক্ষিপ্ত বিবরণ',
+    gu: 'વિહંગાવલોકન',
+    kn: 'ಅವಲೋಕನ',
+    ml: 'അവലോകനം',
+    pa: 'ਸੰਖੇਪ ਜਾਣਕਾਰੀ',
+    or: 'ସଂକ୍ଷିପ୍ତ ବିବରଣୀ',
+    ur: 'جائزہ',
+    es: 'Resumen',
+    fr: 'Aperçu',
+    de: 'Übersicht',
+    zh: '概述',
+    ja: '概要',
+    ar: 'نظرة عامة',
+    pt: 'Visão Geral',
+    ru: 'Обзор'
+  },
+  'AI Assistant': {
+    hi: 'एआई सहायक',
+    te: 'AI సహాయకుడు',
+    ta: 'AI உதவியாளர்',
+    mr: 'एआय सहाय्यक',
+    bn: 'এআই সহায়ক',
+    gu: 'AI સહાયક',
+    kn: 'AI ಸಹಾಯಕ',
+    ml: 'AI സഹായി',
+    pa: 'AI ਸਹਾਇਕ',
+    or: 'AI ସହାୟକ',
+    ur: 'AI اسسٹنٹ',
+    es: 'Asistente IA',
+    fr: 'Assistant IA',
+    de: 'KI-Assistent',
+    zh: 'AI助手',
+    ja: 'AIアシスタント',
+    ar: 'مساعد الذكاء الاصطناعي',
+    pt: 'Assistente IA',
+    ru: 'ИИ Ассистент'
+  },
+  'Generate Roadmap': {
+    hi: 'रोडमैप बनाएं',
+    te: 'రోడ్‌మ్యాప్ రూపొందించండి',
+    ta: 'வரைபடத்தை உருவாக்கவும்',
+    mr: 'रोडमॅप तयार करा',
+    bn: 'রোডম্যাপ তৈরি করুন',
+    gu: 'રોડમેપ બનાવો',
+    kn: 'ರೋಡ್‌ಮ್ಯಾಪ್ ರಚಿಸಿ',
+    ml: 'റോഡ്മാപ്പ് സൃഷ്ടിക്കുക',
+    pa: 'ਰੋਡਮੈਪ ਬਣਾਓ',
+    or: 'ରୋଡମ୍ୟାପ୍ ସୃଷ୍ଟି କରନ୍ତୁ',
+    ur: 'روڈ میپ بنائیں',
+    es: 'Generar Hoja de Ruta',
+    fr: 'Générer la Feuille de Route',
+    de: 'Fahrplan Erstellen',
+    zh: '生成路线图',
+    ja: 'ロードマップを生成',
+    ar: 'إنشاء خريطة الطريق',
+    pt: 'Gerar Roteiro',
+    ru: 'Создать Дорожную Карту'
+  },
+  'My Courses': {
+    hi: 'मेरे पाठ्यक्रम',
+    te: 'నా కోర్సులు',
+    ta: 'எனது பாடநெறிகள்',
+    mr: 'माझे अभ्यासक्रम',
+    bn: 'আমার কোর্স',
+    gu: 'મારા કોર્સ',
+    kn: 'ನನ್ನ ಕೋರ್ಸ್‌ಗಳು',
+    ml: 'എന്റെ കോഴ്സുകൾ',
+    pa: 'ਮੇਰੇ ਕੋਰਸ',
+    or: 'ମୋର ପାଠ୍ୟକ୍ରମ',
+    ur: 'میرے کورسز',
+    es: 'Mis Cursos',
+    fr: 'Mes Cours',
+    de: 'Meine Kurse',
+    zh: '我的课程',
+    ja: 'マイコース',
+    ar: 'دوراتي',
+    pt: 'Meus Cursos',
+    ru: 'Мои Курсы'
+  },
+  'Market Insights': {
+    hi: 'बाजार अंतर्दृष्टि',
+    te: 'మార్కెట్ అంతర్దృష్టులు',
+    ta: 'சந்தை நுண்ணறிவு',
+    mr: 'बाजार अंतर्दृष्टी',
+    bn: 'বাজার অন্তর্দৃষ্টি',
+    gu: 'બજાર સૂઝ',
+    kn: 'ಮಾರುಕಟ್ಟೆ ಒಳನೋಟಗಳು',
+    ml: 'മാർക്കറ്റ് ഇൻസൈറ്റുകൾ',
+    pa: 'ਮਾਰਕੀਟ ਸੂਝ',
+    or: 'ବଜାର ସୂଚନା',
+    ur: 'مارکیٹ بصیرت',
+    es: 'Tendencias del Mercado',
+    fr: 'Aperçus du Marché',
+    de: 'Markteinblicke',
+    zh: '市场洞察',
+    ja: '市場インサイト',
+    ar: 'رؤى السوق',
+    pt: 'Insights do Mercado',
+    ru: 'Рыночная Аналитика'
+  },
+  'Skill Gap Analysis': {
+    hi: 'कौशल अंतर विश्लेषण',
+    te: 'నైపుణ్యాల అంతర విశ్లేషణ',
+    ta: 'திறன் இடைவெளி பகுப்பாய்வு',
+    mr: 'कौशल्य अंतर विश्लेषण',
+    bn: 'দক্ষতা ব্যবধান বিশ্লেষণ',
+    gu: 'કુશળતા અંતર વિશ્લેષણ',
+    kn: 'ಕೌಶಲ್ಯ ಅಂತರ ವಿಶ್ಲೇಷಣೆ',
+    ml: 'കഴിവ് വിടവ് വിശകലനം',
+    pa: 'ਹੁਨਰ ਅੰਤਰ ਵਿਸ਼ਲੇਸ਼ਣ',
+    or: 'ଦକ୍ଷତା ବ୍ୟବଧାନ ବିଶ୍ଳେଷଣ',
+    ur: 'مہارت کے فرق کا تجزیہ',
+    es: 'Análisis de Brecha de Habilidades',
+    fr: 'Analyse des Écarts de Compétences',
+    de: 'Kompetenzlücken-Analyse',
+    zh: '技能差距分析',
+    ja: 'スキルギャップ分析',
+    ar: 'تحليل فجوة المهارات',
+    pt: 'Análise de Lacunas de Habilidades',
+    ru: 'Анализ Разрыва Навыков'
+  },
+  'My Profile': {
+    hi: 'मेरी प्रोफ़ाइल',
+    te: 'నా ప్రొఫైల్',
+    ta: 'எனது சுயவிவரம்',
+    mr: 'माझे प्रोफाइल',
+    bn: 'আমার প্রোফাইল',
+    gu: 'મારી પ્રોફાઇલ',
+    kn: 'ನನ್ನ ಪ್ರೊಫೈಲ್',
+    ml: 'എന്റെ പ്രൊഫൈൽ',
+    pa: 'ਮੇਰਾ ਪ੍ਰੋਫਾਈਲ',
+    or: 'ମୋର ପ୍ରୋଫାଇଲ୍',
+    ur: 'میری پروفائل',
+    es: 'Mi Perfil',
+    fr: 'Mon Profil',
+    de: 'Mein Profil',
+    zh: '我的个人资料',
+    ja: 'マイプロフィール',
+    ar: 'ملفي الشخصي',
+    pt: 'Meu Perfil',
+    ru: 'Мой Профиль'
+  },
+  'Features': {
+    hi: 'विशेषताएं',
+    te: 'లక్షణాలు',
+    ta: 'அம்சங்கள்',
+    mr: 'वैशिष्ट्ये',
+    bn: 'বৈশিষ্ট্য',
+    gu: 'લક્ષણો',
+    kn: 'ವೈಶಿಷ್ಟ್ಯಗಳು',
+    ml: 'സവിശേഷതകൾ',
+    pa: 'ਵਿਸ਼ੇਸ਼ਤਾਵਾਂ',
+    or: 'ବୈଶିଷ୍ଟ୍ୟ',
+    ur: 'خصوصیات',
+    es: 'Características',
+    fr: 'Fonctionnalités',
+    de: 'Funktionen',
+    zh: '功能',
+    ja: '機能',
+    ar: 'الميزات',
+    pt: 'Recursos',
+    ru: 'Функции'
+  },
+  'About': {
+    hi: 'हमारे बारे में',
+    te: 'మా గురించి',
+    ta: 'எங்களை பற்றி',
+    mr: 'आमच्याबद्दल',
+    bn: 'আমাদের সম্পর্কে',
+    gu: 'અમારા વિશે',
+    kn: 'ನಮ್ಮ ಬಗ್ಗೆ',
+    ml: 'ഞങ്ങളെക്കുറിച്ച്',
+    pa: 'ਸਾਡੇ ਬਾਰੇ',
+    or: 'ଆମ ବିଷୟରେ',
+    ur: 'ہمارے بارے میں',
+    es: 'Acerca de',
+    fr: 'À propos',
+    de: 'Über uns',
+    zh: '关于',
+    ja: '私たちについて',
+    ar: 'حول',
+    pt: 'Sobre',
+    ru: 'О нас'
+  },
+  'Settings': {
+    hi: 'सेटिंग्स',
+    te: 'సెట్టింగ్‌లు',
+    ta: 'அமைப்புகள்',
+    mr: 'सेटिंग्ज',
+    bn: 'সেটিংস',
+    gu: 'સેટિંગ્સ',
+    kn: 'ಸೆಟ್ಟಿಂಗ್‌ಗಳು',
+    ml: 'ക്രമീകരണങ്ങൾ',
+    pa: 'ਸੈਟਿੰਗਾਂ',
+    or: 'ସେଟିଂସ',
+    ur: 'ترتیبات',
+    es: 'Configuración',
+    fr: 'Paramètres',
+    de: 'Einstellungen',
+    zh: '设置',
+    ja: '設定',
+    ar: 'الإعدادات',
+    pt: 'Configurações',
+    ru: 'Настройки'
+  },
+  'Sign Out': {
+    hi: 'साइन आउट',
+    te: 'సైన్ అవుట్',
+    ta: 'வெளியேறு',
+    mr: 'साइन आउट',
+    bn: 'সাইন আউট',
+    gu: 'સાઇન આઉટ',
+    kn: 'ಸೈನ್ ಔಟ್',
+    ml: 'സൈൻ ഔട്ട്',
+    pa: 'ਸਾਈਨ ਆਉਟ',
+    or: 'ସାଇନ୍ ଆଉଟ୍',
+    ur: 'سائن آؤٹ',
+    es: 'Cerrar Sesión',
+    fr: 'Se Déconnecter',
+    de: 'Abmelden',
+    zh: '登出',
+    ja: 'サインアウト',
+    ar: 'تسجيل الخروج',
+    pt: 'Sair',
+    ru: 'Выйти'
+  },
+  // Dashboard
+  'Welcome back': {
+    es: 'Bienvenido de nuevo',
+    fr: 'Bon retour',
+    de: 'Willkommen zurück',
+    zh: '欢迎回来',
+    ja: 'おかえりなさい',
+    hi: 'वापसी पर स्वागत है',
+    ar: 'مرحبا بعودتك',
+    pt: 'Bem-vindo de volta',
+    ru: 'Добро пожаловать'
+  },
+  'Your Career Roadmap': {
+    es: 'Tu Hoja de Ruta Profesional',
+    fr: 'Votre Feuille de Route de Carrière',
+    de: 'Ihr Karrierefahrplan',
+    zh: '您的职业路线图',
+    ja: 'あなたのキャリアロードマップ',
+    hi: 'आपका करियर रोडमैप',
+    ar: 'خريطة طريق حياتك المهنية',
+    pt: 'Seu Roteiro de Carreira',
+    ru: 'Ваша карьерная дорожная карта'
+  },
+  'Overview': {
+    es: 'Resumen',
+    fr: 'Aperçu',
+    de: 'Übersicht',
+    zh: '概述',
+    ja: '概要',
+    hi: 'अवलोकन',
+    ar: 'نظرة عامة',
+    pt: 'Visão Geral',
+    ru: 'Обзор'
+  },
+  'Courses': {
+    es: 'Cursos',
+    fr: 'Cours',
+    de: 'Kurse',
+    zh: '课程',
+    ja: 'コース',
+    hi: 'पाठ्यक्रम',
+    ar: 'الدورات',
+    pt: 'Cursos',
+    ru: 'Курсы'
+  },
+  'Readiness Score': {
+    hi: 'तैयारी स्कोर',
+    te: 'సిద్ధత స్కోరు',
+    ta: 'தயார் நிலை மதிப்பெண்',
+    mr: 'तयारी स्कोअर',
+    bn: 'প্রস্তুতি স্কোর',
+    gu: 'તૈયારી સ્કોર',
+    kn: 'ಸಿದ್ಧತಾ ಸ್ಕೋರ್',
+    ml: 'തയ്യാറെടുപ്പ് സ്കോർ',
+    pa: 'ਤਿਆਰੀ ਸਕੋਰ',
+    or: 'ପ୍ରସ୍ତୁତି ସ୍କୋର',
+    ur: 'تیاری سکور',
+    es: 'Puntuación de Preparación',
+    fr: 'Score de Préparation',
+    de: 'Bereitschaftswert',
+    zh: '准备分数',
+    ja: '準備スコア',
+    ar: 'درجة الاستعداد',
+    pt: 'Pontuação de Prontidão',
+    ru: 'Оценка готовности'
+  },
+  'Skill Gap': {
+    hi: 'कौशल अंतर',
+    te: 'నైపుణ్యాల అంతరం',
+    ta: 'திறன் இடைவெளி',
+    mr: 'कौशल्य अंतर',
+    bn: 'দক্ষতা ব্যবধান',
+    gu: 'કુશળતા અંતર',
+    kn: 'ಕೌಶಲ್ಯ ಅಂತರ',
+    ml: 'കഴിവ് വിടവ്',
+    pa: 'ਹੁਨਰ ਅੰਤਰ',
+    or: 'ଦକ୍ଷତା ବ୍ୟବଧାନ',
+    ur: 'مہارت کا فرق',
+    es: 'Brecha de Habilidades',
+    fr: 'Écart de Compétences',
+    de: 'Kompetenzlücke',
+    zh: '技能差距',
+    ja: 'スキルギャップ',
+    ar: 'فجوة المهارات',
+    pt: 'Lacuna de Habilidades',
+    ru: 'Разрыв в навыках'
+  },
+  'Current Phase': {
+    hi: 'वर्तमान चरण',
+    te: 'ప్రస్తుత దశ',
+    ta: 'தற்போதைய கட்டம்',
+    mr: 'सध्याचा टप्पा',
+    bn: 'বর্তমান পর্যায়',
+    gu: 'વર્તમાન તબક્કો',
+    kn: 'ಪ್ರಸ್ತುತ ಹಂತ',
+    ml: 'നിലവിലെ ഘട്ടം',
+    pa: 'ਮੌਜੂਦਾ ਪੜਾਅ',
+    or: 'ବର୍ତ୍ତମାନର ପର୍ଯ୍ୟାୟ',
+    ur: 'موجودہ مرحلہ',
+    es: 'Fase Actual',
+    fr: 'Phase Actuelle',
+    de: 'Aktuelle Phase',
+    zh: '当前阶段',
+    ja: '現在のフェーズ',
+    ar: 'المرحلة الحالية',
+    pt: 'Fase Atual',
+    ru: 'Текущая фаза'
+  },
+  'Days Active': {
+    hi: 'सक्रिय दिन',
+    te: 'క్రియాశీల రోజులు',
+    ta: 'செயலில் உள்ள நாட்கள்',
+    mr: 'सक्रिय दिवस',
+    bn: 'সক্রিয় দিন',
+    gu: 'સક્રિય દિવસો',
+    kn: 'ಸಕ್ರಿಯ ದಿನಗಳು',
+    ml: 'സജീവ ദിവസങ്ങൾ',
+    pa: 'ਸਰਗਰਮ ਦਿਨ',
+    or: 'ସକ୍ରିୟ ଦିନ',
+    ur: 'فعال دن',
+    es: 'Días Activos',
+    fr: 'Jours Actifs',
+    de: 'Aktive Tage',
+    zh: '活跃天数',
+    ja: 'アクティブな日数',
+    ar: 'الأيام النشطة',
+    pt: 'Dias Ativos',
+    ru: 'Активные дни'
+  },
+  'Foundation': {
+    hi: 'नींव',
+    te: 'పునాది',
+    ta: 'அடித்தளம்',
+    mr: 'पाया',
+    bn: 'ভিত্তি',
+    gu: 'પાયો',
+    kn: 'ಅಡಿಪಾಯ',
+    ml: 'അടിസ്ഥാനം',
+    pa: 'ਨੀਂਹ',
+    or: 'ମୂଳଦୁଆ',
+    ur: 'بنیاد',
+    es: 'Fundación',
+    fr: 'Fondation',
+    de: 'Grundlagen',
+    zh: '基础',
+    ja: '基礎',
+    ar: 'الأساس',
+    pt: 'Fundação',
+    ru: 'Основы'
+  },
+  '12 Days': {
+    hi: '12 दिन',
+    te: '12 రోజులు',
+    ta: '12 நாட்கள்',
+    mr: '12 दिवस',
+    bn: '১২ দিন',
+    gu: '12 દિવસ',
+    kn: '12 ದಿನಗಳು',
+    ml: '12 ദിവസം',
+    pa: '12 ਦਿਨ',
+    or: '12 ଦିନ',
+    ur: '12 دن',
+    es: '12 Días',
+    fr: '12 Jours',
+    de: '12 Tage',
+    zh: '12 天',
+    ja: '12日',
+    ar: '12 يومًا',
+    pt: '12 Dias',
+    ru: '12 дней'
+  },
+  'Market Trends': {
+    hi: 'बाजार के रुझान',
+    te: 'మార్కెట్ ట్రెండ్స్',
+    ta: 'சந்தை போக்குகள்',
+    mr: 'बाजार ट्रेंड',
+    bn: 'বাজারের প্রবণতা',
+    gu: 'બજાર વલણો',
+    kn: 'ಮಾರುಕಟ್ಟೆ ಪ್ರವೃತ್ತಿಗಳು',
+    ml: 'മാർക്കറ്റ് ട്രെൻഡുകൾ',
+    pa: 'ਮਾਰਕੀਟ ਰੁਝਾਨ',
+    or: 'ବଜାର ଧାରା',
+    ur: 'مارکیٹ کے رجحانات',
+    es: 'Tendencias del Mercado',
+    fr: 'Tendances du Marché',
+    de: 'Markttrends',
+    zh: '市场趋势',
+    ja: '市場動向',
+    ar: 'اتجاهات السوق',
+    pt: 'Tendências de Mercado',
+    ru: 'Рыночные тенденции'
+  },
+  'Job Opportunities': {
+    hi: 'नौकरी के अवसर',
+    te: 'ఉద్యోగ అవకాశాలు',
+    ta: 'வேலை வாய்ப்புகள்',
+    mr: 'नोकरीच्या संधी',
+    bn: 'চাকরির সুযোগ',
+    gu: 'નોકરીની તકો',
+    kn: 'ಉದ್ಯೋಗ ಅವಕಾಶಗಳು',
+    ml: 'തൊഴിൽ അവസരങ്ങൾ',
+    pa: 'ਨੌਕਰੀ ਦੇ ਮੌਕੇ',
+    or: 'ଚାକିରି ସୁଯୋଗ',
+    ur: 'ملازمت کے مواقع',
+    es: 'Oportunidades Laborales',
+    fr: 'Opportunités d\'Emploi',
+    de: 'Stellenangebote',
+    zh: '工作机会',
+    ja: '求人情報',
+    ar: 'فرص العمل',
+    pt: 'Oportunidades de Emprego',
+    ru: 'Вакансии'
+  },
+  'Your Personalized Career Roadmap': {
+    hi: 'आपका व्यक्तिगत करियर रोडमैप',
+    te: 'మీ వ్యక్తిగత కెరీర్ రోడ్‌మ్యాప్',
+    ta: 'உங்கள் தனிப்பயனாக்கப்பட்ட தொழில் வரைபடம்',
+    mr: 'तुमचा वैयक्तिक करिअर रोडमॅप',
+    bn: 'আপনার ব্যক্তিগত ক্যারিয়ার রোডম্যাপ',
+    gu: 'તમારો વ્યક્તિગત કારકિર્દી રોડમેપ',
+    kn: 'ನಿಮ್ಮ ವೈಯಕ್ತಿಕ ವೃತ್ತಿ ರೋಡ್‌ಮ್ಯಾಪ್',
+    ml: 'നിങ്ങളുടെ വ്യക്തിഗത കരിയർ റോഡ്മാപ്പ്',
+    pa: 'ਤੁਹਾਡਾ ਨਿੱਜੀ ਕਰੀਅਰ ਰੋਡਮੈਪ',
+    or: 'ଆପଣଙ୍କର ବ୍ୟକ୍ତିଗତ କ୍ୟାରିୟର ରୋଡମ୍ୟାପ',
+    ur: 'آپ کا ذاتی کیریئر روڈ میپ',
+    es: 'Tu Hoja de Ruta Profesional Personalizada',
+    fr: 'Votre Feuille de Route de Carrière Personnalisée',
+    de: 'Ihr Personalisierter Karrierefahrplan',
+    zh: '您的个性化职业路线图',
+    ja: 'あなた専用キャリアロードマップ',
+    ar: 'خريطة طريق حياتك المهنية المخصصة',
+    pt: 'Seu Roteiro de Carreira Personalizado',
+    ru: 'Ваша Персонализированная Карьерная Карта'
+  },
+  'Recommended Courses': {
+    hi: 'अनुशंसित पाठ्यक्रम',
+    te: 'సిఫార్సు చేయబడిన కోర్సులు',
+    ta: 'பரிந்துரைக்கப்பட்ட பாடநெறிகள்',
+    mr: 'शिफारस केलेले अभ्यासक्रम',
+    bn: 'প্রস্তাবিত কোর্স',
+    gu: 'ભલામણ કરેલ કોર્સ',
+    kn: 'ಶಿಫಾರಸು ಮಾಡಲಾದ ಕೋರ್ಸ್‌ಗಳು',
+    ml: 'ശുപാർശ ചെയ്ത കോഴ്സുകൾ',
+    pa: 'ਸਿਫਾਰਸ਼ ਕੀਤੇ ਕੋਰਸ',
+    or: 'ସୁପାରିଶ କରାଯାଇଥିବା ପାଠ୍ୟକ୍ରମ',
+    ur: 'تجویز کردہ کورسز',
+    es: 'Cursos Recomendados',
+    fr: 'Cours Recommandés',
+    de: 'Empfohlene Kurse',
+    zh: '推荐课程',
+    ja: 'おすすめコース',
+    ar: 'الدورات الموصى بها',
+    pt: 'Cursos Recomendados',
+    ru: 'Рекомендуемые Курсы'
+  },
+  'Enroll Now': {
+    hi: 'अभी नामांकन करें',
+    te: 'ఇప్పుడే నమోదు చేయండి',
+    ta: 'இப்போது பதிவு செய்க',
+    mr: 'आता नोंदणी करा',
+    bn: 'এখনই নথিভুক্ত করুন',
+    gu: 'હમણાં નોંધણી કરો',
+    kn: 'ಈಗ ನೋಂದಾಯಿಸಿ',
+    ml: 'ഇപ്പോൾ എൻറോൾ ചെയ്യുക',
+    pa: 'ਹੁਣੇ ਦਾਖਲਾ ਲਓ',
+    or: 'ବର୍ତ୍ତମାନ ନାମଲେଖନ କରନ୍ତୁ',
+    ur: 'ابھی اندراج کریں',
+    es: 'Inscríbete Ahora',
+    fr: 'S\'inscrire Maintenant',
+    de: 'Jetzt Anmelden',
+    zh: '立即注册',
+    ja: '今すぐ登録',
+    ar: 'سجل الآن',
+    pt: 'Inscreva-se Agora',
+    ru: 'Записаться Сейчас'
+  },
+  'View All Courses': {
+    hi: 'सभी पाठ्यक्रम देखें',
+    te: 'అన్ని కోర్సులను చూడండి',
+    ta: 'அனைத்து பாடநெறிகளையும் காண்க',
+    mr: 'सर्व अभ्यासक्रम पहा',
+    bn: 'সমস্ত কোর্স দেখুন',
+    gu: 'બધા કોર્સ જુઓ',
+    kn: 'ಎಲ್ಲಾ ಕೋರ್ಸ್‌ಗಳನ್ನು ವೀಕ್ಷಿಸಿ',
+    ml: 'എല്ലാ കോഴ്സുകളും കാണുക',
+    pa: 'ਸਾਰੇ ਕੋਰਸ ਵੇਖੋ',
+    or: 'ସମସ୍ତ ପାଠ୍ୟକ୍ରମ ଦେଖନ୍ତୁ',
+    ur: 'تمام کورسز دیکھیں',
+    es: 'Ver Todos los Cursos',
+    fr: 'Voir Tous les Cours',
+    de: 'Alle Kurse Anzeigen',
+    zh: '查看所有课程',
+    ja: 'すべてのコースを見る',
+    ar: 'عرض جميع الدورات',
+    pt: 'Ver Todos os Cursos',
+    ru: 'Посмотреть Все Курсы'
+  },
+  'Career Roadmap': {
+    hi: 'करियर रोडमैप',
+    te: 'కెరీర్ రోడ్‌మ్యాప్',
+    ta: 'தொழில் வரைபடம்',
+    mr: 'करिअर रोडमॅप',
+    bn: 'ক্যারিয়ার রোডম্যাপ',
+    gu: 'કારકિર્દી રોડમેપ',
+    kn: 'ವೃತ್ತಿ ರೋಡ್‌ಮ್ಯಾಪ್',
+    ml: 'കരിയർ റോഡ്മാപ്പ്',
+    pa: 'ਕਰੀਅਰ ਰੋਡਮੈਪ',
+    or: 'କ୍ୟାରିୟର ରୋଡମ୍ୟାପ',
+    ur: 'کیریئر روڈ میپ',
+    es: 'Hoja de Ruta Profesional',
+    fr: 'Feuille de Route de Carrière',
+    de: 'Karrierefahrplan',
+    zh: '职业路线图',
+    ja: 'キャリアロードマップ',
+    ar: 'خريطة الطريق المهنية',
+    pt: 'Roteiro de Carreira',
+    ru: 'Карьерная Карта'
+  },
+  'Intermediate': {
+    hi: 'मध्यवर्ती',
+    te: 'మధ్యస్థ',
+    ta: 'இடைநிலை',
+    mr: 'मध्यम',
+    bn: 'মধ্যবর্তী',
+    gu: 'મધ્યમ',
+    kn: 'ಮಧ್ಯಂತರ',
+    ml: 'ഇടനില',
+    pa: 'ਵਿਚਕਾਰਲਾ',
+    or: 'ମଧ୍ୟବର୍ତ୍ତୀ',
+    ur: 'درمیانی',
+    es: 'Intermedio',
+    fr: 'Intermédiaire',
+    de: 'Mittelstufe',
+    zh: '中级',
+    ja: '中級',
+    ar: 'متوسط',
+    pt: 'Intermediário',
+    ru: 'Средний'
+  },
+  'Advanced': {
+    hi: 'उन्नत',
+    te: 'ఉన్నత',
+    ta: 'மேம்பட்ட',
+    mr: 'प्रगत',
+    bn: 'উন্নত',
+    gu: 'અદ્યતન',
+    kn: 'ಮುಂದುವರಿದ',
+    ml: 'വികസിത',
+    pa: 'ਉੱਨਤ',
+    or: 'ଉନ୍ନତ',
+    ur: 'جدید',
+    es: 'Avanzado',
+    fr: 'Avancé',
+    de: 'Fortgeschritten',
+    zh: '高级',
+    ja: '上級',
+    ar: 'متقدم',
+    pt: 'Avançado',
+    ru: 'Продвинутый'
+  },
+  'Key Skills': {
+    hi: 'मुख्य कौशल',
+    te: 'ముఖ్య నైపుణ్యాలు',
+    ta: 'முக்கிய திறன்கள்',
+    mr: 'मुख्य कौशल्ये',
+    bn: 'মূল দক্ষতা',
+    gu: 'મુખ્ય કુશળતાઓ',
+    kn: 'ಪ್ರಮುಖ ಕೌಶಲ್ಯಗಳು',
+    ml: 'പ്രധാന കഴിവുകൾ',
+    pa: 'ਮੁੱਖ ਹੁਨਰ',
+    or: 'ମୁଖ୍ୟ ଦକ୍ଷତା',
+    ur: 'اہم مہارتیں',
+    es: 'Habilidades Clave',
+    fr: 'Compétences Clés',
+    de: 'Schlüsselkompetenzen',
+    zh: '关键技能',
+    ja: '主要スキル',
+    ar: 'المهارات الأساسية',
+    pt: 'Habilidades-Chave',
+    ru: 'Ключевые Навыки'
+  },
+  'Learning Resources': {
+    hi: 'सीखने के संसाधन',
+    te: 'నేర్చుకునే వనరులు',
+    ta: 'கற்றல் வளங்கள்',
+    mr: 'शिकण्याची साधने',
+    bn: 'শেখার সংস্থান',
+    gu: 'શીખવાના સંસાધનો',
+    kn: 'ಕಲಿಕಾ ಸಂಪನ್ಮೂಲಗಳು',
+    ml: 'പഠന വിഭവങ്ങൾ',
+    pa: 'ਸਿੱਖਣ ਦੇ ਸਾਧਨ',
+    or: 'ଶିଖିବା ଉତ୍ସ',
+    ur: 'سیکھنے کے وسائل',
+    es: 'Recursos de Aprendizaje',
+    fr: 'Ressources d\'Apprentissage',
+    de: 'Lernressourcen',
+    zh: '学习资源',
+    ja: '学習リソース',
+    ar: 'موارد التعلم',
+    pt: 'Recursos de Aprendizado',
+    ru: 'Учебные Ресурсы'
+  },
+  'Export PDF': {
+    hi: 'पीडीएफ निर्यात करें',
+    te: 'PDF ఎగుమతి చేయండి',
+    ta: 'PDF ஏற்றுமதி செய்க',
+    mr: 'पीडीएफ निर्यात करा',
+    bn: 'PDF রপ্তানি করুন',
+    gu: 'PDF નિકાસ કરો',
+    kn: 'PDF ರಫ್ತು ಮಾಡಿ',
+    ml: 'PDF എക്സ്പോർട്ട് ചെയ്യുക',
+    pa: 'PDF ਨਿਰਯਾਤ ਕਰੋ',
+    or: 'PDF ରପ୍ତାନି କରନ୍ତୁ',
+    ur: 'PDF برآمد کریں',
+    es: 'Exportar PDF',
+    fr: 'Exporter en PDF',
+    de: 'PDF Exportieren',
+    zh: '导出PDF',
+    ja: 'PDF出力',
+    ar: 'تصدير PDF',
+    pt: 'Exportar PDF',
+    ru: 'Экспорт PDF'
+  },
+  'Skill Gap Analysis': {
+    es: 'Análisis de Brecha de Habilidades',
+    fr: 'Analyse des Écarts de Compétences',
+    de: 'Kompetenzlückenanalyse',
+    zh: '技能差距分析',
+    ja: 'スキルギャップ分析',
+    hi: 'कौशल अंतर विश्लेषण',
+    ar: 'تحليل فجوة المهارات',
+    pt: 'Análise de Lacunas de Habilidades',
+    ru: 'Анализ пробелов в навыках'
+  },
+  'Loading...': {
+    es: 'Cargando...',
+    fr: 'Chargement...',
+    de: 'Wird geladen...',
+    zh: '加载中...',
+    ja: '読み込み中...',
+    hi: 'लोड हो रहा है...',
+    ar: 'جار التحميل...',
+    pt: 'Carregando...',
+    ru: 'Загрузка...'
+  },
+  'Search': {
+    es: 'Buscar',
+    fr: 'Rechercher',
+    de: 'Suchen',
+    zh: '搜索',
+    ja: '検索',
+    hi: 'खोजें',
+    ar: 'بحث',
+    pt: 'Pesquisar',
+    ru: 'Поиск'
+  },
+  'Generate Roadmap': {
+    es: 'Generar Hoja de Ruta',
+    fr: 'Générer une Feuille de Route',
+    de: 'Fahrplan Erstellen',
+    zh: '生成路线图',
+    ja: 'ロードマップを生成',
+    hi: 'रोडमैप जेनरेट करें',
+    ar: 'إنشاء خريطة طريق',
+    pt: 'Gerar Roteiro',
+    ru: 'Создать дорожную карту'
+  },
+  'Back to Dashboard': {
+    es: 'Volver al Panel',
+    fr: 'Retour au Tableau de Bord',
+    de: 'Zurück zum Dashboard',
+    zh: '返回仪表板',
+    ja: 'ダッシュボードに戻る',
+    hi: 'डैशबोर्ड पर वापस जाएं',
+    ar: 'العودة إلى لوحة القيادة',
+    pt: 'Voltar ao Painel',
+    ru: 'Вернуться к панели управления'
+  }
+};
+
+// Get translation for a text
+export const translate = (text, targetLang = null) => {
+  if (!targetLang) {
+    targetLang = localStorage.getItem('careerai_language') || 'en';
+  }
+  
+  if (targetLang === 'en' || !targetLang) {
+    return text;
+  }
+  
+  const translation = translations[text];
+  if (translation && translation[targetLang]) {
+    return translation[targetLang];
+  }
+  
+  return text;
+};
+
+// React hook for translations with AI support
+export const useTranslate = () => {
+  const [currentLang, setCurrentLang] = useState(
+    localStorage.getItem('careerai_language') || 'en'
+  );
+  const [translations, setTranslations] = useState({});
+
+  useEffect(() => {
+    const handleLanguageChange = (e) => {
+      setCurrentLang(e.detail.language);
+      // Clear translations when language changes to force re-translation
+      setTranslations({});
+    };
+    
+    window.addEventListener('languageChanged', handleLanguageChange);
+    return () => window.removeEventListener('languageChanged', handleLanguageChange);
+  }, []);
+
+  // Translation function that uses AI
+  const t = (text) => {
+    // If English, return immediately
+    if (currentLang === 'en') {
+      return text;
+    }
+
+    // Check if we already have this translation
+    const cacheKey = `${text}_${currentLang}`;
+    if (translations[cacheKey]) {
+      return translations[cacheKey];
+    }
+
+    // For initial render, return original text and fetch translation in background
+    translateWithAI(text, currentLang).then(translated => {
+      setTranslations(prev => ({
+        ...prev,
+        [cacheKey]: translated
+      }));
+    });
+
+    return translations[cacheKey] || text;
+  };
+
+  return { t, currentLang };
+};
+
+export default { translate, useTranslate };

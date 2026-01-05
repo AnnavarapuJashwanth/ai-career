@@ -47,54 +47,103 @@ def extract_skills(resume_text: str) -> List[str]:
 
     # direct exact token match
     tokens = set(re.split(r"[^a-z0-9+.#]+", text))
+    
+    print(f"\n=== RESUME SKILL EXTRACTION DEBUG ===")
+    print(f"Raw text length: {len(resume_text)} chars")
+    print(f"Normalized text sample: {text[:200]}...")
+    print(f"Total tokens extracted: {len(tokens)}")
+    
     for skill in _SKILLS_DB:
         # skills with spaces handle separately
         if " " in skill:
             if skill in text:
                 found.add(skill)
+                print(f"  ✓ Exact match (multi-word): {skill}")
         else:
             if skill in tokens:
                 found.add(skill)
+                print(f"  ✓ Exact match (single): {skill}")
 
-    # fuzzy match for near misses
+    # fuzzy match for near misses - LOWERED THRESHOLD for better matching
+    fuzzy_matches = 0
     for skill in _SKILLS_DB:
         if skill in found:
             continue
         score = fuzz.partial_ratio(skill, text)
-        if score >= 90:
+        # Lowered from 90 to 75 for better coverage
+        if score >= 75:
             found.add(skill)
+            fuzzy_matches += 1
+            if fuzzy_matches <= 10:  # Show first 10 fuzzy matches
+                print(f"  ✓ Fuzzy match ({score}%): {skill}")
 
     # title-case and dedupe for UI
-    result = sorted({s.replace("node.js", "Node.js").replace("three.js", "Three.js").title() for s in found})
+    result = sorted({s.replace("node.js", "Node.js").replace("three.js", "Three.js").replace("vue.js", "Vue.js").title() for s in found})
     
     # DEBUG: Print extracted skills
-    print(f"\n=== RESUME SKILL EXTRACTION ===")
-    print(f"Resume text length: {len(resume_text)} chars")
-    print(f"Extracted {len(result)} skills: {result[:10]}")  # Show first 10
-    print(f"================================\n")
+    print(f"Total skills found: {len(result)}")
+    print(f"Skills: {result}")
+    print(f"====================================\n")
     
     return result
 
 
 def guess_current_role(resume_text: str) -> Optional[str]:
     text = resume_text.lower()
-    if "frontend" in text or "react" in text:
-        return "Frontend Developer"
-    if "backend" in text or "fastapi" in text or "server" in text:
-        return "Backend Developer"
-    if "data science" in text or "machine learning" in text or "pandas" in text:
-        return "Data Scientist"
-    if "ml engineer" in text or "mlops" in text:
-        return "ML Engineer"
+    
+    # More comprehensive role detection
+    role_patterns = {
+        "Frontend Developer": ["frontend", "react", "vue", "angular", "html", "css", "typescript", "jsx"],
+        "Backend Developer": ["backend", "fastapi", "django", "node.js", "express", "java", "spring", "microservice"],
+        "Full Stack Developer": ["full stack", "mern", "mean", "full-stack"],
+        "Data Scientist": ["data scientist", "data science", "machine learning", "ml", "nlp", "pandas", "numpy", "scikit"],
+        "ML Engineer": ["ml engineer", "machine learning engineer", "mlops", "tensorflow", "pytorch"],
+        "DevOps Engineer": ["devops", "kubernetes", "docker", "ci/cd", "jenkins", "terraform"],
+        "Cloud Engineer": ["cloud engineer", "aws", "azure", "gcp", "cloud architect"],
+        "Database Administrator": ["database", "dba", "sql", "mongodb", "postgresql"],
+        "Solutions Architect": ["architect", "solution architect", "system design"],
+        "QA Engineer": ["qa engineer", "qa", "testing", "selenium", "test automation"],
+    }
+    
+    # Score each role based on keyword matches
+    role_scores = {}
+    for role, keywords in role_patterns.items():
+        score = sum(1 for kw in keywords if kw in text)
+        if score > 0:
+            role_scores[role] = score
+    
+    # Return highest scoring role
+    if role_scores:
+        best_role = max(role_scores, key=role_scores.get)
+        print(f"Detected role: {best_role} (score: {role_scores[best_role]})")
+        return best_role
+    
+    print("No role detected")
     return None
 
 
 def extract_experience_years(resume_text: str) -> Optional[int]:
-    # naive: look for patterns like "X years"
-    m = re.search(r"(\d+)\s+years", resume_text.lower())
-    if m:
-        try:
-            return int(m.group(1))
-        except ValueError:
-            return None
+    """Extract years of experience from resume text"""
+    text = resume_text.lower()
+    
+    # Try multiple patterns for experience extraction
+    patterns = [
+        r"(\d+)\s+years?(?:\s+of)?\s+experience",  # "5 years experience"
+        r"(?:with|over|about|around|approximately)\s+(\d+)\s+years?",  # "with 5 years"
+        r"(\d+)\s+year\+",  # "5 year+"
+        r"total\s+(\d+)\s+years?",  # "total 5 years"
+    ]
+    
+    for pattern in patterns:
+        m = re.search(pattern, text)
+        if m:
+            try:
+                years = int(m.group(1))
+                if 0 < years <= 70:  # Sanity check
+                    print(f"Extracted experience: {years} years (pattern: {pattern})")
+                    return years
+            except ValueError:
+                continue
+    
+    print("No experience pattern found")
     return None

@@ -3,6 +3,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import jsPDF from 'jspdf';
 import RoadmapScene from '../components/3d/RoadmapScene';
 import PhaseCard from '../components/cards/PhaseCard';
 import DetailedPhaseCard from '../components/cards/DetailedPhaseCard';
@@ -12,21 +13,35 @@ import Sidebar from '../components/common/Sidebar';
 import DashboardHeader from '../components/common/DashboardHeader';
 import SkillGapRadar from '../components/cards/SkillGapRadar';
 import MarketTrendsBar from '../components/cards/MarketTrendsBar';
+import AIChatbot from '../components/AIChatbot';
 import { useMarketTrends } from '../hooks/useMarketTrends';
+import { useTranslate } from '../utils/translate';
 import api from '../utils/api';
 
 export default function Dashboard() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { t } = useTranslate();
   const user = JSON.parse(localStorage.getItem('careerai_user') || 'null') || { email: 'user@example.com', name: 'User' };
   const [roadmapData, setRoadmapData] = useState(location.state?.roadmap || null);
   const role = roadmapData?.target_role || location.state?.role || 'Frontend Developer';
   const loc = location.state?.location || '';
+  
+  // Use current_skills from roadmap data (should be populated from backend)
+  // Fallback to location state or empty array
   const currentSkills = roadmapData?.current_skills || location.state?.currentSkills || [];
 
-  // Debug: Log roadmap data to verify skills are included
-  console.log('Dashboard roadmapData:', roadmapData);
-  console.log('Dashboard phases:', roadmapData?.phases);
+  // Debug: Log all relevant data
+  console.log('=== DASHBOARD DEBUG ===');
+  console.log('Roadmap data:', roadmapData);
+  console.log('Readiness Score:', roadmapData?.readiness_score);
+  console.log('Skill Gap Percentage:', roadmapData?.skill_gap_percentage);
+  console.log('Current skills from roadmap:', roadmapData?.current_skills);
+  console.log('Current skills from location:', location.state?.currentSkills);
+  console.log('Final currentSkills being used:', currentSkills);
+  console.log('Target role:', role);
+  console.log('Location:', loc);
+  console.log('=======================');
 
   const [selectedPhase, setSelectedPhase] = useState(null);
   const { fetch: fetchTrends, data: trendsData } = useMarketTrends();
@@ -38,6 +53,11 @@ export default function Dashboard() {
   useEffect(() => {
     if (role) fetchTrends(role, loc).catch(() => {});
   }, [role, loc, fetchTrends]);
+
+  // Scroll to top on mount to show overview section
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
 
   useEffect(() => {
     // If no roadmap passed from navigation, try to load latest from backend
@@ -108,52 +128,198 @@ export default function Dashboard() {
     return items.length ? items : undefined;
   }, [trendsData, currentSkills, roadmapData]);
 
+  // PDF Export Function
+  const handleExportPDF = () => {
+    try {
+      const doc = new jsPDF();
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const pageHeight = doc.internal.pageSize.getHeight();
+      const margin = 20;
+      let yPos = margin;
+      
+      // Title
+      doc.setFontSize(24);
+      doc.setTextColor(66, 135, 245);
+      doc.text('Career Roadmap', pageWidth / 2, yPos, { align: 'center' });
+      yPos += 15;
+      
+      // User Info
+      doc.setFontSize(12);
+      doc.setTextColor(0, 0, 0);
+      doc.text(`Name: ${user.name || 'User'}`, margin, yPos);
+      yPos += 8;
+      doc.text(`Email: ${user.email}`, margin, yPos);
+      yPos += 8;
+      doc.text(`Target Role: ${role}`, margin, yPos);
+      yPos += 8;
+      doc.text(`Date Generated: ${new Date().toLocaleDateString()}`, margin, yPos);
+      yPos += 15;
+      
+      // Readiness Score
+      if (roadmapData?.readiness_score) {
+        doc.setFontSize(14);
+        doc.setTextColor(66, 135, 245);
+        doc.text('Readiness Score', margin, yPos);
+        yPos += 8;
+        doc.setFontSize(12);
+        doc.setTextColor(0, 0, 0);
+        doc.text(`${roadmapData.readiness_score}%`, margin, yPos);
+        yPos += 15;
+      }
+      
+      // Roadmap Phases
+      if (roadmapData?.phases && roadmapData.phases.length > 0) {
+        doc.setFontSize(16);
+        doc.setTextColor(66, 135, 245);
+        doc.text('Roadmap Phases', margin, yPos);
+        yPos += 10;
+        
+        roadmapData.phases.forEach((phase, index) => {
+          if (yPos > pageHeight - 40) {
+            doc.addPage();
+            yPos = margin;
+          }
+          
+          doc.setFontSize(14);
+          doc.setTextColor(0, 0, 0);
+          doc.text(`Phase ${index + 1}: ${phase.phase_name}`, margin, yPos);
+          yPos += 8;
+          
+          doc.setFontSize(10);
+          doc.setTextColor(100, 100, 100);
+          const durationText = `Duration: ${phase.duration || 'N/A'}`;
+          doc.text(durationText, margin + 5, yPos);
+          yPos += 6;
+          
+          if (phase.description) {
+            const splitDesc = doc.splitTextToSize(phase.description, pageWidth - 2 * margin - 10);
+            doc.text(splitDesc, margin + 5, yPos);
+            yPos += splitDesc.length * 5 + 3;
+          }
+          
+          if (phase.skills && phase.skills.length > 0) {
+            doc.setFontSize(10);
+            doc.text('Skills:', margin + 5, yPos);
+            yPos += 5;
+            const skillsText = phase.skills.join(', ');
+            const splitSkills = doc.splitTextToSize(skillsText, pageWidth - 2 * margin - 15);
+            doc.text(splitSkills, margin + 10, yPos);
+            yPos += splitSkills.length * 5 + 5;
+          }
+          
+          yPos += 5;
+        });
+      }
+      
+      // Courses
+      if (extractedCourses.length > 0) {
+        if (yPos > pageHeight - 60) {
+          doc.addPage();
+          yPos = margin;
+        }
+        
+        doc.setFontSize(16);
+        doc.setTextColor(66, 135, 245);
+        doc.text('Recommended Courses', margin, yPos);
+        yPos += 10;
+        
+        extractedCourses.slice(0, 5).forEach((course, index) => {
+          if (yPos > pageHeight - 30) {
+            doc.addPage();
+            yPos = margin;
+          }
+          
+          doc.setFontSize(12);
+          doc.setTextColor(0, 0, 0);
+          doc.text(`${index + 1}. ${course.title}`, margin, yPos);
+          yPos += 7;
+          
+          if (course.url) {
+            doc.setFontSize(9);
+            doc.setTextColor(66, 135, 245);
+            doc.textWithLink('View Course', margin + 5, yPos, { url: course.url });
+            yPos += 7;
+          }
+        });
+      }
+      
+      // Save PDF
+      doc.save(`${role.replace(/\s+/g, '_')}_Roadmap.pdf`);
+      toast.success('PDF exported successfully!');
+    } catch (error) {
+      console.error('PDF export error:', error);
+      toast.error('Failed to export PDF. Please try again.');
+    }
+  };
+
   function handleSignOut() {
     localStorage.removeItem('careerai_logged_in');
     navigate('/login');
   }
 
-  // Course data with images
-  const coursesWithImages = [
+  // Extract courses from roadmap phases
+  const extractedCourses = useMemo(() => {
+    if (!roadmapData?.phases) return [];
+    
+    const courses = [];
+    roadmapData.phases.forEach(phase => {
+      if (phase.resources) {
+        phase.resources.forEach(resource => {
+          if (resource.type === 'course' && resource.url && !resource.url.includes('google.com')) {
+            courses.push(resource);
+          }
+        });
+      }
+    });
+    
+    return courses.slice(0, 8); // Limit to 8 courses for display
+  }, [roadmapData]);
+
+  // Use extracted courses or fallback to generic ones
+  const coursesToDisplay = extractedCourses.length > 0 ? extractedCourses : [
     {
       title: 'Machine Learning A-Z™',
       description: 'Learn ML from scratch',
       instructor: 'Kirill Eremenko',
-      duration: '44 hours',
+      duration_hours: 44,
       rating: 4.5,
       reviews: '1.25K',
       image: 'https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=400&h=300&fit=crop',
-      provider: 'Udemy'
+      provider: 'Udemy',
+      url: 'https://www.udemy.com/course/machinelearning/'
     },
     {
       title: 'Deep Learning Specialization',
       description: 'Master deep learning',
       instructor: 'Andrew Ng',
-      duration: '100 hours',
+      duration_hours: 100,
       rating: 4.9,
       reviews: '2.5K',
       image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=300&fit=crop',
-      provider: 'Coursera'
+      provider: 'Coursera',
+      url: 'https://www.coursera.org/specializations/deep-learning'
     },
     {
       title: 'SQL for Data Analysis',
       description: 'Advanced SQL queries',
       instructor: 'Maven Analytics',
-      duration: '12 hours',
+      duration_hours: 12,
       rating: 4.7,
       reviews: '890',
       image: 'https://images.unsplash.com/photo-1544383835-bda2bc66a55d?w=400&h=300&fit=crop',
-      provider: 'DataCamp'
+      provider: 'DataCamp',
+      url: 'https://www.datacamp.com/courses/sql'
     },
     {
       title: 'TensorFlow for Everyone',
       description: 'Deploy ML models',
       instructor: 'TensorFlow Team',
-      duration: '20 hours',
+      duration_hours: 20,
       rating: 4.6,
       reviews: '1.1K',
       image: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=400&h=300&fit=crop',
-      provider: 'edX'
+      provider: 'edX',
+      url: 'https://www.edx.org/course/tensorflow'
     },
   ];
 
@@ -264,7 +430,7 @@ export default function Dashboard() {
                 </motion.div>
                 <div>
                   <h1 className="text-5xl font-bold text-white mb-3 tracking-tight">
-                    Welcome back, {user.name || user.email?.split('@')[0] || 'User'}!
+                    {t('Welcome back')}, {user.name || user.email?.split('@')[0] || 'User'}!
                   </h1>
                   <div className="flex items-center gap-3 flex-wrap">
                     <div className="flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-md rounded-full border border-white/30">
@@ -277,7 +443,7 @@ export default function Dashboard() {
                     </div>
                     <div className="flex items-center gap-2 px-4 py-2 bg-white/15 backdrop-blur-md rounded-full">
                       <span className="text-lg">📅</span>
-                      <span className="text-white/90 text-sm">Joined Dec 2024</span>
+                      <span className="text-white/90 text-sm">Joined {new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</span>
                     </div>
                   </div>
                 </div>
@@ -295,32 +461,32 @@ export default function Dashboard() {
         >
           {[
             { 
-              label: 'Readiness Score', 
-              value: `${roadmapData?.readiness_score || 0}%`, 
+              label: t('Readiness Score'), 
+              value: `${roadmapData?.readiness_score ?? 0}%`, 
               icon: '🎯', 
               color: 'from-emerald-500 to-teal-600',
               bg: 'bg-emerald-500/10',
               border: 'border-emerald-500/30'
             },
             { 
-              label: 'Skill Gap', 
-              value: `${roadmapData?.skill_gap_percentage || 0}%`, 
+              label: t('Skill Gap'), 
+              value: `${roadmapData?.skill_gap_percentage ?? 0}%`, 
               icon: '📊', 
               color: 'from-amber-500 to-orange-600',
               bg: 'bg-amber-500/10',
               border: 'border-amber-500/30'
             },
             { 
-              label: 'Current Phase', 
-              value: 'Foundation', 
+              label: t('Current Phase'), 
+              value: t('Foundation'), 
               icon: '🚀', 
               color: 'from-blue-500 to-indigo-600',
               bg: 'bg-blue-500/10',
               border: 'border-blue-500/30'
             },
             { 
-              label: 'Days Active', 
-              value: '12 Days', 
+              label: t('Days Active'), 
+              value: t('12 Days'), 
               icon: '⏱️', 
               color: 'from-purple-500 to-pink-600',
               bg: 'bg-purple-500/10',
@@ -426,7 +592,7 @@ export default function Dashboard() {
                     >
                       📈
                     </motion.span>
-                    Skill Gap Analysis
+                    {t('Skill Gap Analysis')}
                   </h3>
                   <p className="text-blue-200 text-sm">Compare your skills with market demand</p>
                 </div>
@@ -470,15 +636,155 @@ export default function Dashboard() {
                     >
                       📊
                     </motion.span>
-                    Market Trends
+                    {t('Market Trends')}
                   </h3>
-                  <p className="text-purple-200 text-sm">Real-time job market insights</p>
+                  <p className="text-purple-200 text-sm">Real-time job market insights for {role}</p>
                 </div>
                 <div className="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl text-white text-xs font-bold shadow-lg">
                   Daily
                 </div>
               </div>
               <MarketTrendsBar trends={trendsData?.trending_skills} role={role} />
+            </div>
+          </motion.div>
+          
+          {/* Job Opportunities Section */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.55 }}
+            className="relative bg-gradient-to-br from-emerald-500/10 via-cyan-500/10 to-blue-500/10 backdrop-blur-3xl rounded-3xl p-10 shadow-2xl border-2 border-emerald-500/20 overflow-hidden"
+          >
+            <motion.div
+              animate={{
+                scale: [1, 1.3, 1],
+                opacity: [0.2, 0.4, 0.2],
+              }}
+              transition={{ duration: 5, repeat: Infinity }}
+              className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-emerald-500/20 to-cyan-500/20 rounded-full blur-3xl"
+            />
+            
+            <div className="relative z-10">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h3 className="text-2xl font-bold text-white flex items-center gap-3 mb-2">
+                    <motion.span 
+                      animate={{ 
+                        y: [0, -5, 0],
+                        scale: [1, 1.1, 1]
+                      }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                      className="text-4xl"
+                    >
+                      💼
+                    </motion.span>
+                    {t('Job Opportunities')}
+                  </h3>
+                  <p className="text-emerald-200 text-sm">Career opportunities for {role}</p>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Job Card 1 - Indeed */}
+                <motion.a
+                  href={`https://www.indeed.com/jobs?q=${encodeURIComponent(role)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  whileHover={{ scale: 1.02, y: -5 }}
+                  className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 hover:border-emerald-400/50 transition-all cursor-pointer"
+                >
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-700 rounded-xl flex items-center justify-center text-2xl">
+                        🔍
+                      </div>
+                      <div>
+                        <h4 className="text-white font-semibold text-lg">Indeed Jobs</h4>
+                        <p className="text-gray-400 text-xs">Search on Indeed</p>
+                      </div>
+                    </div>
+                    <span className="text-emerald-400 text-xl">→</span>
+                  </div>
+                  <p className="text-gray-300 text-sm">
+                    Find {role} positions on Indeed
+                  </p>
+                </motion.a>
+
+                {/* Job Card 2 - LinkedIn */}
+                <motion.a
+                  href={`https://www.linkedin.com/jobs/search/?keywords=${encodeURIComponent(role)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  whileHover={{ scale: 1.02, y: -5 }}
+                  className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 hover:border-blue-400/50 transition-all cursor-pointer"
+                >
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-blue-800 rounded-xl flex items-center justify-center text-2xl">
+                        💼
+                      </div>
+                      <div>
+                        <h4 className="text-white font-semibold text-lg">LinkedIn Jobs</h4>
+                        <p className="text-gray-400 text-xs">Professional network</p>
+                      </div>
+                    </div>
+                    <span className="text-blue-400 text-xl">→</span>
+                  </div>
+                  <p className="text-gray-300 text-sm">
+                    Explore {role} opportunities on LinkedIn
+                  </p>
+                </motion.a>
+
+                {/* Job Card 3 - Glassdoor */}
+                <motion.a
+                  href={`https://www.glassdoor.com/Job/jobs.htm?sc.keyword=${encodeURIComponent(role)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  whileHover={{ scale: 1.02, y: -5 }}
+                  className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 hover:border-green-400/50 transition-all cursor-pointer"
+                >
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 bg-gradient-to-br from-green-600 to-green-800 rounded-xl flex items-center justify-center text-2xl">
+                        🏢
+                      </div>
+                      <div>
+                        <h4 className="text-white font-semibold text-lg">Glassdoor</h4>
+                        <p className="text-gray-400 text-xs">Company insights</p>
+                      </div>
+                    </div>
+                    <span className="text-green-400 text-xl">→</span>
+                  </div>
+                  <p className="text-gray-300 text-sm">
+                    Browse {role} jobs with company reviews
+                  </p>
+                </motion.a>
+
+                {/* Job Card 4 - Remote Jobs */}
+                <motion.a
+                  href={`https://remoteok.com/remote-${encodeURIComponent(role.toLowerCase().replace(/\s+/g, '-'))}-jobs`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  whileHover={{ scale: 1.02, y: -5 }}
+                  className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 hover:border-purple-400/50 transition-all cursor-pointer"
+                >
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-purple-800 rounded-xl flex items-center justify-center text-2xl">
+                        🌍
+                      </div>
+                      <div>
+                        <h4 className="text-white font-semibold text-lg">Remote Jobs</h4>
+                        <p className="text-gray-400 text-xs">Work from anywhere</p>
+                      </div>
+                    </div>
+                    <span className="text-purple-400 text-xl">→</span>
+                  </div>
+                  <p className="text-gray-300 text-sm">
+                    Find remote {role} positions worldwide
+                  </p>
+                </motion.a>
+              </div>
             </div>
           </motion.div>
         </motion.div>
@@ -520,18 +826,19 @@ export default function Dashboard() {
                   >
                     🗺️
                   </motion.span>
-                  Your Personalized Career Roadmap
+                  {t('Your Personalized Career Roadmap')}
                 </h2>
                 <p className="text-gray-400 text-sm">Tailored path to achieve your career goals</p>
               </div>
               <div className="flex items-center gap-3">
                 <motion.button
+                  onClick={handleExportPDF}
                   whileHover={{ scale: 1.05, boxShadow: '0 20px 40px rgba(139, 92, 246, 0.4)' }}
                   whileTap={{ scale: 0.95 }}
                   className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 text-white rounded-2xl font-semibold shadow-xl transition-all"
                 >
                   <span className="text-xl">📄</span>
-                  Export PDF
+                  {t('Export PDF')}
                 </motion.button>
                 {loadedFromAccount && (
                   <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-600 text-white shadow-md">Loaded from your account</span>
@@ -663,7 +970,7 @@ export default function Dashboard() {
                 >
                   🎓
                 </motion.span>
-                Recommended Courses
+                {t('Recommended Courses')}
               </h3>
               <p className="text-gray-400 text-sm">Curated learning paths from top platforms</p>
             </div>
@@ -671,17 +978,27 @@ export default function Dashboard() {
               whileHover={{ scale: 1.05 }}
               className="px-4 py-2 bg-white/10 backdrop-blur-xl border border-white/20 text-white rounded-xl font-medium hover:bg-white/20 transition-all"
             >
-              View All Courses
+              {t('View All Courses')}
             </motion.button>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {coursesWithImages.map((course, idx) => {
+            {coursesToDisplay.map((course, idx) => {
               const gradients = [
                 'from-cyan-600 via-blue-600 to-indigo-600',
                 'from-purple-600 via-pink-600 to-rose-600',
                 'from-orange-600 via-red-600 to-pink-600',
-                'from-emerald-600 via-teal-600 to-cyan-600'
+                'from-emerald-600 via-teal-600 to-cyan-600',
+                'from-yellow-600 via-amber-600 to-orange-600',
+                'from-pink-600 via-rose-600 to-red-600',
+                'from-indigo-600 via-violet-600 to-purple-600',
+                'from-teal-600 via-cyan-600 to-sky-600'
               ];
+
+              const handleCourseClick = () => {
+                if (course.url) {
+                  window.open(course.url, '_blank', 'noopener,noreferrer');
+                }
+              };
               
               return (
                 <motion.div
@@ -690,18 +1007,27 @@ export default function Dashboard() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 1 + idx * 0.1 }}
                   whileHover={{ scale: 1.05, y: -10 }}
-                  className="group relative bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-2xl rounded-3xl overflow-hidden border-2 border-white/20 shadow-2xl hover:shadow-purple-500/40 transition-all duration-300"
+                  onClick={handleCourseClick}
+                  className="group relative bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-2xl rounded-3xl overflow-hidden border-2 border-white/20 shadow-2xl hover:shadow-purple-500/40 transition-all duration-300 cursor-pointer"
                 >
                   {/* Course Image */}
-                  <div className={`relative h-52 overflow-hidden bg-gradient-to-br ${gradients[idx]}`}>
-                    <motion.img 
-                      src={course.image} 
-                      alt={course.title}
-                      whileHover={{ scale: 1.1 }}
-                      transition={{ duration: 0.3 }}
-                      className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                  <div className={`relative h-52 overflow-hidden bg-gradient-to-br ${gradients[idx % gradients.length]}`}>
+                    {course.image ? (
+                      <>
+                        <motion.img 
+                          src={course.image} 
+                          alt={course.title}
+                          whileHover={{ scale: 1.1 }}
+                          transition={{ duration: 0.3 }}
+                          className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                      </>
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <span className="text-6xl">📚</span>
+                      </div>
+                    )}
                     
                     {/* Provider Badge */}
                     <div className="absolute top-4 left-4 px-3 py-1 bg-black/60 backdrop-blur-md rounded-full text-white text-xs font-bold border border-white/30">
@@ -710,8 +1036,15 @@ export default function Dashboard() {
                     
                     {/* Rating Badge */}
                     <div className="absolute top-4 right-4 px-3 py-1 bg-amber-500/90 backdrop-blur-sm rounded-full text-white text-xs font-bold flex items-center gap-1 shadow-lg">
-                      ⭐ {course.rating}
+                      ⭐ {course.rating || 4.5}
                     </div>
+                    
+                    {/* Level Badge */}
+                    {course.level && (
+                      <div className="absolute bottom-4 left-4 px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-white text-xs font-semibold">
+                        {course.level}
+                      </div>
+                    )}
                     
                     {/* Play Button */}
                     <motion.div 
@@ -728,20 +1061,16 @@ export default function Dashboard() {
                     <h4 className="text-lg font-bold text-white mb-2 line-clamp-2 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-cyan-400 group-hover:to-purple-400 transition-all">
                       {course.title}
                     </h4>
-                    <p className="text-cyan-300 text-sm mb-4 flex items-center gap-2">
-                      <span className="text-base">👨‍🏫</span>
-                      {course.instructor}
-                    </p>
                     <div className="flex items-center justify-between text-sm text-gray-300 mb-5">
-                      <span className="flex items-center gap-1">⏱️ {course.duration}</span>
-                      <span className="flex items-center gap-1">👥 {course.reviews}</span>
+                      <span className="flex items-center gap-1">⏱️ {course.duration_hours || course.duration || 0}h</span>
+                      {course.reviews && <span className="flex items-center gap-1">👥 {course.reviews}</span>}
                     </div>
                     <motion.button
                       whileHover={{ scale: 1.05, boxShadow: '0 10px 30px rgba(139, 92, 246, 0.5)' }}
                       whileTap={{ scale: 0.95 }}
                       className={`w-full py-3 bg-gradient-to-r ${gradients[idx]} text-white rounded-2xl font-semibold shadow-lg transition-all`}
                     >
-                      Enroll Now →
+                      {t('Enroll Now')} →
                     </motion.button>
                   </div>
                 </motion.div>
@@ -840,6 +1169,9 @@ export default function Dashboard() {
           </div>
         </motion.div>
       </main>
+      
+      {/* AI Chatbot */}
+      <AIChatbot />
     </div>
   );
 }

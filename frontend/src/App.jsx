@@ -12,6 +12,8 @@ import Features from './pages/Features';
 import SkillGapPage from './pages/SkillGapPage';
 import MarketTrendsPage from './pages/MarketTrendsPage';
 import CoursesPage from './pages/CoursesPage';
+import ProfilePage from './pages/ProfilePage';
+import ProtectedRoute from './components/common/ProtectedRoute';
 import './index.css';
 
 // Token validation and cleanup on app load
@@ -59,25 +61,47 @@ const router = createBrowserRouter(
     {
       path: '/generate',
       element: (
-        <div className="flex flex-col min-h-screen">
-          <Header />
-          <main className="flex-grow">
-            <InputForm />
-          </main>
-          <Footer />
-        </div>
+        <ProtectedRoute>
+          <div className="flex flex-col min-h-screen">
+            <Header />
+            <main className="flex-grow">
+              <InputForm />
+            </main>
+            <Footer />
+          </div>
+        </ProtectedRoute>
       ),
     },
     {
       path: '/dashboard',
       element: (
-        <div className="flex flex-col min-h-screen">
+        <ProtectedRoute>
           <Header />
-          <main className="flex-grow">
-            <Dashboard />
-          </main>
+          <Dashboard />
           <Footer />
-        </div>
+        </ProtectedRoute>
+      ),
+    },
+    {
+      path: '/dashboard-old',
+      element: (
+        <ProtectedRoute>
+          <div className="flex flex-col min-h-screen">
+            <Header />
+            <main className="flex-grow">
+              <Dashboard />
+            </main>
+            <Footer />
+          </div>
+        </ProtectedRoute>
+      ),
+    },
+    {
+      path: '/profile',
+      element: (
+        <ProtectedRoute>
+          <ProfilePage />
+        </ProtectedRoute>
       ),
     },
     {

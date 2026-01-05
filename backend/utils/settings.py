@@ -7,7 +7,7 @@ class Settings(BaseSettings):
     MONGODB_URI: str = ''
     RAPIDAPI_KEY: str = ''
     GEMINI_API_KEY: str = ''
-    ALLOWED_ORIGINS: str = 'http://localhost:5173,http://127.0.0.1:5173,http://localhost:5174,http://127.0.0.1:5174'
+    ALLOWED_ORIGINS: str = 'http://localhost:5173,http://127.0.0.1:5173,http://localhost:5174,http://127.0.0.1:5174,http://localhost:5175,http://127.0.0.1:5175'
     JWT_SECRET: str = 'change-me'
     JWT_EXPIRE_MINUTES: int = 60 * 24
 

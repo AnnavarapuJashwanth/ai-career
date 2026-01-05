@@ -4,6 +4,8 @@ from backend.models.schemas import (
     MarketTrendsResponse, MarketTrendsResponseItem,
     GenerateRoadmapRequest, GenerateRoadmapResponse,
     ExplainRoadmapRequest, ExplainRoadmapResponse,
+    ChatbotRequest, ChatbotResponse,
+    TranslationRequest, TranslationResponse,
 )
 from backend.services.resume_parser import extract_skills, guess_current_role, extract_experience_years
 from backend.services.market_trend_service import compute_trending_skills, compute_market_statistics
@@ -149,11 +151,23 @@ def generate_roadmap_endpoint(payload: GenerateRoadmapRequest):
     total = max(1, len(all_required))
     readiness = int(round((have / total) * 100))
     gap = max(0, 100 - readiness)
+    
+    # Debug logging
+    print(f"🔍 SKILL GAP CALCULATION DEBUG:")
+    print(f"   Current skills: {current_skills}")
+    print(f"   Required skills: {required_skills[:10]}...")  # Show first 10
+    print(f"   All required (set): {len(all_required)} skills")
+    print(f"   Skills you have: {have}")
+    print(f"   Total skills: {total}")
+    print(f"   Readiness: {readiness}%")
+    print(f"   Skill Gap: {gap}%")
+
+    # Ensure response data always includes role and current skills
+    data.setdefault("target_role", payload.target_role)
+    data.setdefault("current_skills", current_skills)
 
     response = GenerateRoadmapResponse(
         **data,
-        target_role=payload.target_role,
-        current_skills=current_skills,
         readiness_score=readiness,
         skill_gap_percentage=gap,
     )
@@ -206,3 +220,90 @@ def latest_analysis(current_user=Depends(get_current_user)):
 def explain_roadmap_endpoint(payload: ExplainRoadmapRequest):
     result = explain_roadmap(payload.roadmap.model_dump())
     return ExplainRoadmapResponse(**result)
+
+
+@router.get("/courses")
+def get_all_courses(role: str = Query(None)):
+    """Get all courses or filter by role"""
+    from pathlib import Path
+    import json
+    
+    data_dir = Path(__file__).parent.parent / "data"
+    courses_path = data_dir / "courses_database.json"
+    
+    try:
+        with open(courses_path, "r", encoding="utf-8") as f:
+            courses_db = json.load(f)
+        
+        if role:
+            return {"courses": courses_db.get(role, [])}
+        
+        # Return all courses from all roles
+        all_courses = []
+        for role_name, courses in courses_db.items():
+            for course in courses:
+                course_with_role = course.copy()
+                course_with_role["role"] = role_name
+                all_courses.append(course_with_role)
+        
+        return {"courses": all_courses}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error loading courses: {str(e)}")
+
+
+@router.post("/chatbot", response_model=ChatbotResponse)
+async def chatbot_query(request: ChatbotRequest, current_user: dict = Depends(get_current_user)):
+    """
+    AI Chatbot endpoint for CareerAI application queries.
+    Uses Gemini AI to answer questions about courses, roadmaps, skills, and career guidance.
+    """
+    try:
+        from backend.services.chatbot_service import ChatbotService
+        from backend.utils.settings import settings
+        
+        # Initialize chatbot service
+        chatbot = ChatbotService(api_key=settings.GEMINI_API_KEY)
+        
+        # Get response from chatbot (not async anymore)
+        result = chatbot.get_response(
+            user_message=request.message,
+            user_role=request.user_role
+        )
+        
+        return ChatbotResponse(**result)
+        
+    except Exception as e:
+        print(f"Chatbot endpoint error: {e}")
+        raise HTTPException(status_code=500, detail=f"Chatbot error: {str(e)}")
+
+
+@router.post("/translate", response_model=TranslationResponse)
+async def translate_text(request: TranslationRequest, current_user: dict = Depends(get_current_user)):
+    """
+    Translation endpoint using Gemini AI.
+    Translates text from one language to another.
+    """
+    try:
+        from backend.services.translation_service import TranslationService
+        from backend.utils.settings import settings
+        
+        # Initialize translation service
+        translator = TranslationService(api_key=settings.GEMINI_API_KEY)
+        
+        # Translate the text
+        translated_text = translator.translate(
+            text=request.text,
+            target_language=request.target_language,
+            source_language=request.source_language
+        )
+        
+        return TranslationResponse(
+            success=True,
+            translated_text=translated_text,
+            source_language=request.source_language,
+            target_language=request.target_language
+        )
+        
+    except Exception as e:
+        print(f"Translation endpoint error: {e}")
+        raise HTTPException(status_code=500, detail=f"Translation error: {str(e)}")
