@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { API_BASE_URL } from '../utils/api';
 
 // Create Language Context
 const LanguageContext = createContext();
@@ -44,7 +45,7 @@ export function LanguageProvider({ children }) {
 
     try {
       setIsTranslating(true);
-      const response = await fetch('http://localhost:8000/api/translate', {
+      const response = await fetch(`${API_BASE_URL}/translate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
