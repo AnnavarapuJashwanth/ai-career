@@ -84,9 +84,12 @@ export default function Header() {
           {/* Logo with Brand Image */}
           <a href="/" className="flex items-center gap-2 hover:opacity-90 transition-opacity">
             <img 
-              src="https://i.imgur.com/YqQZK8x.png" 
+              src="/logo.png" 
               alt="CareerAI Logo" 
               className="h-10 sm:h-12 w-auto object-contain"
+              onError={(e) => {
+                e.target.style.display = 'none';
+              }}
             />
           </a>
 

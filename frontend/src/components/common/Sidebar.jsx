@@ -123,9 +123,12 @@ const Sidebar = ({ user, onSignOut }) => {
           <div className="flex items-center justify-between mb-6">
             <a href="/dashboard" className="flex items-center gap-2">
               <img 
-                src="https://i.imgur.com/YqQZK8x.png" 
+                src="/logo.png" 
                 alt="CareerAI Logo" 
                 className="h-10 w-auto object-contain"
+                onError={(e) => {
+                  e.target.style.display = 'none';
+                }}
               />
             </a>
           </div>

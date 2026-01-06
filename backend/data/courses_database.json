@@ -865,44 +865,44 @@
   ],
   "Soil Scientist": [
     {
-      "title": "Soil Science Fundamentals",
+      "title": "Soil Mechanics and Foundation Engineering",
       "provider": "Udemy",
-      "url": "https://www.udemy.com/course/soil-science-fundamentals/",
-      "duration_hours": 12,
+      "url": "https://www.udemy.com/course/soil-mechanics-and-foundation-engineering/",
+      "duration_hours": 8,
       "level": "Beginner",
       "rating": 4.5,
       "image": "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=480&h=270&fit=crop",
-      "skills": ["Soil Chemistry", "Soil Types", "Agriculture"]
+      "skills": ["Soil Mechanics", "Foundation Engineering", "Geotechnical"]
     },
     {
-      "title": "Agricultural Science & Soil Management",
+      "title": "Introduction to Environmental Science",
       "provider": "Udemy",
-      "url": "https://www.udemy.com/course/agricultural-science/",
-      "duration_hours": 15,
-      "level": "Intermediate",
+      "url": "https://www.udemy.com/course/introduction-to-environmental-science/",
+      "duration_hours": 12,
+      "level": "Beginner",
       "rating": 4.6,
       "image": "https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=480&h=270&fit=crop",
-      "skills": ["Soil Conservation", "Land Management", "Sustainability"]
+      "skills": ["Environmental Science", "Ecology", "Sustainability"]
     },
     {
-      "title": "Environmental Science: Soil & Water",
+      "title": "GIS: Complete Guide to Geographic Information Systems",
       "provider": "Udemy",
-      "url": "https://www.udemy.com/course/environmental-science-soil-water/",
-      "duration_hours": 18,
-      "level": "Advanced",
+      "url": "https://www.udemy.com/course/gis-complete-course/",
+      "duration_hours": 15,
+      "level": "Intermediate",
       "rating": 4.7,
       "image": "https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=480&h=270&fit=crop",
-      "skills": ["Environmental Science", "Water Conservation", "Research"]
+      "skills": ["GIS", "Mapping", "Spatial Analysis"]
     },
     {
-      "title": "Plant Nutrition and Soil Fertility",
+      "title": "Agriculture: Sustainable Farming Practices",
       "provider": "Udemy",
-      "url": "https://www.udemy.com/course/plant-nutrition-soil/",
+      "url": "https://www.udemy.com/course/sustainable-agriculture/",
       "duration_hours": 10,
       "level": "Intermediate",
       "rating": 4.5,
       "image": "https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?w=480&h=270&fit=crop",
-      "skills": ["Plant Nutrition", "Soil Fertility", "Agriculture"]
+      "skills": ["Sustainable Agriculture", "Farming", "Environment"]
     }
   ]
 }
