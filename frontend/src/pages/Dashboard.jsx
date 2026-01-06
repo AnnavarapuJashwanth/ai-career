@@ -462,7 +462,7 @@ export default function Dashboard() {
           {[
             { 
               label: t('Readiness Score'), 
-              value: `${roadmapData?.readiness_score ?? 0}%`, 
+              value: (currentSkills && currentSkills.length > 0) ? `${roadmapData?.readiness_score ?? 0}%` : 'Upload Resume',
               icon: '🎯', 
               color: 'from-emerald-500 to-teal-600',
               bg: 'bg-emerald-500/10',
@@ -470,7 +470,7 @@ export default function Dashboard() {
             },
             { 
               label: t('Skill Gap'), 
-              value: `${roadmapData?.skill_gap_percentage ?? 0}%`, 
+              value: (currentSkills && currentSkills.length > 0) ? `${roadmapData?.skill_gap_percentage ?? 0}%` : 'Upload Resume',
               icon: '📊', 
               color: 'from-amber-500 to-orange-600',
               bg: 'bg-amber-500/10',

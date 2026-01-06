@@ -6,7 +6,8 @@ class TranslationService:
         """Initialize the Gemini translation service."""
         working_key = "AIzaSyBxgHkZjWjWvnaaQa5L1i-W_8PnjOqcnF8"
         genai.configure(api_key=working_key)
-        self.model = genai.GenerativeModel('gemini-2.5-flash')
+        # Use gemini-1.5-flash for higher free tier quota (1500 RPD vs 20 RPD)
+        self.model = genai.GenerativeModel('gemini-1.5-flash')
     
     def translate(self, text: str, target_language: str, source_language: str = "en") -> str:
         """

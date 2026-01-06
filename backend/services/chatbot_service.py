@@ -9,8 +9,8 @@ class ChatbotService:
         # Use the working API key - updated Jan 2026
         working_key = "AIzaSyBxgHkZjWjWvnaaQa5L1i-W_8PnjOqcnF8"
         genai.configure(api_key=working_key)
-        # Use the latest working model: gemini-2.5-flash
-        self.model = genai.GenerativeModel('gemini-2.5-flash')
+        # Use gemini-1.5-flash for higher free tier quota (1500 RPD vs 20 RPD)
+        self.model = genai.GenerativeModel('gemini-1.5-flash')
         self.context = self._load_application_context()
     
     def _load_application_context(self) -> str:

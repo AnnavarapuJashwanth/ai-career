@@ -142,15 +142,19 @@ def generate_roadmap_endpoint(payload: GenerateRoadmapRequest):
     data = generate_roadmap(current_skills, payload.target_role, trends)
 
     # Compute readiness metrics
-    total_required = sum(len(p.get("skills", [])) for p in data.get("phases", [])) + len([s for p in data.get("phases", []) for s in p.get("skills", []) if False])
-    # approximate: readiness = fraction of role skills already present
     required_skills = [s for p in data.get("phases", []) for s in p.get("skills", [])]
-    # If missing list is phases skills, infer required list as missing + have
-    all_required = set(required_skills) | set(current_skills)
-    have = len([s for s in all_required if s in current_skills])
-    total = max(1, len(all_required))
-    readiness = int(round((have / total) * 100))
-    gap = max(0, 100 - readiness)
+    
+    # If no current skills (no resume uploaded), set readiness to 0% and gap to 100%
+    if not current_skills or len(current_skills) == 0:
+        readiness = 0
+        gap = 100
+    else:
+        # Calculate based on overlap between current and required skills
+        all_required = set(required_skills)
+        have = len([s for s in current_skills if s in all_required])
+        total = max(1, len(all_required))
+        readiness = int(round((have / total) * 100))
+        gap = max(0, 100 - readiness)
     
     # Debug logging
     print(f"🔍 SKILL GAP CALCULATION DEBUG:")
@@ -248,18 +252,23 @@ def get_all_courses(role: str = Query(None)):
         
         return {"courses": all_courses}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error loading courses: {str(e)}")
+        print(f"Error loading courses: {e}")
+        return {"courses": []}
 
 
 @router.post("/chatbot", response_model=ChatbotResponse)
-async def chatbot_query(request: ChatbotRequest, current_user: dict = Depends(get_current_user)):
+async def chatbot_query(request: ChatbotRequest):
     """
     AI Chatbot endpoint for CareerAI application queries.
     Uses Gemini AI to answer questions about courses, roadmaps, skills, and career guidance.
+    No authentication required - public access for career guidance.
     """
     try:
         from backend.services.chatbot_service import ChatbotService
         from backend.utils.settings import settings
+        
+        print(f"🤖 Chatbot request received: {request.message[:50]}...")
+        print(f"🤖 User role: {request.user_role}")
         
         # Initialize chatbot service
         chatbot = ChatbotService(api_key=settings.GEMINI_API_KEY)
@@ -270,18 +279,22 @@ async def chatbot_query(request: ChatbotRequest, current_user: dict = Depends(ge
             user_role=request.user_role
         )
         
+        print(f"🤖 Chatbot response generated successfully")
         return ChatbotResponse(**result)
         
     except Exception as e:
-        print(f"Chatbot endpoint error: {e}")
+        print(f"❌ Chatbot endpoint error: {e}")
+        import traceback
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"Chatbot error: {str(e)}")
 
 
 @router.post("/translate", response_model=TranslationResponse)
-async def translate_text(request: TranslationRequest, current_user: dict = Depends(get_current_user)):
+async def translate_text(request: TranslationRequest):
     """
     Translation endpoint using Gemini AI.
     Translates text from one language to another.
+    No authentication required - public access for multi-language support.
     """
     try:
         from backend.services.translation_service import TranslationService
