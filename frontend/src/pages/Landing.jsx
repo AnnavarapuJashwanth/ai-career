@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import CareerGuidanceCursor from '../components/CareerGuidanceCursor';
 import StatsStrip from '../components/landing/StatsStrip';
 import RoadmapShowcase from '../components/landing/RoadmapShowcase';
 import BackgroundMesh from '../components/landing/BackgroundMesh';
@@ -15,16 +14,10 @@ import PhaseTimeline from '../components/landing/PhaseTimeline';
 export default function Landing() {
   const navigate = useNavigate();
 
-  useEffect(() => {
-    // Always clear auth when landing page loads
-    // This ensures everyone sees a fresh landing page
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('careerai_user');
-  }, []);
+  // Removed localStorage clear for faster navigation
 
   return (
     <>
-      <CareerGuidanceCursor />
       <div className="relative min-h-screen bg-gradient-to-br from-white to-blue-50">
       <BackgroundMesh />
       <HeroParallax />
