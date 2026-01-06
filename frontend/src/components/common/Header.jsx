@@ -81,15 +81,14 @@ export default function Header() {
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 z-10">
         <div className="flex items-center justify-between">
-          {/* Logo with Icon */}
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center shadow-lg">
-              <AutoAwesome className="text-white text-lg" />
-            </div>
-            <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent tracking-tight">
-              CareerAI
-            </h1>
-          </div>
+          {/* Logo with Brand Image */}
+          <a href="/" className="flex items-center gap-2 hover:opacity-90 transition-opacity">
+            <img 
+              src="https://i.imgur.com/YqQZK8x.png" 
+              alt="CareerAI Logo" 
+              className="h-10 sm:h-12 w-auto object-contain"
+            />
+          </a>
 
           {/* Right side - Language selector and user name */}
           <div className="hidden lg:flex items-center gap-4 relative z-50">

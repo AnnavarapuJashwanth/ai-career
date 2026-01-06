@@ -121,18 +121,13 @@ const Sidebar = ({ user, onSignOut }) => {
         {/* Logo & Sign Out */}
         <div className="px-6 py-6">
           <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-3">
-              <motion.div 
-                whileHover={{ rotate: 360 }}
-                transition={{ duration: 0.5 }}
-                className="w-10 h-10 bg-gradient-to-br from-cyan-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg"
-              >
-                <span className="text-white font-bold text-xl">C</span>
-              </motion.div>
-              <span className="font-bold text-xl bg-gradient-to-r from-cyan-400 to-purple-400 text-transparent bg-clip-text">
-                CareerAI
-              </span>
-            </div>
+            <a href="/dashboard" className="flex items-center gap-2">
+              <img 
+                src="https://i.imgur.com/YqQZK8x.png" 
+                alt="CareerAI Logo" 
+                className="h-10 w-auto object-contain"
+              />
+            </a>
           </div>
 
           {/* User Profile Card */}

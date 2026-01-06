@@ -1098,42 +1098,42 @@ export default function Dashboard() {
                 description: 'Successfully analyzed your first resume',
                 icon: '📄',
                 unlocked: currentSkills.length > 0,
-                date: 'Dec 20, 2024'
+                date: currentSkills.length > 0 ? 'Just now' : null
               },
               { 
                 title: 'Roadmap Creator', 
                 description: 'Generated your first career roadmap',
                 icon: '🗺️',
                 unlocked: roadmapData?.phases?.length > 0,
-                date: 'Dec 20, 2024'
+                date: roadmapData?.phases?.length > 0 ? 'Just now' : null
               },
               { 
                 title: 'Skill Explorer', 
                 description: `Identified ${currentSkills.length} skills from your resume`,
                 icon: '🎯',
                 unlocked: currentSkills.length >= 5,
-                date: 'Dec 20, 2024'
+                date: currentSkills.length >= 5 ? `${currentSkills.length} skills found` : null
               },
               { 
                 title: 'Market Researcher', 
                 description: 'Explored market insights and trends',
                 icon: '📊',
                 unlocked: trendsData?.trending_skills?.length > 0,
-                date: 'Dec 21, 2024'
+                date: trendsData?.trending_skills?.length > 0 ? 'Active' : null
               },
               { 
                 title: 'Course Seeker', 
-                description: 'Viewed recommended learning courses',
+                description: `${coursesToDisplay.length} courses available`,
                 icon: '📚',
-                unlocked: true,
-                date: 'Dec 22, 2024'
+                unlocked: coursesToDisplay.length > 0,
+                date: coursesToDisplay.length > 0 ? 'Ready to learn' : null
               },
               { 
                 title: 'Goal Setter', 
                 description: `Targeting ${role} role`,
                 icon: '🎓',
-                unlocked: role !== 'Frontend Developer',
-                date: 'Dec 22, 2024'
+                unlocked: !!role,
+                date: role ? 'Goal set' : null
               },
             ].map((achievement, idx) => (
               <motion.div
@@ -1158,10 +1158,10 @@ export default function Dashboard() {
                 <p className={`text-sm mb-3 ${achievement.unlocked ? 'text-gray-300' : 'text-gray-600'}`}>
                   {achievement.description}
                 </p>
-                {achievement.unlocked && (
+                {achievement.unlocked && achievement.date && (
                   <div className="flex items-center gap-2 text-xs text-amber-400">
                     <span>✓</span>
-                    <span>Unlocked {achievement.date}</span>
+                    <span>{achievement.date}</span>
                   </div>
                 )}
               </motion.div>
