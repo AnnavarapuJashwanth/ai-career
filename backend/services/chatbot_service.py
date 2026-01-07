@@ -122,24 +122,66 @@ When users ask about courses or roadmaps, provide specific recommendations from 
             Dict containing response and metadata
         """
         try:
-            # Create the prompt with context
-            prompt = f"{self.context}\n\n"
+            # Build a focused, dynamic prompt based on the question
+            import time
+            request_id = int(time.time() * 1000) % 10000  # Unique ID for each request
             
-            if user_role:
-                prompt += f"User's Current/Target Role: {user_role}\n\n"
+            system_context = f"""You are CareerAI Assistant, an expert career counselor helping users navigate their career journey.
+
+[Request ID: {request_id}] - This is a NEW question requiring a UNIQUE response.
+
+YOUR ROLE:
+- Provide personalized career guidance and course recommendations
+- Answer questions about skills, roles, and learning paths
+- Be conversational, friendly, and encouraging
+- Give specific, actionable advice based on the question asked
+
+CRITICAL RULES:
+- THIS IS A NEW QUESTION - DO NOT repeat previous responses
+- ALWAYS provide unique, relevant answers to EACH question
+- Read the question carefully and answer EXACTLY what is being asked
+- DO NOT give generic or repetitive responses
+- Be concise but informative (3-5 sentences)
+- If asked about courses, recommend 2-3 DIFFERENT courses each time
+- If asked about skills, list 4-6 key skills with brief explanations
+- If asked about career paths, describe specific progression steps
+- Vary your language and examples for each response
+
+AVAILABLE DATA:
+- 47+ career roles across Software, Engineering, Healthcare, Education, Business, and Agriculture
+- Comprehensive courses database with real courses from Udemy, Coursera, edX
+- Skills mapping for each career role
+"""
             
-            prompt += f"User Question: {user_message}\n\nAssistant Response:"
+            # Add role-specific context if provided
+            role_context = ""
+            if user_role and user_role in self.roles_data:
+                skills = self.roles_data.get(user_role, [])[:6]
+                courses = self.courses_data.get(user_role, [])[:3]
+                role_context = f"\n\nUSER'S ROLE: {user_role}\nKey Skills: {', '.join(skills)}\n"
+                if courses:
+                    role_context += f"Available Courses: {', '.join([c.get('title', c.get('name', '')) for c in courses])}"
             
-            # Generate response with speed optimization
+            # Build the complete prompt with emphasis on the specific question
+            prompt = f"""{system_context}{role_context}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+QUESTION #{request_id}: "{user_message}"
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Provide a specific, unique answer to this exact question. Make sure your response is directly relevant to what the user asked. Be conversational and helpful. THIS IS A NEW QUESTION - provide a fresh, unique response."""
+            
+            # Generate response with optimized config for variety
             print(f"🤖 CHATBOT DEBUG: Sending request to Gemini AI...")
             print(f"🤖 User message: {user_message}")
             print(f"🤖 User role: {user_role}")
             
             generation_config = {
-                "temperature": 0.7,
-                "top_p": 0.9,
-                "top_k": 40,
+                "temperature": 0.9,  # High for maximum variety
+                "top_p": 0.95,
+                "top_k": 50,
                 "max_output_tokens": 800,
+                "candidate_count": 1,
             }
             
             response = self.model.generate_content(prompt, generation_config=generation_config)
@@ -198,42 +240,58 @@ When users ask about courses or roadmaps, provide specific recommendations from 
         return None
 
     def _build_fallback_response(self, user_message: str, user_role: str | None) -> Dict[str, Any]:
-        """Generate a deterministic fallback response using local data when Gemini fails."""
-        if not self.courses_data:
+        """Generate a dynamic fallback response based on the specific question."""
+        user_message_lower = user_message.lower()
+        
+        # Detect question type and provide relevant response
+        if any(word in user_message_lower for word in ['course', 'learn', 'training', 'tutorial', 'study']):
+            # Course recommendation question
+            role_key = user_role if user_role in self.courses_data else None
+            if not role_key:
+                found_role = next((role for role in self.courses_data.keys() if role.lower() in user_message_lower), None)
+                role_key = found_role or "Software Developer"
+            
+            courses = self.courses_data.get(role_key, [])[:3]
+            response = f"Here are some great courses for {role_key}:\n\n"
+            for i, course in enumerate(courses, 1):
+                title = course.get('title') or course.get('name', 'Course')
+                provider = course.get('provider', 'Top Platform')
+                response += f"{i}. {title} by {provider}\n"
+            
+            response += f"\nThese courses will help you build essential {role_key} skills. Would you like more recommendations?"
+            return {"success": True, "response": response, "user_role": role_key}
+        
+        elif any(word in user_message_lower for word in ['skill', 'know', 'learn', 'master', 'ability']):
+            # Skills question
+            role_key = user_role if user_role in self.roles_data else None
+            if not role_key:
+                found_role = next((role for role in self.roles_data.keys() if role.lower() in user_message_lower), None)
+                role_key = found_role or "Software Developer"
+            
+            skills = self.roles_data.get(role_key, [])[:6]
+            response = f"For {role_key}, these are the key skills you should develop:\n\n"
+            for i, skill in enumerate(skills, 1):
+                response += f"{i}. {skill}\n"
+            
+            response += f"\nFocus on building these skills through hands-on projects and courses. What specific skill would you like to learn more about?"
+            return {"success": True, "response": response, "user_role": role_key}
+        
+        elif any(word in user_message_lower for word in ['career', 'job', 'role', 'path', 'become', 'transition']):
+            # Career path question
+            available_roles = list(self.courses_data.keys())[:8]
+            response = "CareerAI can help you with various career paths! Here are some popular roles:\n\n"
+            for i, role in enumerate(available_roles, 1):
+                response += f"{i}. {role}\n"
+            
+            response += "\nWhich career path interests you? I can provide personalized guidance, skills needed, and course recommendations!"
+            return {"success": True, "response": response}
+        
+        else:
+            # General question
             return {
-                "success": False,
-                "response": "I'm here to help with CareerAI questions, but I'm unable to fetch fresh insights right now. Please try again soon.",
+                "success": True,
+                "response": "I'm CareerAI Assistant, here to help with your career development! You can ask me about:\n\n• Course recommendations for any role\n• Skills required for different careers\n• Learning roadmaps and career paths\n• How to transition between roles\n\nWhat would you like to know?",
             }
-
-        role_key = user_role if user_role in self.courses_data else None
-        if not role_key:
-            found_role = next((role for role in self.courses_data.keys() if role.lower() in user_message.lower()), None)
-            role_key = found_role or next(iter(self.courses_data.keys()))
-
-        recommendations = self.courses_data.get(role_key, [])[:3]
-        skills = self.roles_data.get(role_key, [])[:5]
-
-        response_lines = [
-            f"Let's focus on the {role_key} path. Based on CareerAI's knowledge base, here is how you can move forward:",
-        ]
-
-        if skills:
-            response_lines.append("Key skills to strengthen: " + ", ".join(skills) + ".")
-
-        if recommendations:
-            response_lines.append("Recommended courses:")
-            for course in recommendations:
-                title = course.get('title') or course.get('name')
-                provider = course.get('provider', 'Trusted Provider')
-                response_lines.append(f"• {title} — {provider}")
-
-        response_lines.append("Let me know if you'd like more resources or a different specialization.")
-
-        return {
-            "success": True,
-            "response": "\n".join(response_lines),
-            "user_role": role_key,
-        }
     
     def get_course_recommendations(self, role: str) -> Dict[str, Any]:
         """Get course recommendations for a specific role."""
