@@ -23,8 +23,13 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const { t } = useTranslate();
   const user = JSON.parse(localStorage.getItem('careerai_user') || 'null') || { email: 'user@example.com', name: 'User' };
+  
+  // Handle role discovery flow
+  const discoveredRole = location.state?.discoveredRole;
+  const fromRoleDiscovery = location.state?.fromRoleDiscovery;
+  
   const [roadmapData, setRoadmapData] = useState(location.state?.roadmap || null);
-  const role = roadmapData?.target_role || location.state?.role || 'Frontend Developer';
+  const role = roadmapData?.target_role || discoveredRole || location.state?.role || 'Frontend Developer';
   const loc = location.state?.location || '';
   
   // Use current_skills from roadmap data (should be populated from backend)
@@ -34,6 +39,8 @@ export default function Dashboard() {
   // Debug: Log all relevant data
   console.log('=== DASHBOARD DEBUG ===');
   console.log('Roadmap data:', roadmapData);
+  console.log('Discovered Role:', discoveredRole);
+  console.log('From Role Discovery:', fromRoleDiscovery);
   console.log('Readiness Score:', roadmapData?.readiness_score);
   console.log('Skill Gap Percentage:', roadmapData?.skill_gap_percentage);
   console.log('Current skills from roadmap:', roadmapData?.current_skills);
@@ -50,6 +57,18 @@ export default function Dashboard() {
   const [regenLoading, setRegenLoading] = useState(false);
   const [loadedFromAccount, setLoadedFromAccount] = useState(false);
 
+  // Refetch trends when navigating back to dashboard
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden && role) {
+        fetchTrends(role, loc).catch(() => {});
+      }
+    };
+    
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, [role, loc, fetchTrends]);
+
   useEffect(() => {
     if (role) fetchTrends(role, loc).catch(() => {});
   }, [role, loc, fetchTrends]);
@@ -57,7 +76,15 @@ export default function Dashboard() {
   // Scroll to top on mount to show overview section
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, []);
+    
+    // Show welcome message if coming from role discovery
+    if (fromRoleDiscovery && discoveredRole) {
+      toast.success(`🎯 Great! Let's create your personalized roadmap for ${discoveredRole}`, {
+        position: 'top-center',
+        autoClose: 5000,
+      });
+    }
+  }, [fromRoleDiscovery, discoveredRole]);
 
   useEffect(() => {
     // If no roadmap passed from navigation, try to load latest from backend
@@ -117,16 +144,64 @@ export default function Dashboard() {
     }
   }, [roadmapData]);
 
+  const computedReadiness = useMemo(() => {
+    if (typeof roadmapData?.readiness_score === 'number') {
+      return roadmapData.readiness_score;
+    }
+    if (!roadmapData?.phases?.length) return null;
+
+    const normalizedRequired = Array.from(
+      new Set(
+        roadmapData.phases.flatMap((phase) =>
+          (phase.skills || []).map((skill) => skill?.toLowerCase().trim()).filter(Boolean)
+        )
+      )
+    );
+
+    const normalizedCurrent = (roadmapData.current_skills || currentSkills || [])
+      .map((skill) => skill?.toLowerCase().trim())
+      .filter(Boolean);
+
+    if (!normalizedRequired.length) {
+      return normalizedCurrent.length ? 100 : 0;
+    }
+
+    const matchesRequiredSkill = (requiredSkill) =>
+      normalizedCurrent.some((skill) => skill === requiredSkill || skill.includes(requiredSkill) || requiredSkill.includes(skill));
+
+    const matchedCount = normalizedRequired.reduce((count, skill) => (
+      matchesRequiredSkill(skill) ? count + 1 : count
+    ), 0);
+
+    return normalizedCurrent.length ? Math.round((matchedCount / normalizedRequired.length) * 100) : 0;
+  }, [roadmapData, currentSkills]);
+
+  const readinessScore = computedReadiness ?? 0;
+  const skillGapScore = roadmapData?.skill_gap_percentage ?? Math.max(0, 100 - readinessScore);
+
   const radarData = useMemo(() => {
-    const top = trendsData?.trending_skills?.slice(0, 6) || [];
-    const haveSkills = roadmapData?.current_skills || currentSkills || [];
-    const items = top.map((t) => {
-      const you = haveSkills.some((s) => s.toLowerCase() === t.name.toLowerCase()) ? 4 : 1;
-      const market = Math.max(1, Math.round((t.importance || 0.2) * 5));
-      return { skill: t.name, you, market };
+    const phases = roadmapData?.phases || [];
+    const requiredSkills = Array.from(new Set(phases.flatMap((p) => p.skills))) || [];
+    const currentList = roadmapData?.current_skills || currentSkills || [];
+    const normalizedCurrent = currentList.map((s) => s.toLowerCase());
+
+    const importanceMap = new Map();
+    (trendsData?.trending_skills || []).forEach((item) => {
+      importanceMap.set(item.name.toLowerCase(), item.importance || 0.6);
     });
-    return items.length ? items : undefined;
-  }, [trendsData, currentSkills, roadmapData]);
+
+    let skillsToDisplay = requiredSkills.length ? requiredSkills : (trendsData?.trending_skills || []).map((s) => s.name);
+    skillsToDisplay = skillsToDisplay.slice(0, 6);
+
+    if (!skillsToDisplay.length) return [];
+
+    return skillsToDisplay.map((skill) => {
+      const skillLower = skill.toLowerCase();
+      const youScore = normalizedCurrent.some((s) => s === skillLower) ? 4.5 : 2;
+      const marketScore = Math.max(2, Math.round((importanceMap.get(skillLower) || 0.6) * 4 + 1));
+      return { skill, you: youScore, market: marketScore };
+    });
+  }, [roadmapData, currentSkills, trendsData]);
 
   // PDF Export Function
   const handleExportPDF = () => {
@@ -156,14 +231,14 @@ export default function Dashboard() {
       yPos += 15;
       
       // Readiness Score
-      if (roadmapData?.readiness_score) {
+      if (typeof readinessScore === 'number') {
         doc.setFontSize(14);
         doc.setTextColor(66, 135, 245);
         doc.text('Readiness Score', margin, yPos);
         yPos += 8;
         doc.setFontSize(12);
         doc.setTextColor(0, 0, 0);
-        doc.text(`${roadmapData.readiness_score}%`, margin, yPos);
+        doc.text(`${readinessScore}%`, margin, yPos);
         yPos += 15;
       }
       
@@ -272,7 +347,19 @@ export default function Dashboard() {
       }
     });
     
-    return courses.slice(0, 8); // Limit to 8 courses for display
+    // Remove duplicates by title and limit to 4 courses
+    const uniqueCourses = [];
+    const seenTitles = new Set();
+    
+    for (const course of courses) {
+      if (!seenTitles.has(course.title)) {
+        seenTitles.add(course.title);
+        uniqueCourses.push(course);
+        if (uniqueCourses.length >= 4) break;
+      }
+    }
+    
+    return uniqueCourses;
   }, [roadmapData]);
 
   // Use extracted courses or fallback to generic ones
@@ -462,7 +549,7 @@ export default function Dashboard() {
           {[
             { 
               label: t('Readiness Score'), 
-              value: (currentSkills && currentSkills.length > 0) ? `${roadmapData?.readiness_score ?? 0}%` : 'Upload Resume',
+              value: (currentSkills && currentSkills.length > 0) ? `${readinessScore}%` : 'Upload Resume',
               icon: '🎯', 
               color: 'from-emerald-500 to-teal-600',
               bg: 'bg-emerald-500/10',
@@ -470,7 +557,7 @@ export default function Dashboard() {
             },
             { 
               label: t('Skill Gap'), 
-              value: (currentSkills && currentSkills.length > 0) ? `${roadmapData?.skill_gap_percentage ?? 0}%` : 'Upload Resume',
+              value: (currentSkills && currentSkills.length > 0) ? `${skillGapScore}%` : 'Upload Resume',
               icon: '📊', 
               color: 'from-amber-500 to-orange-600',
               bg: 'bg-amber-500/10',
@@ -600,7 +687,7 @@ export default function Dashboard() {
                   Live
                 </div>
               </div>
-              <SkillGapRadar data={radarData} />
+              <SkillGapRadar key={`${role}-${currentSkills.length}-${trendsData?.trending_skills?.length || 0}`} data={radarData} />
             </div>
           </motion.div>
 

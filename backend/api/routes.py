@@ -6,6 +6,7 @@ from backend.models.schemas import (
     ExplainRoadmapRequest, ExplainRoadmapResponse,
     ChatbotRequest, ChatbotResponse,
     TranslationRequest, TranslationResponse,
+    RoleDiscoveryAnswersRequest, RoleDiscoveryResponse,
 )
 from backend.services.resume_parser import extract_skills, guess_current_role, extract_experience_years
 from backend.services.market_trend_service import compute_trending_skills, compute_market_statistics
@@ -20,6 +21,26 @@ import pdfplumber
 import io
 
 router = APIRouter()
+
+
+def _normalize_skill_name(skill: str) -> str:
+    return (skill or "").strip().lower()
+
+
+def _skill_matches(required_skill: str, current_skills: list[str]) -> bool:
+    """Return True when the required skill loosely matches any current skill."""
+    normalized_required = _normalize_skill_name(required_skill)
+    if not normalized_required:
+        return False
+    for skill in current_skills:
+        candidate = _normalize_skill_name(skill)
+        if not candidate:
+            continue
+        if candidate == normalized_required:
+            return True
+        if candidate in normalized_required or normalized_required in candidate:
+            return True
+    return False
 
 @router.get("/ping")
 def ping():
@@ -143,26 +164,34 @@ def generate_roadmap_endpoint(payload: GenerateRoadmapRequest):
 
     # Compute readiness metrics
     required_skills = [s for p in data.get("phases", []) for s in p.get("skills", [])]
-    
+    normalized_current_skills = [_normalize_skill_name(s) for s in (current_skills or []) if _normalize_skill_name(s)]
+    normalized_required = {_normalize_skill_name(s) for s in required_skills if _normalize_skill_name(s)}
+
     # If no current skills (no resume uploaded), set readiness to 0% and gap to 100%
-    if not current_skills or len(current_skills) == 0:
+    if not normalized_current_skills:
         readiness = 0
         gap = 100
+        have = 0
+        total = len(normalized_required)
+    elif not normalized_required:
+        readiness = 100
+        gap = 0
+        have = len(normalized_current_skills)
+        total = have
     else:
-        # Calculate based on overlap between current and required skills
-        all_required = set(required_skills)
-        have = len([s for s in current_skills if s in all_required])
-        total = max(1, len(all_required))
-        readiness = int(round((have / total) * 100))
+        matches = [_skill_matches(skill, current_skills) for skill in normalized_required]
+        have = sum(1 for matched in matches if matched)
+        total = len(normalized_required)
+        readiness = int(round((have / total) * 100)) if total else 0
         gap = max(0, 100 - readiness)
-    
+
     # Debug logging
-    print(f"🔍 SKILL GAP CALCULATION DEBUG:")
+    print("🔍 SKILL GAP CALCULATION DEBUG:")
     print(f"   Current skills: {current_skills}")
-    print(f"   Required skills: {required_skills[:10]}...")  # Show first 10
-    print(f"   All required (set): {len(all_required)} skills")
-    print(f"   Skills you have: {have}")
-    print(f"   Total skills: {total}")
+    print(f"   Required skills (sample): {required_skills[:10]}")
+    print(f"   Normalized required skills count: {len(normalized_required)}")
+    print(f"   Skills matched: {have}")
+    print(f"   Total skills considered: {total}")
     print(f"   Readiness: {readiness}%")
     print(f"   Skill Gap: {gap}%")
 
@@ -320,3 +349,46 @@ async def translate_text(request: TranslationRequest):
     except Exception as e:
         print(f"Translation endpoint error: {e}")
         raise HTTPException(status_code=500, detail=f"Translation error: {str(e)}")
+
+
+@router.get("/role-discovery/questions")
+async def get_role_discovery_questions():
+    """
+    Get the questionnaire for role discovery.
+    Public endpoint - no authentication required.
+    """
+    try:
+        from backend.services.role_discovery_service import RoleDiscoveryService
+        from backend.utils.settings import settings
+        
+        service = RoleDiscoveryService(api_key=settings.GEMINI_API_KEY)
+        questions = service.get_discovery_questions()
+        
+        return {
+            "success": True,
+            "questions": questions
+        }
+    except Exception as e:
+        print(f"Error getting discovery questions: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/role-discovery/analyze", response_model=RoleDiscoveryResponse)
+async def analyze_role_discovery(request: RoleDiscoveryAnswersRequest):
+    """
+    Analyze user's quiz answers and recommend a suitable role.
+    Public endpoint - no authentication required.
+    """
+    try:
+        from backend.services.role_discovery_service import RoleDiscoveryService
+        from backend.utils.settings import settings
+        
+        service = RoleDiscoveryService(api_key=settings.GEMINI_API_KEY)
+        result = service.analyze_answers_and_recommend_role(request.answers)
+        
+        return RoleDiscoveryResponse(**result)
+    except Exception as e:
+        print(f"Error analyzing role discovery: {e}")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))

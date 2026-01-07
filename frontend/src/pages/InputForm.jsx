@@ -39,7 +39,7 @@ import {
 } from '@mui/icons-material';
 import { useResumeAnalysis } from '../hooks/useResumeAnalysis';
 import { useRoadmapGeneration } from '../hooks/useRoadmapGeneration';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation as useRouterLocation } from 'react-router-dom';
 import api from '../utils/api';
 
 const TARGET_ROLES = [
@@ -298,6 +298,7 @@ const TARGET_ROLES = [
 
 export default function InputForm() {
   const navigate = useNavigate();
+  const routerLocation = useRouterLocation();
   const [resumeText, setResumeText] = useState('');
   const [targetRole, setTargetRole] = useState('');
   const [experience, setExperience] = useState('');
@@ -322,6 +323,16 @@ export default function InputForm() {
       })
       .catch(() => {});
   }, []);
+
+  useEffect(() => {
+    const discoveryRole = routerLocation.state?.discoveredRole;
+    if (discoveryRole) {
+      setTargetRole(discoveryRole);
+      setStep(2);
+      setInputMode('no-resume');
+      toast.success(`Loaded ${discoveryRole} from Role Discovery`);
+    }
+  }, [routerLocation.state?.discoveredRole]);
 
   const handleResumeUpload = async (e) => {
     const file = e.target.files[0];
@@ -527,7 +538,7 @@ export default function InputForm() {
             )}
 
             {!inputMode && (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 {/* Option 1: Upload Resume */}
                 <button
                   onClick={() => setInputMode('upload')}
@@ -578,10 +589,28 @@ export default function InputForm() {
                     <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center transform group-hover:rotate-6 transition-transform shadow-xl">
                       <span className="text-5xl">🎯</span>
                     </div>
-                    <h3 className="font-bold text-xl text-gray-900 mb-2 group-hover:text-purple-600 transition-colors">No Resume?</h3>
-                    <p className="text-sm text-gray-600 leading-relaxed">Select role to get started</p>
+                    <h3 className="font-bold text-xl text-gray-900 mb-2 group-hover:text-purple-600 transition-colors">No Resume</h3>
+                    <p className="text-sm text-gray-600 leading-relaxed">I know my target role</p>
                     <div className="mt-4 inline-flex items-center text-purple-600 font-semibold text-sm group-hover:gap-2 gap-1 transition-all">
-                      Skip Step <ArrowForward style={{ fontSize: 16 }} className="group-hover:translate-x-1 transition-transform" />
+                      Continue <ArrowForward style={{ fontSize: 16 }} className="group-hover:translate-x-1 transition-transform" />
+                    </div>
+                  </div>
+                </button>
+
+                {/* Option 4: Discover My Role - NEW */}
+                <button
+                  onClick={() => navigate('/role-discovery')}
+                  className="group relative overflow-hidden p-8 border-3 border-orange-200 rounded-2xl hover:border-orange-400 bg-gradient-to-br from-orange-50 to-amber-50 hover:from-orange-100 hover:to-amber-100 transition-all duration-300 cursor-pointer text-center transform hover:scale-105 hover:shadow-2xl shadow-lg"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-br from-orange-400/0 to-amber-400/0 group-hover:from-orange-400/10 group-hover:to-amber-400/10 transition-all duration-300"></div>
+                  <div className="relative z-10">
+                    <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-orange-500 to-amber-500 rounded-2xl flex items-center justify-center transform group-hover:rotate-6 transition-transform shadow-xl">
+                      <span className="text-5xl">🧠</span>
+                    </div>
+                    <h3 className="font-bold text-xl text-gray-900 mb-2 group-hover:text-orange-600 transition-colors">Discover My Role</h3>
+                    <p className="text-sm text-gray-600 leading-relaxed">Take a quiz to find your path</p>
+                    <div className="mt-4 inline-flex items-center text-orange-600 font-semibold text-sm group-hover:gap-2 gap-1 transition-all">
+                      Start Quiz <ArrowForward style={{ fontSize: 16 }} className="group-hover:translate-x-1 transition-transform" />
                     </div>
                   </div>
                 </button>

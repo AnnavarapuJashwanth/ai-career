@@ -19,6 +19,7 @@ export function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const signupSuccess = location?.state?.signupSuccess;
+  const fromRoleDiscovery = location?.state?.fromRoleDiscovery;
 
   const normalizeAxiosError = (err) => {
     const detail = err?.response?.data?.detail;
@@ -41,7 +42,30 @@ export function LoginPage() {
       const { data } = await api.post('/auth/login', { email, password });
       localStorage.setItem('authToken', data.access_token);
       localStorage.setItem('careerai_user', JSON.stringify(data.user));
-      navigate('/dashboard');
+      let redirectState = null;
+      let redirectPath = '/dashboard';
+      try {
+        const pendingRole = sessionStorage.getItem('pendingRoleDiscovery');
+        if (pendingRole) {
+          const parsed = JSON.parse(pendingRole);
+          redirectPath = parsed?.nextRoute || '/dashboard';
+          redirectState = parsed?.state || {
+            discoveredRole: parsed?.recommended_role,
+            fromRoleDiscovery: true,
+            roleDiscoveryResult: parsed?.result,
+          };
+        }
+      } catch (_) {
+        // ignore parse errors
+      } finally {
+        sessionStorage.removeItem('pendingRoleDiscovery');
+      }
+
+      if (redirectState) {
+        navigate(redirectPath, { state: redirectState });
+      } else {
+        navigate(redirectPath);
+      }
     } catch (err) {
       const msg = normalizeAxiosError(err) || 'Invalid credentials';
       setError(msg);
@@ -90,6 +114,11 @@ export function LoginPage() {
                 Account created successfully. Please sign in.
               </div>
             )}
+            {fromRoleDiscovery && (
+              <div className="mb-4 p-3 bg-purple-50 border border-purple-200 rounded-md text-purple-700 text-sm">
+                Please sign in so we can save your recommended role and build the roadmap.
+              </div>
+            )}
             {error && (
               <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md text-red-600 text-sm">
                 {String(error)}
@@ -110,6 +139,7 @@ export function LoginPage() {
                   className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
                   value={email}
                   onChange={e => setEmail(e.target.value)}
+                  autoComplete="email"
                   required
                 />
               </div>
@@ -125,6 +155,7 @@ export function LoginPage() {
                   className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
                   value={password}
                   onChange={e => setPassword(e.target.value)}
+                  autoComplete="current-password"
                   required
                 />
               </div>
@@ -249,6 +280,7 @@ export function SignupPage() {
                   className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
                   value={name}
                   onChange={e => setName(e.target.value)}
+                  autoComplete="name"
                   required
                 />
               </div>
@@ -264,6 +296,7 @@ export function SignupPage() {
                   className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
                   value={email}
                   onChange={e => setEmail(e.target.value)}
+                  autoComplete="email"
                   required
                 />
               </div>
@@ -279,6 +312,7 @@ export function SignupPage() {
                   className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
                   value={password}
                   onChange={e => setPassword(e.target.value)}
+                  autoComplete="new-password"
                   required
                 />
               </div>

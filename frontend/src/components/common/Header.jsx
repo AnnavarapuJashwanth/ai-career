@@ -74,24 +74,31 @@ export default function Header() {
   const isLoggedIn = !!localStorage.getItem('authToken') && !!user;
 
   return (
-    <header className="bg-white shadow-sm sticky top-0 z-[100] border-b border-gray-100 relative">
+    <header className="bg-white shadow-sm sticky top-0 z-[100] border-b border-gray-200 relative" style={{ height: '100px' }}>
       {isLanding && (
         <div aria-hidden className="absolute inset-0 bg-gradient-to-r from-blue-50 to-purple-50 opacity-50 pointer-events-none" />
       )}
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 z-10">
-        <div className="flex items-center justify-between">
-          {/* Logo with Brand Image */}
-          <a href="/" className="flex items-center gap-2 hover:opacity-90 transition-opacity">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full z-10">
+        <div className="flex items-center justify-between h-full">
+          {/* Logo with Brand Name */}
+          <div className="flex items-center gap-4 h-full py-3">
             <img 
               src="/logo.png" 
               alt="CareerAI Logo" 
-              className="h-10 sm:h-12 w-auto object-contain"
+              className="w-auto object-contain drop-shadow-xl"
+              style={{ height: '70px', maxWidth: '70px' }}
               onError={(e) => {
                 e.target.style.display = 'none';
               }}
             />
-          </a>
+            <div className="flex flex-col">
+              <h1 className="text-4xl font-black bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-transparent bg-clip-text tracking-tight glow-text">
+                CareerAI
+              </h1>
+              <p className="text-xs text-gray-500 font-medium tracking-widest">AI-POWERED GUIDANCE</p>
+            </div>
+          </div>
 
           {/* Right side - Language selector and user name */}
           <div className="hidden lg:flex items-center gap-4 relative z-50">

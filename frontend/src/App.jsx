@@ -13,6 +13,7 @@ import SkillGapPage from './pages/SkillGapPage';
 import MarketTrendsPage from './pages/MarketTrendsPage';
 import CoursesPage from './pages/CoursesPage';
 import ProfilePage from './pages/ProfilePage';
+import RoleDiscoveryQuiz from './pages/RoleDiscoveryQuiz';
 import ProtectedRoute from './components/common/ProtectedRoute';
 import './index.css';
 
@@ -159,6 +160,20 @@ const router = createBrowserRouter(
     {
       path: '/courses',
       element: <CoursesPage />,
+    },
+    {
+      path: '/role-discovery',
+      element: (
+        <ProtectedRoute>
+          <div className="flex flex-col min-h-screen">
+            <Header />
+            <main className="flex-grow">
+              <RoleDiscoveryQuiz />
+            </main>
+            <Footer />
+          </div>
+        </ProtectedRoute>
+      ),
     },
   ],
   {

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import StatsStrip from '../components/landing/StatsStrip';
@@ -13,6 +13,32 @@ import PhaseTimeline from '../components/landing/PhaseTimeline';
 
 export default function Landing() {
   const navigate = useNavigate();
+
+  const storyBlocks = [
+    {
+      title: 'Our Mission',
+      body: 'Deliver measurable upskilling journeys that turn into interviews, promotions, and pay raises—not just shiny dashboards.',
+    },
+    {
+      title: 'Our Vision',
+      body: 'A world where every learner has an adaptive co-pilot guiding strategic career moves with confidence, clarity, and encouragement.',
+    },
+    {
+      title: 'Our Values',
+      body: 'We design with empathy, keep guidance practical, and make every interaction feel like a helpful push forward.',
+    },
+  ];
+
+  const teamMembers = [
+    { name: 'Annavarapu Jashwanth', role: 'Co-founder & CEO', avatar: 'https://images.unsplash.com/photo-1504593811423-6dd665756598?auto=format&fit=crop&w=400&q=80', focus: 'Designs the AI reasoning layer that translates hiring signals into learning plans.' },
+    { name: 'Mukund Mulpuri', role: 'Managing Director', avatar: 'https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=400&q=80', focus: 'Architects the immersive dashboards and cinematic landing experiences you scroll through.' },
+    { name: 'Sravanthi Varikuti', role: 'Designer', avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=400&q=80', focus: 'Creates beautiful, user-friendly interfaces that make career planning intuitive.' },
+    { name: 'Likitha Sri Vemullapalli', role: 'Purchasing Manager', avatar: 'https://images.unsplash.com/photo-1544723795-432537f78d09?auto=format&fit=crop&w=400&q=80', focus: 'Ensures we have the best resources and tools to deliver quality experiences.' },
+    { name: 'Ankisetty Varshini', role: 'Developer', avatar: 'https://images.unsplash.com/photo-1544723795-432537f78e19?auto=format&fit=crop&w=400&q=80', focus: 'Builds robust features that power your career growth journey.' },
+    { name: 'Kavitha', role: 'Production Manager', avatar: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=400&q=80', focus: 'Keeps our market-trend models honest with weekly hiring-panel interviews.' },
+  ];
+
+  const industriesServed = ['FinTech', 'HealthTech', 'SaaS', 'Cybersecurity', 'Retail Media', 'Climate', 'Manufacturing'];
 
   // Removed localStorage clear for faster navigation
 
@@ -193,6 +219,156 @@ export default function Landing() {
 
       {/* Testimonials */}
       <Testimonials />
+
+      {/* About & Team Section - Professional Design */}
+      <section id="about" className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
+        {/* Background Animations */}
+        <motion.div 
+          className="absolute inset-0 -z-10 overflow-hidden"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+        >
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-gradient-to-br from-blue-400/20 to-cyan-300/10 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-gradient-to-br from-purple-400/20 to-pink-300/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+        </motion.div>
+
+        {/* Header */}
+        <div className="text-center mb-16">
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            viewport={{ once: true }}
+            className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-100 to-purple-100 px-6 py-2 shadow-lg border border-blue-200 mb-4"
+          >
+            <span className="text-2xl">✨</span>
+            <span className="text-xs font-bold uppercase tracking-[0.3em] bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">About CareerAI</span>
+          </motion.p>
+          <motion.h2 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            viewport={{ once: true }}
+            className="text-4xl sm:text-5xl lg:text-6xl font-black bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900 bg-clip-text text-transparent mb-4"
+          >
+            Built for real career wins
+          </motion.h2>
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            viewport={{ once: true }}
+            className="text-lg sm:text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed"
+          >
+            Simple cards, clear promises, and a team you can trust—just like the reference layout you shared.
+          </motion.p>
+        </div>
+
+        {/* Mission, Vision, Values Cards */}
+        <div className="grid gap-6 md:grid-cols-3 mb-20">
+          {storyBlocks.map((card, index) => (
+            <motion.div 
+              key={card.title}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+              viewport={{ once: true }}
+              whileHover={{ y: -8, scale: 1.02 }}
+              className="group rounded-3xl border-2 border-white bg-white/90 backdrop-blur-sm shadow-xl hover:shadow-2xl p-8 text-left transition-all duration-300"
+            >
+              <div className="mb-4 inline-flex p-4 rounded-2xl bg-gradient-to-br from-blue-100 to-purple-100 group-hover:from-blue-200 group-hover:to-purple-200 transition-colors">
+                <span className="text-4xl">{index === 0 ? '🎯' : index === 1 ? '✨' : '🛡️'}</span>
+              </div>
+              <h3 className="text-2xl font-bold text-slate-900 mb-3">{card.title}</h3>
+              <p className="text-base text-slate-600 leading-relaxed">{card.body}</p>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Team Section */}
+        <div className="mt-20">
+          <div className="text-center mb-12">
+            <motion.p 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              viewport={{ once: true }}
+              className="text-sm font-bold text-blue-600 uppercase tracking-[0.3em] mb-2"
+            >
+              MEET OUR TEAM
+            </motion.p>
+            <motion.h3 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              viewport={{ once: true }}
+              className="text-3xl sm:text-4xl font-black text-slate-900"
+            >
+              Faces behind CareerAI
+            </motion.h3>
+            <motion.p 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              viewport={{ once: true }}
+              className="mt-3 text-base text-slate-500"
+            >
+              First two leaders are highlighted as requested, followed by the four powerhouse women driving delivery.
+            </motion.p>
+          </div>
+
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            {teamMembers.map((member, index) => (
+              <motion.div 
+                key={member.name}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                viewport={{ once: true }}
+                whileHover={{ y: -8 }}
+                className="group rounded-3xl border-2 border-slate-100 bg-white shadow-lg hover:shadow-2xl p-8 text-center transition-all duration-300"
+              >
+                <div className="relative mx-auto h-32 w-32 mb-6">
+                  <div className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-400 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-xl"></div>
+                  <div className="relative h-full w-full overflow-hidden rounded-full border-4 border-white shadow-xl">
+                    <img src={member.avatar} alt={member.name} className="h-full w-full object-cover group-hover:scale-110 transition-transform duration-300" />
+                  </div>
+                </div>
+                <h4 className="text-xl font-bold text-slate-900 mb-1">{member.name}</h4>
+                <p className="text-sm text-blue-600 font-semibold mb-3">{member.role}</p>
+                <p className="text-sm text-slate-600 leading-relaxed">{member.focus}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+
+        {/* Industries Served */}
+        <motion.div 
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          viewport={{ once: true }}
+          className="mt-20 text-center"
+        >
+          <p className="text-sm font-bold text-slate-500 uppercase tracking-[0.3em] mb-6">INDUSTRIES WE SERVE</p>
+          <div className="flex flex-wrap justify-center gap-3">
+            {industriesServed.map((industry, index) => (
+              <motion.span 
+                key={industry}
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.3, delay: index * 0.05 }}
+                viewport={{ once: true }}
+                whileHover={{ scale: 1.1, y: -2 }}
+                className="rounded-full border-2 border-slate-200 bg-white px-6 py-3 text-sm font-bold text-slate-700 shadow-md hover:shadow-lg hover:border-blue-300 hover:text-blue-600 transition-all cursor-default"
+              >
+                {industry}
+              </motion.span>
+            ))}
+          </div>
+        </motion.div>
+      </section>
 
       {/* Call To Action */}
       <section className="max-w-5xl mx-auto my-16 px-6">

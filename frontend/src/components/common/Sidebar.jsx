@@ -38,7 +38,7 @@ const Sidebar = ({ user, onSignOut }) => {
 
   const bottomNavItems = [
     { label: t('Features'), icon: Home, path: '/features' },
-    { label: t('About'), icon: Info, path: '/about' },
+    { label: t('About Us'), icon: Info, path: '/#about', scrollTo: true },
     { label: t('Settings'), icon: Settings, path: '#settings' },
   ];
 
@@ -53,6 +53,21 @@ const Sidebar = ({ user, onSignOut }) => {
       e.preventDefault();
       const element = document.querySelector(path);
       element?.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const handleBottomNavClick = (e, item) => {
+    setIsOpen(false);
+    if (item.scrollTo) {
+      e.preventDefault();
+      // Navigate to landing page first if not already there
+      if (location.pathname !== '/') {
+        window.location.href = item.path;
+      } else {
+        const sectionId = item.path.split('#')[1];
+        const element = document.getElementById(sectionId);
+        element?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
     }
   };
 
@@ -120,17 +135,21 @@ const Sidebar = ({ user, onSignOut }) => {
       <div className="relative z-10 flex flex-col h-full">
         {/* Logo & Sign Out */}
         <div className="px-6 py-6">
-          <div className="flex items-center justify-between mb-6">
-            <a href="/dashboard" className="flex items-center gap-2">
+          <div className="flex flex-col items-center justify-center mb-6 gap-3">
+            <div className="flex items-center justify-center p-3 bg-white/10 backdrop-blur-xl rounded-2xl border-2 border-cyan-500/30 shadow-2xl hover:shadow-cyan-500/70 transition-all duration-300">
               <img 
                 src="/logo.png" 
                 alt="CareerAI Logo" 
-                className="h-10 w-auto object-contain"
+                className="h-14 w-auto object-contain drop-shadow-2xl"
+                style={{ maxHeight: '56px' }}
                 onError={(e) => {
                   e.target.style.display = 'none';
                 }}
               />
-            </a>
+            </div>
+            <h2 className="text-2xl font-black bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 text-transparent bg-clip-text tracking-tight">
+              CareerAI
+            </h2>
           </div>
 
           {/* User Profile Card */}
@@ -144,9 +163,9 @@ const Sidebar = ({ user, onSignOut }) => {
               </div>
               <div className="flex-1 min-w-0">
                 <div className="font-semibold text-white text-sm truncate">
-                  {user?.name || user?.email?.split('@')[0] || 'User'}
+                  {user?.name || (user?.email ? user.email.split('@')[0] : 'User')}
                 </div>
-                <div className="text-gray-400 text-xs truncate">{user?.email}</div>
+                <div className="text-gray-400 text-xs truncate">{user?.email || 'No email'}</div>
               </div>
             </div>
             <motion.button
@@ -221,6 +240,7 @@ const Sidebar = ({ user, onSignOut }) => {
                 <Link
                   key={item.label}
                   to={item.path}
+                  onClick={(e) => handleBottomNavClick(e, item)}
                 >
                   <motion.div
                     initial={{ opacity: 0, x: -20 }}

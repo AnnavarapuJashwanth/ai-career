@@ -74,9 +74,15 @@ export default function CoursesPage() {
     }
   };
 
+  const handleSignOut = () => {
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('careerai_user');
+    navigate('/login');
+  };
+
   return (
     <div className="flex min-h-screen bg-gray-50">
-      <Sidebar />
+      <Sidebar user={user} onSignOut={handleSignOut} />
       
       <main className="flex-1 ml-64 p-8 bg-gradient-to-br from-gray-50 to-blue-50">
         {/* Header */}

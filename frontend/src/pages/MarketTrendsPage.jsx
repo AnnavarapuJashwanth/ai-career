@@ -17,18 +17,29 @@ export default function MarketTrendsPage() {
   // Fetch user's actual target role and market trends
   useEffect(() => {
     const fetchUserRoleAndTrends = async () => {
+      setIsLoading(true);
       try {
         const response = await api.get('/roadmaps/latest');
         if (response.data && response.data.target_role) {
           setUserRole(response.data.target_role);
-          await fetchTrends(response.data.target_role, '');
+          // Fetch trends immediately without waiting
+          fetchTrends(response.data.target_role, '').catch(err => {
+            console.log('Market trends error:', err);
+          });
         } else {
-          await fetchTrends('Data Scientist', '');
+          // Fallback to default
+          fetchTrends('Data Scientist', '').catch(err => {
+            console.log('Market trends error:', err);
+          });
         }
       } catch (error) {
         console.log('Using default role: Data Scientist');
-        await fetchTrends('Data Scientist', '').catch(() => {});
+        // Still try to fetch trends
+        fetchTrends('Data Scientist', '').catch(err => {
+          console.log('Market trends error:', err);
+        });
       } finally {
+        // Don't wait for trends to finish
         setIsLoading(false);
       }
     };
@@ -107,25 +118,25 @@ export default function MarketTrendsPage() {
           {[
             { 
               label: 'Job Openings', 
-              value: trendsData?.job_openings ? trendsData.job_openings.toLocaleString() : '15,234', 
+              value: trendsData?.job_openings ? trendsData.job_openings.toLocaleString() : (isLoading ? 'Loading...' : '15,234'), 
               icon: '💼', 
               color: 'from-blue-500 to-cyan-500' 
             },
             { 
               label: 'Avg Salary', 
-              value: trendsData?.avg_salary ? `$${Math.round(trendsData.avg_salary / 1000)}K` : '$120K', 
+              value: trendsData?.avg_salary ? `$${Math.round(trendsData.avg_salary / 1000)}K` : (isLoading ? 'Loading...' : '$120K'), 
               icon: '💰', 
               color: 'from-green-500 to-emerald-500' 
             },
             { 
               label: 'Growth Rate', 
-              value: trendsData?.growth_rate ? `+${trendsData.growth_rate}%` : '+28%', 
+              value: trendsData?.growth_rate ? `+${trendsData.growth_rate}%` : (isLoading ? 'Loading...' : '+28%'), 
               icon: '📊', 
               color: 'from-purple-500 to-pink-500' 
             },
             { 
               label: 'Remote Jobs', 
-              value: trendsData?.remote_percentage ? `${trendsData.remote_percentage}%` : '68%', 
+              value: trendsData?.remote_percentage ? `${trendsData.remote_percentage}%` : (isLoading ? 'Loading...' : '68%'), 
               icon: '🏠', 
               color: 'from-orange-500 to-red-500' 
             }

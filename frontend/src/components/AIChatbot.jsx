@@ -93,9 +93,19 @@ export default function AIChatbot() {
       console.error('❌ Error response:', error.response?.data);
       console.error('❌ Error status:', error.response?.status);
       
+      let errorText = 'I apologize, but I\'m having trouble processing your request right now. Please try again.';
+      
+      if (error.response?.status === 429) {
+        errorText = 'I\'m receiving too many requests right now. Please wait a moment and try again.';
+      } else if (error.response?.status === 500) {
+        errorText = 'I encountered an internal error. Please try rephrasing your question.';
+      } else if (error.response?.data?.detail) {
+        errorText = `Error: ${error.response.data.detail}`;
+      }
+      
       const errorMessage = {
         type: 'bot',
-        text: `Sorry, I encountered an error: ${error.response?.data?.detail || error.message || 'Please try again.'}`,
+        text: errorText,
         timestamp: new Date()
       };
       setMessages(prev => [...prev, errorMessage]);

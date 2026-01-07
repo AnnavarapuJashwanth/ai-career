@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 from pydantic import BaseModel, Field
 
 class AnalyzeResumeRequest(BaseModel):
@@ -72,3 +72,17 @@ class ExplainRoadmapRequest(BaseModel):
 class ExplainRoadmapResponse(BaseModel):
     narrative: str
     project_ideas: List[str]
+
+
+class RoleDiscoveryAnswersRequest(BaseModel):
+    answers: Dict[int, Any] = Field(..., description="Map of question_id to answer(s)")
+
+
+class RoleDiscoveryResponse(BaseModel):
+    success: bool
+    recommended_role: str
+    confidence: int = Field(..., ge=0, le=100, description="Confidence percentage")
+    skill_level: str = Field(..., description="Estimated skill level: beginner/intermediate/advanced")
+    explanation: str
+    key_strengths: List[str]
+    next_steps: List[str]

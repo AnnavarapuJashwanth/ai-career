@@ -6,11 +6,37 @@ from typing import Dict, Any
 class ChatbotService:
     def __init__(self, api_key: str):
         """Initialize the Gemini chatbot service."""
-        # Use the working API key - updated Jan 2026
-        working_key = "AIzaSyBxgHkZjWjWvnaaQa5L1i-W_8PnjOqcnF8"
-        genai.configure(api_key=working_key)
-        # Use gemini-1.5-flash for higher free tier quota (1500 RPD vs 20 RPD)
-        self.model = genai.GenerativeModel('gemini-1.5-flash')
+        if not api_key:
+            raise ValueError("Gemini API key is required. Set GEMINI_API_KEY in backend/.env.")
+
+        self.courses_data: Dict[str, Any] = {}
+        self.skills_data: Dict[str, Any] = {}
+        self.roles_data: Dict[str, Any] = {}
+
+        sanitized_key = api_key.strip()
+        genai.configure(api_key=sanitized_key)
+        
+        # Try multiple Gemini models for compatibility
+        preferred_models = [
+            "gemini-1.5-flash",
+            "gemini-1.5-flash-latest",
+            "gemini-pro",
+        ]
+        
+        self.model = None
+        last_error = None
+        for model_name in preferred_models:
+            try:
+                self.model = genai.GenerativeModel(model_name)
+                print(f"✅ ChatbotService using Gemini model: {model_name}")
+                break
+            except Exception as model_error:
+                last_error = model_error
+                print(f"⚠️ Unable to load {model_name}: {model_error}")
+        
+        if not self.model:
+            raise last_error or RuntimeError("No Gemini model available for chatbot")
+        
         self.context = self._load_application_context()
     
     def _load_application_context(self) -> str:
@@ -28,8 +54,23 @@ class ChatbotService:
             
             # Load roles and skills mapping
             with open(base_path / "roles_skills.json", "r") as f:
-                roles_data = json.load(f)
+                raw_roles_data = json.load(f)
             
+            # Normalize roles_data to dict format
+            if isinstance(raw_roles_data, list):
+                roles_data = {}
+                for item in raw_roles_data:
+                    role_name = item.get("role")
+                    if role_name:
+                        roles_data[role_name] = item.get("required_skills", [])
+            else:
+                roles_data = raw_roles_data
+            
+            # Expose structured data for fallbacks
+            self.courses_data = courses_data
+            self.skills_data = skills_data
+            self.roles_data = roles_data
+
             # Create context string
             context = f"""
 You are CareerAI Assistant, an AI chatbot specifically designed to help users with their career development using the CareerAI platform.
@@ -89,43 +130,110 @@ When users ask about courses or roadmaps, provide specific recommendations from 
             
             prompt += f"User Question: {user_message}\n\nAssistant Response:"
             
-            # Generate response
+            # Generate response with speed optimization
             print(f"🤖 CHATBOT DEBUG: Sending request to Gemini AI...")
             print(f"🤖 User message: {user_message}")
             print(f"🤖 User role: {user_role}")
             
-            response = self.model.generate_content(prompt)
+            generation_config = {
+                "temperature": 0.7,
+                "top_p": 0.9,
+                "top_k": 40,
+                "max_output_tokens": 800,
+            }
+            
+            response = self.model.generate_content(prompt, generation_config=generation_config)
             
             print(f"🤖 Gemini response received successfully!")
             print(f"🤖 Response type: {type(response)}")
             print(f"🤖 Has text attribute: {hasattr(response, 'text')}")
             
-            # Check if response has text
-            if hasattr(response, 'text') and response.text:
-                print(f"🤖 Response text length: {len(response.text)} characters")
+            extracted_text = self._extract_text(response)
+
+            if extracted_text:
+                print(f"🤖 Response text length: {len(extracted_text)} characters")
                 return {
                     "success": True,
-                    "response": response.text,
+                    "response": extracted_text,
                     "user_role": user_role
                 }
-            else:
-                print(f"❌ No text in response. Response object: {response}")
-                print(f"❌ Response dir: {dir(response)}")
-                return {
-                    "success": False,
-                    "response": "I received your question but couldn't generate a response. Please try rephrasing your question.",
-                    "error": "No text in response"
-                }
+
+            print(f"❌ No text in response. Response object: {response}")
+            print(f"❌ Response dir: {dir(response)}")
+            fallback = self._build_fallback_response(user_message, user_role)
+            return fallback
             
         except Exception as e:
             print(f"❌ ERROR in chatbot get_response: {type(e).__name__}: {str(e)}")
             import traceback
             traceback.print_exc()
+            fallback = self._build_fallback_response(user_message, user_role)
+            return fallback
+
+    def _extract_text(self, response: Any) -> str | None:
+        """Safely extract response text from Gemini SDK responses."""
+        if hasattr(response, 'text') and response.text:
+            return response.text.strip()
+
+        candidates = getattr(response, 'candidates', None) or []
+        for candidate in candidates:
+            content = getattr(candidate, 'content', None)
+            parts = []
+            if content is not None:
+                if hasattr(content, 'parts'):
+                    parts = content.parts
+                elif isinstance(content, dict):
+                    parts = content.get('parts', [])
+            if not parts:
+                parts = getattr(candidate, 'parts', []) or []
+
+            for part in parts:
+                text_value = None
+                if hasattr(part, 'text'):
+                    text_value = part.text
+                elif isinstance(part, dict):
+                    text_value = part.get('text') or part.get('formattedText')
+                if text_value:
+                    return text_value.strip()
+        return None
+
+    def _build_fallback_response(self, user_message: str, user_role: str | None) -> Dict[str, Any]:
+        """Generate a deterministic fallback response using local data when Gemini fails."""
+        if not self.courses_data:
             return {
                 "success": False,
-                "response": "I apologize, but I'm having trouble processing your request right now. Please try again.",
-                "error": str(e)
+                "response": "I'm here to help with CareerAI questions, but I'm unable to fetch fresh insights right now. Please try again soon.",
             }
+
+        role_key = user_role if user_role in self.courses_data else None
+        if not role_key:
+            found_role = next((role for role in self.courses_data.keys() if role.lower() in user_message.lower()), None)
+            role_key = found_role or next(iter(self.courses_data.keys()))
+
+        recommendations = self.courses_data.get(role_key, [])[:3]
+        skills = self.roles_data.get(role_key, [])[:5]
+
+        response_lines = [
+            f"Let's focus on the {role_key} path. Based on CareerAI's knowledge base, here is how you can move forward:",
+        ]
+
+        if skills:
+            response_lines.append("Key skills to strengthen: " + ", ".join(skills) + ".")
+
+        if recommendations:
+            response_lines.append("Recommended courses:")
+            for course in recommendations:
+                title = course.get('title') or course.get('name')
+                provider = course.get('provider', 'Trusted Provider')
+                response_lines.append(f"• {title} — {provider}")
+
+        response_lines.append("Let me know if you'd like more resources or a different specialization.")
+
+        return {
+            "success": True,
+            "response": "\n".join(response_lines),
+            "user_role": role_key,
+        }
     
     def get_course_recommendations(self, role: str) -> Dict[str, Any]:
         """Get course recommendations for a specific role."""
