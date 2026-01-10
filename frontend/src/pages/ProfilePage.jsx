@@ -92,7 +92,8 @@ export default function ProfilePage() {
 
   const handleSignOut = () => {
     localStorage.removeItem('authToken');
-    window.location.href = '/';
+    localStorage.removeItem('careerai_user');
+    navigate('/');
   };
 
   if (loading) {

@@ -74,9 +74,13 @@ export default function AIChatbot() {
       console.log('🤖 Sending message to chatbot:', inputMessage);
       console.log('🤖 User role:', userRole);
       
+      // Make API call without requiring authentication (skip 401 redirect)
       const response = await api.post('/chatbot', {
         message: inputMessage,
         user_role: userRole
+      }, {
+        // Skip authentication requirement for chatbot
+        skipAuthRedirect: true
       });
 
       console.log('🤖 Chatbot response received:', response.data);

@@ -328,8 +328,9 @@ export default function Dashboard() {
   };
 
   function handleSignOut() {
-    localStorage.removeItem('careerai_logged_in');
-    navigate('/login');
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('careerai_user');
+    navigate('/');
   }
 
   // Extract courses from roadmap phases

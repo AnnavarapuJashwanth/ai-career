@@ -14,6 +14,7 @@ import MarketTrendsPage from './pages/MarketTrendsPage';
 import CoursesPage from './pages/CoursesPage';
 import ProfilePage from './pages/ProfilePage';
 import RoleDiscoveryQuiz from './pages/RoleDiscoveryQuiz';
+import ProgressTrackerNew from './pages/ProgressTrackerNew';
 import ProtectedRoute from './components/common/ProtectedRoute';
 import './index.css';
 
@@ -172,6 +173,14 @@ const router = createBrowserRouter(
             </main>
             <Footer />
           </div>
+        </ProtectedRoute>
+      ),
+    },
+    {
+      path: '/progress',
+      element: (
+        <ProtectedRoute>
+          <ProgressTrackerNew />
         </ProtectedRoute>
       ),
     },

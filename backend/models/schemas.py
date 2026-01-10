@@ -86,3 +86,23 @@ class RoleDiscoveryResponse(BaseModel):
     explanation: str
     key_strengths: List[str]
     next_steps: List[str]
+
+
+class CourseProgressRequest(BaseModel):
+    phase: str = Field(..., description="Phase name: foundation, intermediate, or advanced")
+    course_title: str = Field(..., description="Course title to mark as complete")
+    phase_total: Optional[int] = Field(None, description="Total number of skills in this phase (optional)")
+
+
+class PhaseProgressDetail(BaseModel):
+    completed: List[str] = []
+    total: int = 0
+    progress: float = 0.0
+
+
+class CourseProgressResponse(BaseModel):
+    success: bool
+    message: str
+    completed_courses: List[str]
+    phase_progress: Dict[str, PhaseProgressDetail]
+    total_progress: float

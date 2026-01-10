@@ -77,7 +77,7 @@ export default function CoursesPage() {
   const handleSignOut = () => {
     localStorage.removeItem('authToken');
     localStorage.removeItem('careerai_user');
-    navigate('/login');
+    navigate('/');
   };
 
   return (

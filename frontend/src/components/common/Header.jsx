@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import { Menu, Close, AutoAwesome, Translate, Check } from '@mui/icons-material';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Menu, Close, AutoAwesome, Translate, Check, Logout } from '@mui/icons-material';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // Language options - Including all major Indian state languages
@@ -34,6 +34,7 @@ export default function Header() {
     return localStorage.getItem('careerai_language') || 'en';
   });
   const location = useLocation();
+  const navigate = useNavigate();
   const isLanding = location.pathname === '/';
 
   const handleLanguageChange = (langCode) => {
@@ -42,6 +43,13 @@ export default function Header() {
     setLanguageMenuOpen(false);
     // Dispatch custom event for language change
     window.dispatchEvent(new CustomEvent('languageChanged', { detail: { language: langCode } }));
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('careerai_user');
+    navigate('/');
+    window.location.reload(); // Refresh to clear all state
   };
 
   const currentLangObj = LANGUAGES.find(l => l.code === currentLanguage) || LANGUAGES[0];
@@ -182,9 +190,19 @@ export default function Header() {
             </div>
 
             {isLoggedIn && user?.name && (
-              <span className="text-sm text-gray-700 font-medium">
-                Hi, <span className="font-semibold text-blue-600">{user.name}</span>
-              </span>
+              <div className="flex items-center gap-3">
+                <span className="text-sm text-gray-700 font-medium">
+                  Hi, <span className="font-semibold text-blue-600">{user.name}</span>
+                </span>
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 font-semibold transition text-sm border border-red-200"
+                  title="Logout"
+                >
+                  <Logout fontSize="small" />
+                  Logout
+                </button>
+              </div>
             )}
             {!isLoggedIn && (
               <a href="/login" className="btn-gradient px-5 py-2 rounded-lg font-semibold shadow hover:shadow-lg transition text-sm">
@@ -230,8 +248,19 @@ export default function Header() {
               </div>
               
               {isLoggedIn && user?.name && (
-                <div className="py-2 text-sm text-gray-700">
-                  Hi, <span className="font-semibold text-blue-600">{user.name}</span>
+                <div className="py-2 border-t border-gray-200 mt-2 pt-3">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-sm text-gray-700">
+                      Hi, <span className="font-semibold text-blue-600">{user.name}</span>
+                    </span>
+                  </div>
+                  <button
+                    onClick={handleLogout}
+                    className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 font-semibold transition border border-red-200"
+                  >
+                    <Logout fontSize="small" />
+                    Logout
+                  </button>
                 </div>
               )}
               {!isLoggedIn && (

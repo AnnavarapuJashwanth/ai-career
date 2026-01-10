@@ -85,8 +85,9 @@ export default function SkillGapPage() {
   }, []);
   
   const handleSignOut = () => {
-    localStorage.removeItem('careerai_logged_in');
-    navigate('/login');
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('careerai_user');
+    navigate('/');
   };
 
   return (

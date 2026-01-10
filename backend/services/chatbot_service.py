@@ -71,38 +71,46 @@ class ChatbotService:
             self.skills_data = skills_data
             self.roles_data = roles_data
 
-            # Create context string
+            # Create optimized context string - don't overwhelm with ALL data
+            all_roles_list = list(courses_data.keys())
+            all_skills_list = list(skills_data) if isinstance(skills_data, list) else list(skills_data.keys())
+            
+            # Sample representative roles from each category
+            tech_roles = [r for r in roles_data.keys() if "developer" in r.lower() or "engineer" in r.lower() or "data" in r.lower() or "ml" in r.lower() or "cloud" in r.lower()][:10]
+            healthcare_roles = [r for r in roles_data.keys() if any(x in r.lower() for x in ["doctor", "nurse", "pharmacist", "psychologist", "medical"])][:5]
+            education_roles = [r for r in roles_data.keys() if any(x in r.lower() for x in ["teacher", "professor", "administrator", "curriculum"])][:5]
+            agriculture_roles = [r for r in roles_data.keys() if any(x in r.lower() for x in ["agriculture", "agricultural", "farm", "soil", "crop"])][:5]
+            business_roles = [r for r in roles_data.keys() if any(x in r.lower() for x in ["manager", "analyst", "sales", "marketing", "product"])][:5]
+            
             context = f"""
-You are CareerAI Assistant, an AI chatbot specifically designed to help users with their career development using the CareerAI platform.
+You are CareerAI Assistant, an expert AI career counselor with access to comprehensive career database.
 
-IMPORTANT INSTRUCTIONS:
-- You MUST ONLY answer questions related to the CareerAI application, career guidance, courses, roadmaps, skills, and job roles available in this platform.
-- If asked about anything unrelated to CareerAI, career development, or the data provided, politely decline and redirect to career-related topics.
-- Always be helpful, professional, and encouraging.
+DATABASE OVERVIEW:
+- {len(all_roles_list)} Career Roles across Technology, Healthcare, Education, Agriculture, Business
+- {len(all_skills_list)} Technical & Professional Skills
+- Courses and Learning Paths for all roles
 
-AVAILABLE DATA IN CAREERAI PLATFORM:
+CRITICAL INSTRUCTIONS:
+✅ Answer about ANY role user asks about (not limited to their current role)
+✅ If user asks "What courses for Data Scientist?" → provide Data Scientist info
+✅ If user asks "Skills for Backend Developer?" → provide Backend Developer skills
+✅ You can access data for ALL {len(all_roles_list)} roles
+✅ Provide specific, actionable advice from your knowledge
+✅ Be helpful, professional, and encouraging
 
-1. AVAILABLE CAREER ROLES:
-{json.dumps(list(courses_data.keys()), indent=2)}
+AVAILABLE ROLES (Sample):
+Technology: {', '.join(tech_roles)}
+Healthcare: {', '.join(healthcare_roles)}  
+Education: {', '.join(education_roles)}
+Agriculture: {', '.join(agriculture_roles)}
+Business: {', '.join(business_roles)}
+...and {len(all_roles_list) - len(tech_roles) - len(healthcare_roles) - len(education_roles) - len(agriculture_roles) - len(business_roles)} more roles
 
-2. COURSES DATABASE (Sample):
-{json.dumps({k: v[:2] for k, v in list(courses_data.items())[:3]}, indent=2)}
-
-3. SKILLS DATABASE (Sample):
-{json.dumps(list(skills_data.keys())[:20], indent=2)}
-
-4. ROLES AND REQUIRED SKILLS (Sample):
-{json.dumps({k: v for k, v in list(roles_data.items())[:3]}, indent=2)}
-
-CAPABILITIES:
-- Provide information about available courses for specific roles
-- Explain what skills are needed for different career paths
-- Suggest learning roadmaps based on user goals
-- Answer questions about the CareerAI platform features
-- Help users understand career progression paths
-- Recommend courses based on skill gaps
-
-When users ask about courses or roadmaps, provide specific recommendations from the available data.
+When user asks about a specific role, provide:
+1. Required skills for that role
+2. Top 3-4 courses recommendations  
+3. Career path and next steps
+4. Salary insights and job market trends
 """
             return context
             
@@ -126,119 +134,128 @@ When users ask about courses or roadmaps, provide specific recommendations from 
             import time
             request_id = int(time.time() * 1000) % 10000  # Unique ID for each request
             
-            # Detect which role(s) the user is asking about
+            # Detect which role(s) the user is asking about from ALL roles
             mentioned_roles = []
             user_message_lower = user_message.lower()
             
+            # Search through ALL roles in database
             for role in self.roles_data.keys():
                 if role.lower() in user_message_lower:
                     mentioned_roles.append(role)
             
-            # If no role mentioned in question, use user's current role
-            if not mentioned_roles and user_role:
-                mentioned_roles = [user_role]
+            # Check for partial matches or keywords
+            if not mentioned_roles:
+                role_keywords = {
+                    "frontend": ["Frontend Developer"],
+                    "backend": ["Backend Developer"],
+                    "full stack": ["Full Stack Developer"],
+                    "data scien": ["Data Scientist"],
+                    "machine learning": ["ML Engineer"],
+                    "devops": ["DevOps Engineer"],
+                    "mobile": ["Mobile Developer"],
+                    "doctor": ["Medical Doctor"],
+                    "nurse": ["Nurse"],
+                    "teacher": ["Teacher"],
+                    "farmer": ["Agricultural Farm Manager"],
+                    "engineer": ["Civil Engineer", "Mechanical Engineer", "Electrical Engineer"]
+                }
+                
+                for keyword, roles_list in role_keywords.items():
+                    if keyword in user_message_lower:
+                        mentioned_roles.extend(roles_list)
+                        break
             
-            # Build comprehensive context with relevant role data
+            # Build comprehensive context with relevant role data from FULL database
             role_specific_data = ""
             if mentioned_roles:
-                role_specific_data = "\n\nRELEVANT ROLE DATA FOR THIS QUESTION:\n"
-                for role in mentioned_roles[:3]:  # Limit to 3 roles for context size
-                    skills = self.roles_data.get(role, [])[:8]
-                    courses = self.courses_data.get(role, [])[:4]
+                role_specific_data = "\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+                role_specific_data += "SPECIFIC DATA FOR ROLES IN THIS QUESTION:\n"
+                role_specific_data += "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+                for role in mentioned_roles[:5]:  # Include up to 5 roles
+                    skills = self.roles_data.get(role, [])
+                    courses = self.courses_data.get(role, [])[:6]
                     
-                    role_specific_data += f"\n--- {role.upper()} ---\n"
-                    role_specific_data += f"Required Skills: {', '.join(skills)}\n"
+                    role_specific_data += f"\n🎯 {role.upper()}\n"
+                    role_specific_data += f"   Required Skills ({len(skills)}): {', '.join(skills)}\n"
                     
+            # Build OPTIMIZED context with only relevant role data
+            role_specific_data = ""
+            if mentioned_roles:
+                role_specific_data = "\n\n📋 RELEVANT ROLE DATA:\n"
+                for role in mentioned_roles[:3]:  # Limit to 3 roles max
+                    skills = self.roles_data.get(role, [])[:10]  # Top 10 skills
+                    courses = self.courses_data.get(role, [])[:4]  # Top 4 courses
+                    
+                    role_specific_data += f"\n🎯 {role}:\n"
+                    if skills:
+                        role_specific_data += f"   Skills: {', '.join(skills)}\n"
                     if courses:
-                        role_specific_data += f"Top Courses:\n"
+                        role_specific_data += f"   Top Courses:\n"
                         for i, course in enumerate(courses, 1):
                             title = course.get('title') or course.get('name', 'Course')
                             provider = course.get('provider', 'Platform')
-                            role_specific_data += f"  {i}. {title} - {provider}\n"
+                            role_specific_data += f"      {i}. {title} ({provider})\n"
             
-            # Get sample of all available roles
-            all_roles_sample = list(self.roles_data.keys())[:15]
+            # Get sample of all roles
+            all_roles_sample = list(self.roles_data.keys())[:20]  # Sample only
             
-            system_context = f"""You are CareerAI Assistant, an expert career counselor with access to comprehensive career data.
+            system_context = f"""You are CareerAI Assistant - Expert career counselor.
 
-[Request ID: {request_id}] - NEW QUESTION requiring UNIQUE response
+[Request #{request_id}] - Provide unique, specific response
 
-YOUR CAPABILITIES:
-- Answer questions about ANY career role, not just the user's current role
-- Provide courses, skills, and roadmaps for any role user asks about
-- Help users transition between different career paths
-- Give specific, actionable career guidance
+DATABASE: {len(self.roles_data)} roles, {len(self.skills_data)} skills, courses for all roles
 
-CRITICAL INSTRUCTIONS:
-- Read the question CAREFULLY - identify which role(s) the user is asking about
-- If user asks about "Data Scientist" courses, provide Data Scientist courses (NOT Frontend Developer courses)
-- If user asks about skills for "Backend Developer", provide Backend Developer skills
-- ALWAYS answer about the SPECIFIC role mentioned in the question
-- If no specific role mentioned, provide general guidance or ask for clarification
-- DO NOT limit responses to only the user's current role
-- Provide DIFFERENT courses and skills each time for variety
-
-AVAILABLE CAREER ROLES (Sample):
-{', '.join(all_roles_sample[:15])}
-...and 32 more roles in Healthcare, Education, Agriculture, Business domains.
+SAMPLE ROLES: {', '.join(all_roles_sample)}... (and more)
 
 {role_specific_data}
 
-USER'S CURRENT ROLE: {user_role or 'Not specified'}"""
+INSTRUCTIONS:
+✅ Answer about the SPECIFIC role in user's question
+✅ Provide courses, skills, career advice for that role
+✅ Use the data shown above
+✅ Keep responses helpful and concise
+
+User's Current Role: {user_role or 'Not set'}"""
             
-            # Build the complete prompt with emphasis on the specific question
+            # Build the prompt
             prompt = f"""{system_context}
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-QUESTION #{request_id}: "{user_message}"
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+QUESTION: "{user_message}"
 
-Analyze this question carefully:
-1. Which career role is the user asking about?
-2. Are they asking about courses, skills, career path, or transition?
-3. Provide a specific answer using the relevant role data above
-
-Answer the question directly and specifically. If the question asks about a different role than the user's current role, that's completely fine - provide information about the role they're asking about."""
+Provide a helpful answer about the role mentioned in the question. Be specific and use the course/skill data shown above."""
             
-            # Generate response with optimized config for variety
-            print(f"🤖 CHATBOT DEBUG: Sending request to Gemini AI...")
-            print(f"🤖 User message: {user_message}")
-            print(f"🤖 User role: {user_role}")
+            # Generate response with faster config
+            print(f"🤖 Chatbot: Processing '{user_message[:50]}...'")
+            print(f"🤖 User role: {user_role}, Mentioned roles: {mentioned_roles}")
             
             generation_config = {
-                "temperature": 0.9,  # High for maximum variety
-                "top_p": 0.95,
-                "top_k": 50,
-                "max_output_tokens": 800,
-                "candidate_count": 1,
+                "temperature": 0.7,
+                "top_p": 0.9,
+                "top_k": 40,
+                "max_output_tokens": 600,  # Faster responses
             }
             
             response = self.model.generate_content(prompt, generation_config=generation_config)
             
-            print(f"🤖 Gemini response received successfully!")
-            print(f"🤖 Response type: {type(response)}")
-            print(f"🤖 Has text attribute: {hasattr(response, 'text')}")
+            print(f"✅ Gemini response received!")
             
             extracted_text = self._extract_text(response)
 
             if extracted_text:
-                print(f"🤖 Response text length: {len(extracted_text)} characters")
+                print(f"✅ Response: {len(extracted_text)} chars")
                 return {
                     "success": True,
                     "response": extracted_text,
                     "user_role": user_role
                 }
 
-            print(f"❌ No text in response. Response object: {response}")
-            print(f"❌ Response dir: {dir(response)}")
-            fallback = self._build_fallback_response(user_message, user_role)
+            print(f"⚠️ No text in response, using fallback")
+            fallback = self._build_fallback_response(user_message, user_role, mentioned_roles)
             return fallback
             
         except Exception as e:
-            print(f"❌ ERROR in chatbot get_response: {type(e).__name__}: {str(e)}")
-            import traceback
-            traceback.print_exc()
-            fallback = self._build_fallback_response(user_message, user_role)
+            print(f"❌ Chatbot error: {type(e).__name__}: {str(e)}")
+            fallback = self._build_fallback_response(user_message, user_role, mentioned_roles)
             return fallback
 
     def _extract_text(self, response: Any) -> str | None:
@@ -268,19 +285,20 @@ Answer the question directly and specifically. If the question asks about a diff
                     return text_value.strip()
         return None
 
-    def _build_fallback_response(self, user_message: str, user_role: str | None) -> Dict[str, Any]:
-        """Generate a dynamic fallback response based on the specific question."""
+    def _build_fallback_response(self, user_message: str, user_role: str | None, mentioned_roles: list = None) -> Dict[str, Any]:
+        """Generate a fast, accurate fallback response using database."""
         user_message_lower = user_message.lower()
         
-        # Detect which role the user is asking about (not just their current role)
-        mentioned_role = None
-        for role in self.courses_data.keys():
-            if role.lower() in user_message_lower:
-                mentioned_role = role
-                break
+        # Use mentioned roles from detection, or detect here
+        if not mentioned_roles:
+            mentioned_roles = []
+            for role in self.courses_data.keys():
+                if role.lower() in user_message_lower:
+                    mentioned_roles.append(role)
+                    break
         
-        # If no role mentioned, use user's current role
-        target_role = mentioned_role or user_role or "Software Developer"
+        # Target role: first mentioned role, or user's role, or default
+        target_role = mentioned_roles[0] if mentioned_roles else (user_role or "Full Stack Developer")
         
         # Detect question type and provide relevant response
         if any(word in user_message_lower for word in ['course', 'learn', 'training', 'tutorial', 'study']):

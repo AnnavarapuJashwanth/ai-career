@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import TechLogo from '../common/TechLogo';
+import { CheckCircle, RadioButtonUnchecked } from '@mui/icons-material';
+import { toast } from 'react-toastify';
+import api from '../../utils/api';
 
 
 
@@ -108,6 +111,74 @@ const SKILL_BADGE_META = {
 };
 
 export default function RoadmapScene({ phases = [] }) {
+  const [completedSkills, setCompletedSkills] = useState([]);
+  const [loading, setLoading] = useState({});
+
+  useEffect(() => {
+    fetchCompletedSkills();
+  }, []);
+
+  const fetchCompletedSkills = async () => {
+    try {
+      const response = await api.get('/progress/status');
+      // Backend stores as "phase_skillname", extract just the skill names
+      const completed = (response.data.completed_courses || []).map(course => {
+        // Split "foundation_TypeScript" -> "TypeScript"
+        const parts = course.split('_');
+        return parts.slice(1).join('_'); // Handle skills with underscores
+      });
+      setCompletedSkills(completed);
+    } catch (error) {
+      console.error('Error fetching completed skills:', error);
+    }
+  };
+
+  const handleToggleSkill = async (skill, phaseName, phaseSkills = []) => {
+    setLoading(prev => ({ ...prev, [skill]: true }));
+    
+    try {
+      const isCompleted = completedSkills.includes(skill);
+      
+      // Convert phase name to lowercase (Foundation -> foundation)
+      const phaseType = phaseName.toLowerCase();
+      
+      // Calculate total skills in this phase
+      const phase_total = phaseSkills.length || 1;
+      
+      if (isCompleted) {
+        await api.post('/progress/uncomplete', {
+          course_title: skill,
+          phase: phaseType,
+          phase_total
+        });
+        setCompletedSkills(prev => prev.filter(s => s !== skill));
+        toast.info(`✓ ${skill} unmarked from ${phaseName}`, {
+          autoClose: 2000
+        });
+      } else {
+        await api.post('/progress/mark-complete', {
+          course_title: skill,
+          phase: phaseType,
+          phase_total
+        });
+        setCompletedSkills(prev => [...prev, skill]);
+        toast.success(`🎉 ${skill} completed in ${phaseName}!`, {
+          autoClose: 2000
+        });
+      }
+      
+      // Refresh completed skills list
+      fetchCompletedSkills();
+      
+      // Notify Progress Tracker to update
+      window.dispatchEvent(new Event('progressUpdated'));
+    } catch (error) {
+      toast.error('Failed to update');
+      console.error('Error toggling skill:', error);
+    } finally {
+      setLoading(prev => ({ ...prev, [skill]: false }));
+    }
+  };
   // Debug: Log phases to see if skills are included
   console.log('RoadmapScene received phases:', JSON.stringify(phases, null, 2));
   
@@ -244,6 +315,9 @@ export default function RoadmapScene({ phases = [] }) {
               {phase.skills && phase.skills.length > 0 ? (
                 <div className="mt-6 flex flex-wrap justify-center gap-2 w-[220px]">
                   {phase.skills.map((skill, skillIdx) => {
+                    const isCompleted = completedSkills.includes(skill);
+                    const isLoading = loading[skill];
+
                     // Function to search YouTube for full course
                     const openYouTubeCourse = () => {
                       const searchQuery = encodeURIComponent(`${skill} full course tutorial`);
@@ -252,20 +326,46 @@ export default function RoadmapScene({ phases = [] }) {
                     };
 
                     return (
-                      <motion.button
-                        key={skillIdx}
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.3, delay: idx * 0.1 + skillIdx * 0.05 }}
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={openYouTubeCourse}
-                        className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white text-xs font-bold text-gray-900 shadow-lg border-2 border-gray-300 hover:border-blue-400 hover:shadow-xl transition-all backdrop-blur-sm cursor-pointer"
-                        title={`Click to find ${skill} full courses on YouTube`}
-                      >
-                        <TechLogo name={skill} size={18} />
-                        <span className="whitespace-nowrap">{skill}</span>
-                      </motion.button>
+                      <div key={skillIdx} className="relative group/skill">
+                        <motion.button
+                          initial={{ opacity: 0, scale: 0.8 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ duration: 0.3, delay: idx * 0.1 + skillIdx * 0.05 }}
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={openYouTubeCourse}
+                          className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-bold shadow-lg border-2 transition-all backdrop-blur-sm cursor-pointer ${
+                            isCompleted 
+                              ? 'bg-green-500 text-white border-green-600 hover:border-green-400' 
+                              : 'bg-white text-gray-900 border-gray-300 hover:border-blue-400'
+                          } hover:shadow-xl`}
+                          title={`Click to find ${skill} full courses on YouTube`}
+                        >
+                          <TechLogo name={skill} size={18} />
+                          <span className="whitespace-nowrap">{skill}</span>
+                        </motion.button>
+                        
+                        {/* Mark as Complete Checkbox */}
+                        <motion.button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleToggleSkill(skill, phase.name, phase.skills || []);
+                          }}
+                          disabled={isLoading}
+                          whileHover={{ scale: 1.2 }}
+                          whileTap={{ scale: 0.9 }}
+                          className={`absolute -top-2 -right-2 z-20 rounded-full bg-white shadow-lg border-2 ${
+                            isCompleted ? 'border-green-500' : 'border-gray-300'
+                          } ${isLoading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} hover:shadow-xl transition-all`}
+                          title={isCompleted ? 'Mark as incomplete' : 'Mark as complete'}
+                        >
+                          {isCompleted ? (
+                            <CheckCircle style={{ fontSize: 20 }} className="text-green-500" />
+                          ) : (
+                            <RadioButtonUnchecked style={{ fontSize: 20 }} className="text-gray-400" />
+                          )}
+                        </motion.button>
+                      </div>
                     );
                   })}
                 </div>

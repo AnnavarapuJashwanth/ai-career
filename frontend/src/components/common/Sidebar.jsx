@@ -14,7 +14,8 @@ import {
   Assessment,
   Menu,
   Close,
-  SmartToy
+  SmartToy,
+  TrackChanges
 } from '@mui/icons-material';
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslate } from '../../utils/translate';
@@ -29,6 +30,7 @@ const Sidebar = ({ user, onSignOut }) => {
   const navItems = [
     { label: t('Overview'), icon: Dashboard, path: '/dashboard', gradient: 'from-cyan-500 to-blue-600' },
     { label: t('AI Assistant'), icon: SmartToy, path: '#chatbot', gradient: 'from-blue-500 to-purple-600', special: true },
+    { label: t('Progress Tracker'), icon: TrackChanges, path: '/progress', gradient: 'from-yellow-500 to-orange-600', featured: true },
     { label: t('Generate Roadmap'), icon: Timeline, path: '/generate', gradient: 'from-purple-500 to-pink-600' },
     { label: t('My Courses'), icon: School, path: '/courses', gradient: 'from-orange-500 to-red-600' },
     { label: t('Market Insights'), icon: TrendingUp, path: '/market-trends', gradient: 'from-green-500 to-emerald-600' },
