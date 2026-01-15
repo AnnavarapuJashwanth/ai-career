@@ -50,9 +50,12 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    // Only redirect to login if it's a 401 and not explicitly skipped
-    if (error.response?.status === 401 && !error.config?.skipAuthRedirect) {
+    // Only redirect to login if it's a 401, not explicitly skipped, AND we're not on a public page
+    const isPublicPage = ['/', '/login', '/signup', '/about', '/features', '/demo'].includes(window.location.pathname);
+    
+    if (error.response?.status === 401 && !error.config?.skipAuthRedirect && !isPublicPage) {
       localStorage.removeItem('authToken');
+      localStorage.removeItem('careerai_user');
       window.location.href = '/login';
     }
     return Promise.reject(error);
