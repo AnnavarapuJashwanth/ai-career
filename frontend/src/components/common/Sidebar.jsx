@@ -23,7 +23,8 @@ import { useTranslate } from '../../utils/translate';
 const Sidebar = ({ user, onSignOut }) => {
   const [activeItem, setActiveItem] = useState('Overview');
   const [isOpen, setIsOpen] = useState(false);
-  const [isDesktop, setIsDesktop] = useState(false);
+  // Initialize isDesktop properly - check immediately
+  const [isDesktop, setIsDesktop] = useState(typeof window !== 'undefined' ? window.innerWidth >= 1024 : false);
   const location = useLocation();
   const { t } = useTranslate();
 
@@ -146,7 +147,8 @@ const Sidebar = ({ user, onSignOut }) => {
         style={{
           position: isDesktop ? 'relative' : 'fixed',
           top: 0,
-          left: 0
+          left: 0,
+          transform: isDesktop ? 'none' : (isOpen ? 'translateX(0)' : 'translateX(-288px)')
         }}
       >
       {/* Animated Background */}
