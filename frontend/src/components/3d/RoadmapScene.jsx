@@ -4,6 +4,7 @@ import TechLogo from '../common/TechLogo';
 import { CheckCircle, RadioButtonUnchecked } from '@mui/icons-material';
 import { toast } from 'react-toastify';
 import api from '../../utils/api';
+import { useAnimationSettings } from '../../utils/mobileDetect';
 
 
 
@@ -12,16 +13,17 @@ import api from '../../utils/api';
 
 
 
-function RoadPath({ width = 2600, height = 900 }) {
-  // MOVED ROAD UP: lower baseY value makes the road sit higher (closer to title)
-  const baseY = height - 340; // previously height - 240 (moved up by 100)
-  const amp = 220; // slightly larger amplitude for wider canvas
+function RoadPath({ width = 2600, height = 900, isMobile = false }) {
+  // Adjust for mobile: smaller amplitude and different positioning
+  const baseY = isMobile ? height - 200 : height - 340;
+  const amp = isMobile ? 120 : 220;
   const points = [];
-  const segments = 120;
+  const segments = isMobile ? 60 : 120;
+  const marginX = isMobile ? 60 : 180;
+  
   for (let i = 0; i <= segments; i += 1) {
     const t = i / segments;
-    // INCREASED LEFT/RIGHT MARGINS proportionally for the wider canvas
-    const x = 180 + t * (width - 360);
+    const x = marginX + t * (width - marginX * 2);
     const y = baseY - amp * Math.sin(Math.PI * t);
     points.push(`${x},${y}`);
   }
@@ -30,11 +32,11 @@ function RoadPath({ width = 2600, height = 900 }) {
   return (
     <svg width={width} height={height} className="absolute left-0 top-0 w-full h-full z-0 pointer-events-none" viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="xMidYMid meet">
       {/* Dark base road with stronger outline */}
-      <path d={d} stroke="#1e293b" strokeWidth={18} fill="none" strokeLinecap="round" strokeLinejoin="round" opacity="0.9" />
+      <path d={d} stroke="#1e293b" strokeWidth={isMobile ? 12 : 18} fill="none" strokeLinecap="round" strokeLinejoin="round" opacity="0.9" />
       {/* White dashed center line with animation */}
-      <path d={d} stroke="#ffffff" strokeWidth={6} fill="none" strokeDasharray="20 15" className="dash-animate" strokeLinecap="round" strokeLinejoin="round" />
+      <path d={d} stroke="#ffffff" strokeWidth={isMobile ? 4 : 6} fill="none" strokeDasharray={isMobile ? "12 10" : "20 15"} className="dash-animate" strokeLinecap="round" strokeLinejoin="round" />
       {/* Glowing line for premium effect */}
-      <path d={d} stroke="url(#roadGradient)" strokeWidth={3} fill="none" strokeLinecap="round" strokeLinejoin="round" opacity="0.6" />
+      <path d={d} stroke="url(#roadGradient)" strokeWidth={isMobile ? 2 : 3} fill="none" strokeLinecap="round" strokeLinejoin="round" opacity="0.6" />
       
       <defs>
         <linearGradient id="roadGradient" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -182,13 +184,19 @@ export default function RoadmapScene({ phases = [] }) {
   // Debug: Log phases to see if skills are included
   console.log('RoadmapScene received phases:', JSON.stringify(phases, null, 2));
   
-  // Milestone positions along the curve (simple even spread for now)
-  const width = 2200;             // INCREASED width
-  const height = 800;            // keep taller canvas so badges fit
-  const baseY = height - 340;    // moved road up
-  const amp = 220;               // slightly larger amplitude
+  // Get animation settings for mobile optimization
+  const animSettings = useAnimationSettings();
+  const isMobile = animSettings.reduceMotion;
+  
+  // Responsive dimensions
+  const width = isMobile ? 800 : 2200;
+  const height = isMobile ? 500 : 800;
+  const baseY = isMobile ? height - 200 : height - 340;
+  const amp = isMobile ? 120 : 220;
+  const marginX = isMobile ? 60 : 180;
+  
   const getPoint = t => {
-    const x = 180 + t * (width - 360); // keep margins proportional with new width
+    const x = marginX + t * (width - marginX * 2);
     const y = baseY - amp * Math.sin(Math.PI * t);
     return { x, y };
   };
@@ -213,20 +221,22 @@ export default function RoadmapScene({ phases = [] }) {
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.8, ease: 'easeOut' }}
-      className="w-[1150px] mx-auto rounded-3xl overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.15)] 
+      className="w-full max-w-[1150px] mx-auto rounded-2xl sm:rounded-3xl overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.15)] 
                  bg-gradient-to-br from-white via-blue-50/50 to-purple-50/50 
-                 p-8 md:p-12 relative border-2 border-white/60 backdrop-blur-xl" 
-      style={{ minHeight: height }}
+                 p-4 sm:p-6 md:p-8 lg:p-12 relative border-2 border-white/60 backdrop-blur-xl" 
+      style={{ minHeight: isMobile ? '400px' : `${height}px` }}
     >
 
 
-      {/* Animated gradient mesh background */}
-      <div className="absolute inset-0 opacity-60 pointer-events-none">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-100/40 via-purple-100/40 to-pink-100/40 animate-pulse" style={{ animationDuration: '8s' }}></div>
-      </div>
+      {/* Animated gradient mesh background - Disabled on mobile */}
+      {!isMobile && (
+        <div className="absolute inset-0 opacity-60 pointer-events-none">
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-100/40 via-purple-100/40 to-pink-100/40 animate-pulse" style={{ animationDuration: '8s' }}></div>
+        </div>
+      )}
 
-      {/* Floating animated orbs */}
-      {floatingOrbs.map((orb, idx) => (
+      {/* Floating animated orbs - Disabled on mobile */}
+      {!isMobile && floatingOrbs.map((orb, idx) => (
         <motion.div
           key={idx}
           className={`absolute ${orb.size} ${orb.color} ${orb.blur} rounded-full pointer-events-none`}
@@ -254,22 +264,24 @@ export default function RoadmapScene({ phases = [] }) {
         backgroundSize: '40px 40px'
       }}></div>
 
-      {/* Shimmering light effect */}
-      <motion.div
-        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none"
-        animate={{
-          x: ['-100%', '200%'],
-        }}
-        transition={{
-          duration: 3,
-          repeat: Infinity,
-          ease: 'linear',
-          repeatDelay: 5,
-        }}
-      />
+      {/* Shimmering light effect - Disabled on mobile */}
+      {!isMobile && (
+        <motion.div
+          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none"
+          animate={{
+            x: ['-100%', '200%'],
+          }}
+          transition={{
+            duration: 3,
+            repeat: Infinity,
+            ease: 'linear',
+            repeatDelay: 5,
+          }}
+        />
+      )}
       
-      <div className="w-full h-full relative" style={{ minHeight: height }}>
-        <RoadPath width={width} height={height} />
+      <div className="w-full h-full relative overflow-x-auto" style={{ minHeight: isMobile ? '400px' : `${height}px` }}>
+        <RoadPath width={width} height={height} isMobile={isMobile} />
         {/* Milestones */}
         {phases.map((phase, idx) => {
           const t = phases.length === 1 ? 0.5 : idx / (phases.length - 1);
@@ -281,39 +293,39 @@ export default function RoadmapScene({ phases = [] }) {
               key={idx}
               className="absolute flex flex-col items-center z-10 group"
               style={{ 
-                left: `calc(${(x / width) * 100}% - 90px)`, 
-                top: `${y - 140}px`, // keep badges inside canvas after road moved up
-                width: '180px'
+                left: `calc(${(x / width) * 100}% - ${isMobile ? '60' : '90'}px)`, 
+                top: `${y - (isMobile ? 100 : 140)}px`,
+                width: isMobile ? '120px' : '180px'
               }}
             >
               {/* Phase name above pin */}
-              <div className="mb-3 text-gray-800 text-xl font-black text-center drop-shadow-sm">
+              <div className={`mb-2 sm:mb-3 text-gray-800 ${isMobile ? 'text-sm' : 'text-xl'} font-black text-center drop-shadow-sm`}>
                 {phase.name}
               </div>
 
-              {/* Location Pin Marker like timeline image */}
+              {/* Location Pin Marker - Responsive Size */}
               <div className="relative">
                 {/* Outer circle */}
-                <div className={`w-[90px] h-[90px] rounded-full bg-gradient-to-br ${colorScheme.bg} flex items-center justify-center shadow-[0_15px_40px_rgba(0,0,0,0.5)] border-[5px] border-white ring-4 ${colorScheme.ring} relative`}>
+                <div className={`${isMobile ? 'w-[60px] h-[60px]' : 'w-[90px] h-[90px]'} rounded-full bg-gradient-to-br ${colorScheme.bg} flex items-center justify-center shadow-[0_15px_40px_rgba(0,0,0,0.5)] ${isMobile ? 'border-[3px]' : 'border-[5px]'} border-white ${isMobile ? 'ring-2' : 'ring-4'} ${colorScheme.ring} relative`}>
                   {/* Inner white circle */}
-                  <div className="w-[50px] h-[50px] rounded-full bg-white flex items-center justify-center shadow-inner">
-                    <div className={`w-[35px] h-[35px] rounded-full bg-gradient-to-br ${colorScheme.bg}`}></div>
+                  <div className={`${isMobile ? 'w-[34px] h-[34px]' : 'w-[50px] h-[50px]'} rounded-full bg-white flex items-center justify-center shadow-inner`}>
+                    <div className={`${isMobile ? 'w-[24px] h-[24px]' : 'w-[35px] h-[35px]'} rounded-full bg-gradient-to-br ${colorScheme.bg}`}></div>
                   </div>
                 </div>
-                {/* Pin point triangle */}
-                <div className={`absolute left-1/2 -bottom-4 -translate-x-1/2 w-0 h-0 border-l-[15px] border-l-transparent border-r-[15px] border-r-transparent border-t-[20px] bg-gradient-to-br ${colorScheme.bg}`} style={{ borderTopColor: 'inherit' }}>
-                  <div className={`absolute -top-5 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[12px] border-l-transparent border-r-[12px] border-r-transparent border-t-[16px] bg-gradient-to-br ${colorScheme.bg}`} style={{ filter: `hue-rotate(${idx * 30}deg)` }}></div>
+                {/* Pin point triangle - Responsive Size */}
+                <div className={`absolute left-1/2 ${isMobile ? '-bottom-2' : '-bottom-4'} -translate-x-1/2 w-0 h-0 ${isMobile ? 'border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-t-[14px]' : 'border-l-[15px] border-l-transparent border-r-[15px] border-r-transparent border-t-[20px]'} bg-gradient-to-br ${colorScheme.bg}`} style={{ borderTopColor: 'inherit' }}>
+                  <div className={`absolute ${isMobile ? '-top-3.5' : '-top-5'} left-1/2 -translate-x-1/2 w-0 h-0 ${isMobile ? 'border-l-[8px] border-l-transparent border-r-[8px] border-r-transparent border-t-[12px]' : 'border-l-[12px] border-l-transparent border-r-[12px] border-r-transparent border-t-[16px]'} bg-gradient-to-br ${colorScheme.bg}`} style={{ filter: `hue-rotate(${idx * 30}deg)` }}></div>
                 </div>
               </div>
               
-              {/* Year/Duration label below pin */}
-              <div className="mt-8 text-white text-base font-black text-center bg-gray-800 backdrop-blur-sm px-5 py-2.5 rounded-2xl border-2 border-gray-700 shadow-xl min-w-[120px]">
+              {/* Year/Duration label below pin - Responsive Size */}
+              <div className={`${isMobile ? 'mt-4 text-xs px-3 py-1.5' : 'mt-8 text-base px-5 py-2.5'} text-white font-black text-center bg-gray-800 backdrop-blur-sm rounded-2xl border-2 border-gray-700 shadow-xl ${isMobile ? 'min-w-[80px]' : 'min-w-[120px]'}`}>
                 {phase.duration}
               </div>
               
-              {/* Skill badges below - show ALL skills from phase - CLICKABLE for YouTube courses */}
+              {/* Skill badges below - Responsive Layout */}
               {phase.skills && phase.skills.length > 0 ? (
-                <div className="mt-6 flex flex-wrap justify-center gap-2 w-[220px]">
+                <div className={`${isMobile ? 'mt-3' : 'mt-6'} flex flex-wrap justify-center gap-1.5 sm:gap-2 ${isMobile ? 'w-[140px]' : 'w-[220px]'}`}>
                   {phase.skills.map((skill, skillIdx) => {
                     const isCompleted = completedSkills.includes(skill);
                     const isLoading = loading[skill];
@@ -331,38 +343,42 @@ export default function RoadmapScene({ phases = [] }) {
                           initial={{ opacity: 0, scale: 0.8 }}
                           animate={{ opacity: 1, scale: 1 }}
                           transition={{ duration: 0.3, delay: idx * 0.1 + skillIdx * 0.05 }}
-                          whileHover={{ scale: 1.1 }}
-                          whileTap={{ scale: 0.95 }}
+                          {...(animSettings.enableHoverEffects ? {
+                            whileHover: { scale: 1.1 },
+                            whileTap: { scale: 0.95 }
+                          } : {})}
                           onClick={openYouTubeCourse}
-                          className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-bold shadow-lg border-2 transition-all backdrop-blur-sm cursor-pointer ${
+                          className={`flex items-center gap-1 ${isMobile ? 'px-2 py-1 text-[10px]' : 'px-2.5 py-1.5 text-xs'} rounded-lg font-bold shadow-lg border-2 transition-all backdrop-blur-sm cursor-pointer ${
                             isCompleted 
                               ? 'bg-green-500 text-white border-green-600 hover:border-green-400' 
                               : 'bg-white text-gray-900 border-gray-300 hover:border-blue-400'
                           } hover:shadow-xl`}
                           title={`Click to find ${skill} full courses on YouTube`}
                         >
-                          <TechLogo name={skill} size={18} />
+                          <TechLogo name={skill} size={isMobile ? 14 : 18} />
                           <span className="whitespace-nowrap">{skill}</span>
                         </motion.button>
                         
-                        {/* Mark as Complete Checkbox */}
+                        {/* Mark as Complete Checkbox - Responsive Size */}
                         <motion.button
                           onClick={(e) => {
                             e.stopPropagation();
                             handleToggleSkill(skill, phase.name, phase.skills || []);
                           }}
                           disabled={isLoading}
-                          whileHover={{ scale: 1.2 }}
-                          whileTap={{ scale: 0.9 }}
-                          className={`absolute -top-2 -right-2 z-20 rounded-full bg-white shadow-lg border-2 ${
+                          {...(animSettings.enableHoverEffects ? {
+                            whileHover: { scale: 1.2 },
+                            whileTap: { scale: 0.9 }
+                          } : {})}
+                          className={`absolute ${isMobile ? '-top-1 -right-1' : '-top-2 -right-2'} z-20 rounded-full bg-white shadow-lg border-2 ${
                             isCompleted ? 'border-green-500' : 'border-gray-300'
                           } ${isLoading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} hover:shadow-xl transition-all`}
                           title={isCompleted ? 'Mark as incomplete' : 'Mark as complete'}
                         >
                           {isCompleted ? (
-                            <CheckCircle style={{ fontSize: 20 }} className="text-green-500" />
+                            <CheckCircle style={{ fontSize: isMobile ? 16 : 20 }} className="text-green-500" />
                           ) : (
-                            <RadioButtonUnchecked style={{ fontSize: 20 }} className="text-gray-400" />
+                            <RadioButtonUnchecked style={{ fontSize: isMobile ? 16 : 20 }} className="text-gray-400" />
                           )}
                         </motion.button>
                       </div>
@@ -370,13 +386,13 @@ export default function RoadmapScene({ phases = [] }) {
                   })}
                 </div>
               ) : (
-                <div className="mt-6 text-xs text-gray-500 italic">No skills data</div>
+                <div className={`mt-3 sm:mt-6 ${isMobile ? 'text-[10px]' : 'text-xs'} text-gray-500 italic`}>No skills data</div>
               )}
             </div>
           );
         })}
-        {/* Roadmap Title */}
-        <div className="absolute left-1/2 top-6 -translate-x-1/2 text-gray-800 text-3xl md:text-4xl font-black drop-shadow-sm">
+        {/* Roadmap Title - Responsive */}
+        <div className={`absolute left-1/2 ${isMobile ? 'top-2' : 'top-6'} -translate-x-1/2 text-gray-800 ${isMobile ? 'text-xl' : 'text-3xl md:text-4xl'} font-black drop-shadow-sm`}>
           Career Roadmap
         </div>
       </div>

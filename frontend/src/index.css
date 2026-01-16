@@ -210,8 +210,14 @@ html {
 }
 
 /* Ensure no horizontal scroll on mobile */
-body {
+body, html {
   overflow-x: hidden;
+  max-width: 100vw;
+}
+
+/* Container max widths for mobile */
+.container {
+  max-width: 100%;
 }
 
 /* Touch-friendly button sizing */
@@ -219,5 +225,53 @@ body {
   button, a.btn-gradient, a.btn-glass {
     min-height: 44px;
     min-width: 44px;
+  }
+  
+  /* Reduce font sizes on very small screens */
+  h1 {
+    font-size: 1.875rem !important; /* 30px */
+  }
+  
+  h2 {
+    font-size: 1.5rem !important; /* 24px */
+  }
+  
+  h3 {
+    font-size: 1.25rem !important; /* 20px */
+  }
+}
+
+/* Mobile responsive utilities */
+@media (max-width: 640px) {
+  .hidden-mobile {
+    display: none !important;
+  }
+  
+  .full-width-mobile {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  
+  /* Reduce padding on mobile */
+  .dashboard-container {
+    padding: 0.75rem !important;
+  }
+  
+  /* Stack charts vertically on mobile */
+  .chart-container {
+    width: 100% !important;
+  }
+  
+  /* Reduce animation intensity on mobile */
+  * {
+    animation-duration: 0.3s !important;
+    transition-duration: 0.2s !important;
+  }
+}
+
+/* Tablet optimizations */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .container {
+    padding: 1rem;
   }
 }
