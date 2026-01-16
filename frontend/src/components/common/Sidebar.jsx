@@ -30,7 +30,12 @@ const Sidebar = ({ user, onSignOut }) => {
   // Track window size for responsive behavior
   React.useEffect(() => {
     const checkDesktop = () => {
-      setIsDesktop(window.innerWidth >= 1024);
+      const desktop = window.innerWidth >= 1024;
+      setIsDesktop(desktop);
+      // Force close on mobile on mount and resize
+      if (!desktop) {
+        setIsOpen(false);
+      }
     };
     
     // Check on mount
@@ -161,6 +166,17 @@ const Sidebar = ({ user, onSignOut }) => {
       </div>
 
       <div className="relative z-10 flex flex-col h-full">
+        {/* Close Button for Mobile - Inside Sidebar */}
+        {!isDesktop && (
+          <button
+            onClick={() => setIsOpen(false)}
+            className="absolute top-4 right-4 z-50 p-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-all"
+            aria-label="Close menu"
+          >
+            <Close fontSize="small" />
+          </button>
+        )}
+
         {/* Logo & Sign Out */}
         <div className="px-6 py-6">
           <div className="flex flex-col items-center justify-center mb-6 gap-3">
