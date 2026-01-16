@@ -218,24 +218,30 @@ export default function RoadmapScene({ phases = [] }) {
 
   return (
     <motion.div 
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.8, ease: 'easeOut' }}
-      className="w-full max-w-[1150px] mx-auto rounded-2xl sm:rounded-3xl overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.15)] 
-                 bg-gradient-to-br from-white via-blue-50/50 to-purple-50/50 
-                 p-4 sm:p-6 md:p-8 lg:p-12 relative border-2 border-white/60 backdrop-blur-xl" 
+      {...(isMobile ? {
+        // No animation on mobile - instant render
+      } : {
+        initial: { opacity: 0, scale: 0.95 },
+        animate: { opacity: 1, scale: 1 },
+        transition: { duration: 0.8, ease: 'easeOut' }
+      })}
+      className={`w-full max-w-[1150px] mx-auto rounded-2xl sm:rounded-3xl overflow-hidden 
+                 ${isMobile ? 'shadow-lg' : 'shadow-[0_20px_60px_rgba(0,0,0,0.15)]'}
+                 ${isMobile ? 'bg-white' : 'bg-gradient-to-br from-white via-blue-50/50 to-purple-50/50'}
+                 p-4 sm:p-6 md:p-8 lg:p-12 relative 
+                 ${isMobile ? 'border border-gray-200' : 'border-2 border-white/60 backdrop-blur-xl'}`}
       style={{ minHeight: isMobile ? '400px' : `${height}px` }}
     >
 
 
-      {/* Animated gradient mesh background - Disabled on mobile */}
+      {/* Animated gradient mesh background - Desktop only */}
       {!isMobile && (
         <div className="absolute inset-0 opacity-60 pointer-events-none">
           <div className="absolute inset-0 bg-gradient-to-br from-blue-100/40 via-purple-100/40 to-pink-100/40 animate-pulse" style={{ animationDuration: '8s' }}></div>
         </div>
       )}
 
-      {/* Floating animated orbs - Disabled on mobile */}
+      {/* Floating animated orbs - Desktop only */}
       {!isMobile && floatingOrbs.map((orb, idx) => (
         <motion.div
           key={idx}
@@ -255,16 +261,20 @@ export default function RoadmapScene({ phases = [] }) {
         />
       ))}
 
-      {/* Glassmorphism overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-white/30 via-white/10 to-transparent pointer-events-none backdrop-blur-sm"></div>
+      {/* Glassmorphism overlay - Desktop only */}
+      {!isMobile && (
+        <div className="absolute inset-0 bg-gradient-to-br from-white/30 via-white/10 to-transparent pointer-events-none backdrop-blur-sm"></div>
+      )}
       
-      {/* Subtle grid pattern */}
-      <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{
-        backgroundImage: `radial-gradient(circle at 2px 2px, rgb(0 0 0) 1px, transparent 0)`,
-        backgroundSize: '40px 40px'
-      }}></div>
+      {/* Subtle grid pattern - Desktop only */}
+      {!isMobile && (
+        <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{
+          backgroundImage: `radial-gradient(circle at 2px 2px, rgb(0 0 0) 1px, transparent 0)`,
+          backgroundSize: '40px 40px'
+        }}></div>
+      )}
 
-      {/* Shimmering light effect - Disabled on mobile */}
+      {/* Shimmering light effect - Desktop only */}
       {!isMobile && (
         <motion.div
           className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none"
@@ -340,19 +350,21 @@ export default function RoadmapScene({ phases = [] }) {
                     return (
                       <div key={skillIdx} className="relative group/skill">
                         <motion.button
-                          initial={{ opacity: 0, scale: 0.8 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          transition={{ duration: 0.3, delay: idx * 0.1 + skillIdx * 0.05 }}
+                          {...(isMobile ? {} : {
+                            initial: { opacity: 0, scale: 0.8 },
+                            animate: { opacity: 1, scale: 1 },
+                            transition: { duration: 0.3, delay: idx * 0.1 + skillIdx * 0.05 }
+                          })}
                           {...(animSettings.enableHoverEffects ? {
                             whileHover: { scale: 1.1 },
                             whileTap: { scale: 0.95 }
                           } : {})}
                           onClick={openYouTubeCourse}
-                          className={`flex items-center gap-1 ${isMobile ? 'px-2 py-1 text-[10px]' : 'px-2.5 py-1.5 text-xs'} rounded-lg font-bold shadow-lg border-2 transition-all backdrop-blur-sm cursor-pointer ${
+                          className={`flex items-center gap-1 ${isMobile ? 'px-2 py-1 text-[10px]' : 'px-2.5 py-1.5 text-xs'} rounded-lg font-bold ${isMobile ? 'shadow-md' : 'shadow-lg'} border-2 cursor-pointer ${
                             isCompleted 
                               ? 'bg-green-500 text-white border-green-600 hover:border-green-400' 
                               : 'bg-white text-gray-900 border-gray-300 hover:border-blue-400'
-                          } hover:shadow-xl`}
+                          } ${isMobile ? '' : 'hover:shadow-xl'}`}
                           title={`Click to find ${skill} full courses on YouTube`}
                         >
                           <TechLogo name={skill} size={isMobile ? 14 : 18} />
@@ -370,9 +382,9 @@ export default function RoadmapScene({ phases = [] }) {
                             whileHover: { scale: 1.2 },
                             whileTap: { scale: 0.9 }
                           } : {})}
-                          className={`absolute ${isMobile ? '-top-1 -right-1' : '-top-2 -right-2'} z-20 rounded-full bg-white shadow-lg border-2 ${
+                          className={`absolute ${isMobile ? '-top-1 -right-1' : '-top-2 -right-2'} z-20 rounded-full bg-white ${isMobile ? 'shadow' : 'shadow-lg'} border-2 ${
                             isCompleted ? 'border-green-500' : 'border-gray-300'
-                          } ${isLoading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} hover:shadow-xl transition-all`}
+                          } ${isLoading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} ${isMobile ? '' : 'hover:shadow-xl transition-all'}`}
                           title={isCompleted ? 'Mark as incomplete' : 'Mark as complete'}
                         >
                           {isCompleted ? (

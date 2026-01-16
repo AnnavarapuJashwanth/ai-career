@@ -12,9 +12,12 @@ export const isMobile = () => {
     // Check for Cordova
     if (window.cordova) return true;
     
+    // Check screen width - aggressive mobile detection
+    if (window.innerWidth <= 768) return true;
+    
     // Check user agent for mobile devices
     const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-    return /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent.toLowerCase());
+    return /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini|mobile/i.test(userAgent.toLowerCase());
   }
   return false;
 };
@@ -39,17 +42,17 @@ export const getAnimationSettings = () => {
   const lowPerf = isLowPerformance();
   
   return {
-    // Disable expensive animations on mobile
-    enableBackgroundAnimations: !mobile,
+    // COMPLETELY DISABLE all animations on mobile to prevent flickering
+    enableBackgroundAnimations: false, // Always disabled on mobile
     enableHoverEffects: !mobile,
-    enableParticles: !mobile && !lowPerf,
-    enableBlur: !mobile,
-    enableInfiniteLoops: !mobile,
+    enableParticles: false, // Always disabled on mobile
+    enableBlur: !mobile, // Blur causes performance issues
+    enableInfiniteLoops: false, // Always disabled on mobile
     
-    // Reduce animation durations on mobile
-    transitionDuration: mobile ? 0.2 : 0.5,
+    // Instant transitions on mobile
+    transitionDuration: mobile ? 0 : 0.5,
     
-    // Reduce animation complexity
+    // Reduce motion completely on mobile
     reduceMotion: mobile || lowPerf,
   };
 };
