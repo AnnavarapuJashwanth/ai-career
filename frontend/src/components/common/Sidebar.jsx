@@ -33,7 +33,7 @@ const Sidebar = ({ user, onSignOut }) => {
       const desktop = window.innerWidth >= 1024;
       setIsDesktop(desktop);
       // Force close on mobile on mount and resize
-      if (!desktop) {
+      if (!desktop && isOpen) {
         setIsOpen(false);
       }
     };
@@ -41,10 +41,19 @@ const Sidebar = ({ user, onSignOut }) => {
     // Check on mount
     checkDesktop();
     
-    // Listen for resize
-    window.addEventListener('resize', checkDesktop);
-    return () => window.removeEventListener('resize', checkDesktop);
-  }, []);
+    // Listen for resize with debounce to avoid flickering
+    let timeoutId;
+    const handleResize = () => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(checkDesktop, 100);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => {
+      clearTimeout(timeoutId);
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [isOpen]);
 
   // Close sidebar when route changes on mobile
   React.useEffect(() => {
@@ -133,7 +142,10 @@ const Sidebar = ({ user, onSignOut }) => {
           x: isDesktop ? 0 : (isOpen ? 0 : -288)
         }}
         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-        className="fixed top-0 left-0 lg:relative w-72 h-screen flex flex-col bg-gradient-to-b from-indigo-950 via-purple-950 to-slate-950 border-r-2 border-purple-500/20 shadow-2xl z-50"
+        className="fixed top-0 left-0 w-72 min-h-screen max-h-screen overflow-y-auto flex flex-col bg-gradient-to-b from-indigo-950 via-purple-950 to-slate-950 border-r-2 border-purple-500/20 shadow-2xl z-50 lg:translate-x-0"
+        style={{
+          position: isDesktop ? 'relative' : 'fixed'
+        }}
       >
       {/* Animated Background */}
       <div className="absolute inset-0 overflow-hidden">
