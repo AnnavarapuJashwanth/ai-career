@@ -142,9 +142,11 @@ const Sidebar = ({ user, onSignOut }) => {
           x: isDesktop ? 0 : (isOpen ? 0 : -288)
         }}
         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-        className="fixed top-0 left-0 w-72 min-h-screen max-h-screen overflow-y-auto flex flex-col bg-gradient-to-b from-indigo-950 via-purple-950 to-slate-950 border-r-2 border-purple-500/20 shadow-2xl z-50 lg:translate-x-0"
+        className="w-72 min-h-screen max-h-screen overflow-y-auto flex flex-col bg-gradient-to-b from-indigo-950 via-purple-950 to-slate-950 border-r-2 border-purple-500/20 shadow-2xl z-50"
         style={{
-          position: isDesktop ? 'relative' : 'fixed'
+          position: isDesktop ? 'relative' : 'fixed',
+          top: 0,
+          left: 0
         }}
       >
       {/* Animated Background */}
