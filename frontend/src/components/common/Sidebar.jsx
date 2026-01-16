@@ -23,19 +23,18 @@ import { useTranslate } from '../../utils/translate';
 const Sidebar = ({ user, onSignOut }) => {
   const [activeItem, setActiveItem] = useState('Overview');
   const [isOpen, setIsOpen] = useState(false);
-  const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 1024);
   const location = useLocation();
   const { t } = useTranslate();
 
-  // Handle window resize for responsive sidebar
+  // Check if desktop size
+  const isDesktop = typeof window !== 'undefined' && window.innerWidth >= 1024;
+
+  // Close sidebar when route changes on mobile
   React.useEffect(() => {
-    const handleResize = () => {
-      setIsDesktop(window.innerWidth >= 1024);
-    };
-    
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+    if (!isDesktop) {
+      setIsOpen(false);
+    }
+  }, [location.pathname, isDesktop]);
 
   // Navigation items with translated labels
   const navItems = [
@@ -113,9 +112,9 @@ const Sidebar = ({ user, onSignOut }) => {
       {/* Sidebar */}
       <motion.aside
         initial={false}
-        animate={{ x: (isOpen || isDesktop) ? 0 : -288 }}
+        animate={{ x: (isOpen && !isDesktop) || isDesktop ? 0 : -288 }}
         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-        className="fixed lg:relative w-72 min-h-screen flex flex-col bg-gradient-to-b from-indigo-950 via-purple-950 to-slate-950 border-r-2 border-purple-500/20 shadow-2xl z-50"
+        className="fixed top-0 left-0 lg:relative w-72 min-h-screen flex flex-col bg-gradient-to-b from-indigo-950 via-purple-950 to-slate-950 border-r-2 border-purple-500/20 shadow-2xl z-50"
       >
       {/* Animated Background */}
       <div className="absolute inset-0 overflow-hidden">
