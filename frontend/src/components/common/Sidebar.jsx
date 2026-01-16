@@ -23,11 +23,23 @@ import { useTranslate } from '../../utils/translate';
 const Sidebar = ({ user, onSignOut }) => {
   const [activeItem, setActiveItem] = useState('Overview');
   const [isOpen, setIsOpen] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(false);
   const location = useLocation();
   const { t } = useTranslate();
 
-  // Check if desktop size
-  const isDesktop = typeof window !== 'undefined' && window.innerWidth >= 1024;
+  // Track window size for responsive behavior
+  React.useEffect(() => {
+    const checkDesktop = () => {
+      setIsDesktop(window.innerWidth >= 1024);
+    };
+    
+    // Check on mount
+    checkDesktop();
+    
+    // Listen for resize
+    window.addEventListener('resize', checkDesktop);
+    return () => window.removeEventListener('resize', checkDesktop);
+  }, []);
 
   // Close sidebar when route changes on mobile
   React.useEffect(() => {
@@ -112,9 +124,11 @@ const Sidebar = ({ user, onSignOut }) => {
       {/* Sidebar */}
       <motion.aside
         initial={false}
-        animate={{ x: (isOpen && !isDesktop) || isDesktop ? 0 : -288 }}
+        animate={{ 
+          x: isDesktop ? 0 : (isOpen ? 0 : -288)
+        }}
         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-        className="fixed top-0 left-0 lg:relative w-72 min-h-screen flex flex-col bg-gradient-to-b from-indigo-950 via-purple-950 to-slate-950 border-r-2 border-purple-500/20 shadow-2xl z-50"
+        className="fixed top-0 left-0 lg:relative w-72 h-screen flex flex-col bg-gradient-to-b from-indigo-950 via-purple-950 to-slate-950 border-r-2 border-purple-500/20 shadow-2xl z-50"
       >
       {/* Animated Background */}
       <div className="absolute inset-0 overflow-hidden">
