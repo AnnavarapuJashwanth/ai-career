@@ -17,11 +17,13 @@ import AIChatbot from '../components/AIChatbot';
 import { useMarketTrends } from '../hooks/useMarketTrends';
 import { useTranslate } from '../utils/translate';
 import api from '../utils/api';
+import { useAnimationSettings, conditionalAnimation } from '../utils/mobileDetect';
 
 export default function Dashboard() {
   const location = useLocation();
   const navigate = useNavigate();
   const { t } = useTranslate();
+  const animSettings = useAnimationSettings();
   const user = JSON.parse(localStorage.getItem('careerai_user') || 'null') || { email: 'user@example.com', name: 'User' };
   
   // Handle role discovery flow
@@ -413,77 +415,74 @@ export default function Dashboard() {
 
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900">
-      {/* Enhanced Animated Background Pattern */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        {/* Gradient Mesh Background */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.1),transparent_50%),radial-gradient(circle_at_70%_80%,rgba(168,85,247,0.1),transparent_50%),radial-gradient(circle_at_50%_50%,rgba(14,165,233,0.05),transparent_50%)]"></div>
-        
-        {/* Floating Orbs */}
-        <motion.div
-          animate={{
-            y: [0, -40, 0],
-            x: [0, 30, 0],
-            scale: [1, 1.3, 1],
-            opacity: [0.15, 0.25, 0.15],
-          }}
-          transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-20 left-20 w-80 h-80 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full blur-3xl"
-        />
-        <motion.div
-          animate={{
-            y: [0, 40, 0],
-            x: [0, -30, 0],
-            scale: [1, 1.4, 1],
-            opacity: [0.1, 0.2, 0.1],
-          }}
-          transition={{ duration: 18, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-          className="absolute bottom-20 right-20 w-96 h-96 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full blur-3xl"
-        />
-        <motion.div
-          animate={{
-            y: [0, -20, 0],
-            x: [0, 20, 0],
-            scale: [1, 1.2, 1],
-            opacity: [0.08, 0.15, 0.08],
-          }}
-          transition={{ duration: 22, repeat: Infinity, ease: "easeInOut", delay: 4 }}
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-gradient-to-r from-indigo-500 to-blue-500 rounded-full blur-3xl"
-        />
-        
-        {/* Animated Grid Pattern */}
-        <motion.div 
-          animate={{ 
-            backgroundPosition: ['0% 0%', '100% 100%'],
-          }}
-          transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-          className="absolute inset-0 opacity-[0.03]"
-          style={{
-            backgroundImage: 'linear-gradient(rgba(59, 130, 246, 0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(59, 130, 246, 0.3) 1px, transparent 1px)',
-            backgroundSize: '50px 50px'
-          }}
-        />
-      </div>
+      {/* Enhanced Animated Background Pattern - Optimized for Mobile */}
+      {animSettings.enableBackgroundAnimations && (
+        <div className="fixed inset-0 overflow-hidden pointer-events-none">
+          {/* Gradient Mesh Background */}
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.1),transparent_50%),radial-gradient(circle_at_70%_80%,rgba(168,85,247,0.1),transparent_50%),radial-gradient(circle_at_50%_50%,rgba(14,165,233,0.05),transparent_50%)]"></div>
+          
+          {/* Floating Orbs */}
+          {animSettings.enableInfiniteLoops && (
+            <>
+              <motion.div
+                animate={{
+                  y: [0, -40, 0],
+                  x: [0, 30, 0],
+                  scale: [1, 1.3, 1],
+                  opacity: [0.15, 0.25, 0.15],
+                }}
+                transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute top-20 left-20 w-80 h-80 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full blur-3xl"
+              />
+              <motion.div
+                animate={{
+                  y: [0, 40, 0],
+                  x: [0, -30, 0],
+                  scale: [1, 1.4, 1],
+                  opacity: [0.1, 0.2, 0.1],
+                }}
+                transition={{ duration: 18, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+                className="absolute bottom-20 right-20 w-96 h-96 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full blur-3xl"
+              />
+              <motion.div
+                animate={{
+                  y: [0, -20, 0],
+                  x: [0, 20, 0],
+                  scale: [1, 1.2, 1],
+                  opacity: [0.08, 0.15, 0.08],
+                }}
+                transition={{ duration: 22, repeat: Infinity, ease: "easeInOut", delay: 4 }}
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-gradient-to-r from-indigo-500 to-blue-500 rounded-full blur-3xl"
+              />
+            </>
+          )}
+        </div>
+      )}
 
       <Sidebar user={user} onSignOut={handleSignOut} />
       <main className="relative z-10 flex-1 p-3 sm:p-4 md:p-6 lg:p-8 overflow-y-auto overflow-x-hidden">
         {/* Welcome Banner with Modern Design */}
         <motion.div 
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, type: "spring" }}
+          {...conditionalAnimation({
+            initial: { opacity: 0, y: -20 },
+            animate: { opacity: 1, y: 0 },
+            transition: { duration: animSettings.transitionDuration }
+          })}
           className="relative bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 rounded-2xl sm:rounded-[2rem] p-6 sm:p-8 lg:p-10 mb-6 sm:mb-8 overflow-hidden shadow-[0_20px_70px_rgba(59,130,246,0.3)]"
         >
-          {/* Animated Shimmer Effect */}
-          <motion.div 
-            animate={{
-              x: ['-100%', '200%'],
-            }}
-            transition={{ duration: 3, repeat: Infinity, repeatDelay: 2, ease: "easeInOut" }}
-            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12"
-          />
+          {/* Animated Shimmer Effect - Disabled on Mobile */}
+          {animSettings.enableInfiniteLoops && (
+            <motion.div 
+              animate={{
+                x: ['-100%', '200%'],
+              }}
+              transition={{ duration: 3, repeat: Infinity, repeatDelay: 2, ease: "easeInOut" }}
+              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12"
+            />
+          )}
           
-          {/* Floating Particles */}
-          {[...Array(5)].map((_, i) => (
+          {/* Floating Particles - Disabled on Mobile */}
+          {animSettings.enableParticles && [...Array(5)].map((_, i) => (
             <motion.div
               key={i}
               animate={{
@@ -583,43 +582,51 @@ export default function Dashboard() {
           ].map((stat, idx) => (
             <motion.div
               key={idx}
-              whileHover={{ 
-                scale: 1.05, 
-                y: -8,
-                boxShadow: '0 20px 40px rgba(0,0,0,0.3)'
-              }}
-              initial={{ opacity: 0, scale: 0.8, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              transition={{ 
-                duration: 0.6, 
-                delay: 0.3 + idx * 0.1,
-                type: "spring",
-                stiffness: 100
-              }}
-              className={`relative group ${stat.bg} backdrop-blur-xl rounded-2xl p-6 border-2 ${stat.border} shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden cursor-pointer`}
+              {...(animSettings.enableHoverEffects ? {
+                whileHover: { 
+                  scale: 1.05, 
+                  y: -8,
+                  boxShadow: '0 20px 40px rgba(0,0,0,0.3)'
+                }
+              } : {})}
+              {...conditionalAnimation({
+                initial: { opacity: 0, scale: 0.8, y: 20 },
+                animate: { opacity: 1, scale: 1, y: 0 },
+                transition: { 
+                  duration: animSettings.transitionDuration, 
+                  delay: 0.3 + idx * 0.1
+                }
+              })}
+              className={`relative group ${stat.bg} ${animSettings.enableBlur ? 'backdrop-blur-xl' : ''} rounded-2xl p-6 border-2 ${stat.border} shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden cursor-pointer`}
             >
               {/* Corner Accent */}
               <div className={`absolute top-0 right-0 w-20 h-20 bg-gradient-to-br ${stat.color} opacity-20 rounded-bl-full`}></div>
               
-              {/* Hover Glow Effect */}
-              <motion.div
-                animate={{
-                  opacity: [0, 0.1, 0],
-                }}
-                transition={{ duration: 2, repeat: Infinity, delay: idx * 0.5 }}
-                className={`absolute inset-0 bg-gradient-to-br ${stat.color} blur-xl`}
-              />
+              {/* Hover Glow Effect - Disabled on Mobile */}
+              {animSettings.enableInfiniteLoops && (
+                <motion.div
+                  animate={{
+                    opacity: [0, 0.1, 0],
+                  }}
+                  transition={{ duration: 2, repeat: Infinity, delay: idx * 0.5 }}
+                  className={`absolute inset-0 bg-gradient-to-br ${stat.color} ${animSettings.enableBlur ? 'blur-xl' : ''}`}
+                />
+              )}
               
               <div className="relative z-10">
                 <div className="flex items-center justify-between mb-5">
                   <motion.div
-                    whileHover={{ scale: 1.2, rotate: 10 }}
+                    {...(animSettings.enableHoverEffects ? {
+                      whileHover: { scale: 1.2, rotate: 10 }
+                    } : {})}
                     className="text-5xl filter drop-shadow-lg"
                   >
                     {stat.icon}
                   </motion.div>
                   <motion.div 
-                    whileHover={{ scale: 1.1, rotate: -5 }}
+                    {...(animSettings.enableHoverEffects ? {
+                      whileHover: { scale: 1.1, rotate: -5 }
+                    } : {})}
                     className={`px-5 py-2 rounded-xl bg-gradient-to-r ${stat.color} text-white text-xl font-bold shadow-lg`}
                   >
                     {stat.value}
@@ -632,7 +639,7 @@ export default function Dashboard() {
                   <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: '100%' }}
-                    transition={{ duration: 1, delay: 0.5 + idx * 0.1 }}
+                    transition={{ duration: animSettings.transitionDuration, delay: 0.5 + idx * 0.1 }}
                     className={`h-full bg-gradient-to-r ${stat.color}`}
                   />
                 </div>
@@ -643,39 +650,49 @@ export default function Dashboard() {
 
         {/* Charts Section with Modern Design */}
         <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.5 }}
+          {...conditionalAnimation({
+            initial: { opacity: 0, y: 20 },
+            animate: { opacity: 1, y: 0 },
+            transition: { duration: animSettings.transitionDuration, delay: 0.5 }
+          })}
           className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8"
           id="analytics"
         >
           <motion.div 
-            whileHover={{ scale: 1.02, y: -8 }}
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.7, delay: 0.6, type: "spring" }}
-            className="relative group bg-gradient-to-br from-purple-500/10 to-pink-500/10 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-6 sm:p-8 border-2 border-purple-500/30 shadow-[0_8px_32px_rgba(168,85,247,0.2)] hover:shadow-[0_20px_60px_rgba(168,85,247,0.4)] transition-all duration-300 overflow-hidden"
+            {...(animSettings.enableHoverEffects ? {
+              whileHover: { scale: 1.02, y: -8 }
+            } : {})}
+            {...conditionalAnimation({
+              initial: { opacity: 0, x: -30 },
+              animate: { opacity: 1, x: 0 },
+              transition: { duration: animSettings.transitionDuration, delay: 0.6 }
+            })}
+            className={`relative group bg-gradient-to-br from-purple-500/10 to-pink-500/10 ${animSettings.enableBlur ? 'backdrop-blur-xl' : ''} rounded-2xl sm:rounded-3xl p-6 sm:p-8 border-2 border-purple-500/30 shadow-[0_8px_32px_rgba(168,85,247,0.2)] hover:shadow-[0_20px_60px_rgba(168,85,247,0.4)] transition-all duration-300 overflow-hidden`}
           >
-            {/* Animated Corner Decoration */}
-            <motion.div
-              animate={{
-                scale: [1, 1.5, 1],
-                rotate: [0, 180, 360],
-              }}
-              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-              className="absolute -top-10 -right-10 w-32 h-32 bg-gradient-to-br from-cyan-400/20 to-blue-400/20 rounded-full blur-2xl"
-            />
+            {/* Animated Corner Decoration - Disabled on Mobile */}
+            {animSettings.enableInfiniteLoops && (
+              <motion.div
+                animate={{
+                  scale: [1, 1.5, 1],
+                  rotate: [0, 180, 360],
+                }}
+                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                className={`absolute -top-10 -right-10 w-32 h-32 bg-gradient-to-br from-cyan-400/20 to-blue-400/20 rounded-full ${animSettings.enableBlur ? 'blur-2xl' : ''}`}
+              />
+            )}
             
             <div className="relative z-10">
               <div className="flex items-center justify-between mb-6">
                 <div>
                   <h3 className="text-2xl font-bold text-white flex items-center gap-3 mb-2">
                     <motion.span 
-                      animate={{ 
-                        scale: [1, 1.2, 1],
-                        rotate: [0, -10, 0]
-                      }}
-                      transition={{ duration: 2, repeat: Infinity, repeatDelay: 1 }}
+                      {...(animSettings.enableInfiniteLoops ? {
+                        animate: { 
+                          scale: [1, 1.2, 1],
+                          rotate: [0, -10, 0]
+                        },
+                        transition: { duration: 2, repeat: Infinity, repeatDelay: 1 }
+                      } : {})}
                       className="text-4xl"
                     >
                       📈
@@ -693,11 +710,15 @@ export default function Dashboard() {
           </motion.div>
 
           <motion.div
-            whileHover={{ scale: 1.02, y: -8 }}
-            initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.7, delay: 0.7, type: "spring" }}
-            className="relative group bg-gradient-to-br from-purple-500/10 to-pink-500/10 backdrop-blur-xl rounded-3xl p-8 border-2 border-purple-500/30 shadow-[0_8px_32px_rgba(168,85,247,0.2)] hover:shadow-[0_20px_60px_rgba(168,85,247,0.4)] transition-all duration-300 overflow-hidden"
+            {...(animSettings.enableHoverEffects ? {
+              whileHover: { scale: 1.02, y: -8 }
+            } : {})}
+            {...conditionalAnimation({
+              initial: { opacity: 0, x: 30 },
+              animate: { opacity: 1, x: 0 },
+              transition: { duration: animSettings.transitionDuration, delay: 0.7 }
+            })}
+            className={`relative group bg-gradient-to-br from-purple-500/10 to-pink-500/10 ${animSettings.enableBlur ? 'backdrop-blur-xl' : ''} rounded-3xl p-8 border-2 border-purple-500/30 shadow-[0_8px_32px_rgba(168,85,247,0.2)] hover:shadow-[0_20px_60px_rgba(168,85,247,0.4)] transition-all duration-300 overflow-hidden`}
             id="market"
           >
             {/* Animated Corner Decoration */}
