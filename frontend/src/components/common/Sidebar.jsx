@@ -23,8 +23,19 @@ import { useTranslate } from '../../utils/translate';
 const Sidebar = ({ user, onSignOut }) => {
   const [activeItem, setActiveItem] = useState('Overview');
   const [isOpen, setIsOpen] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 1024);
   const location = useLocation();
   const { t } = useTranslate();
+
+  // Handle window resize for responsive sidebar
+  React.useEffect(() => {
+    const handleResize = () => {
+      setIsDesktop(window.innerWidth >= 1024);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Navigation items with translated labels
   const navItems = [
@@ -86,23 +97,25 @@ const Sidebar = ({ user, onSignOut }) => {
 
       {/* Mobile Overlay */}
       <AnimatePresence>
-        {isOpen && (
+        {isOpen && !isDesktop && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
             onClick={() => setIsOpen(false)}
-            className="lg:hidden fixed inset-0 bg-black/50 z-40"
+            className="lg:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-40 cursor-pointer"
+            aria-label="Close menu"
           />
         )}
       </AnimatePresence>
 
       {/* Sidebar */}
       <motion.aside
-        initial={{ x: -288 }}
-        animate={{ x: isOpen || window.innerWidth >= 1024 ? 0 : -288 }}
-        transition={{ type: 'spring', damping: 20 }}
-        className="fixed lg:relative w-72 min-h-screen flex flex-col bg-gradient-to-b from-indigo-950 via-purple-950 to-slate-950 border-r-2 border-purple-500/20 shadow-2xl z-40"
+        initial={false}
+        animate={{ x: (isOpen || isDesktop) ? 0 : -288 }}
+        transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+        className="fixed lg:relative w-72 min-h-screen flex flex-col bg-gradient-to-b from-indigo-950 via-purple-950 to-slate-950 border-r-2 border-purple-500/20 shadow-2xl z-50"
       >
       {/* Animated Background */}
       <div className="absolute inset-0 overflow-hidden">
