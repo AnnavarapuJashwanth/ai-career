@@ -30,7 +30,7 @@ function RoadPath({ width = 2600, height = 900, isMobile = false }) {
   const d = `M ${points[0]} ` + points.slice(1).map(p => `L ${p}`).join(' ');
 
   return (
-    <svg width={width} height={height} className="absolute left-0 top-0 w-full h-full z-0 pointer-events-none" viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="xMidYMid meet">
+    <svg className="absolute left-0 top-0 w-full h-full z-0 pointer-events-none" viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="xMidYMid meet">
       {/* Dark base road with stronger outline */}
       <path d={d} stroke="#1e293b" strokeWidth={isMobile ? 12 : 18} fill="none" strokeLinecap="round" strokeLinejoin="round" opacity="0.9" />
       {/* White dashed center line with animation */}
@@ -188,12 +188,12 @@ export default function RoadmapScene({ phases = [] }) {
   const animSettings = useAnimationSettings();
   const isMobile = animSettings.reduceMotion;
   
-  // Responsive dimensions
-  const width = isMobile ? 800 : 2200;
-  const height = isMobile ? 500 : 800;
-  const baseY = isMobile ? height - 200 : height - 340;
-  const amp = isMobile ? 120 : 220;
-  const marginX = isMobile ? 60 : 180;
+  // Responsive dimensions - use consistent viewBox, scale content instead
+  const width = 1000;  // Standard viewBox width for calculations
+  const height = 600;  // Standard viewBox height
+  const baseY = height - 200;
+  const amp = isMobile ? 80 : 150;
+  const marginX = isMobile ? 40 : 100;
   
   const getPoint = t => {
     const x = marginX + t * (width - marginX * 2);
@@ -225,12 +225,12 @@ export default function RoadmapScene({ phases = [] }) {
         animate: { opacity: 1, scale: 1 },
         transition: { duration: 0.8, ease: 'easeOut' }
       })}
-      className={`w-full max-w-[1150px] mx-auto rounded-2xl sm:rounded-3xl overflow-hidden 
+      className={`w-full mx-auto rounded-2xl sm:rounded-3xl overflow-hidden 
                  ${isMobile ? 'shadow-lg' : 'shadow-[0_20px_60px_rgba(0,0,0,0.15)]'}
                  ${isMobile ? 'bg-white' : 'bg-gradient-to-br from-white via-blue-50/50 to-purple-50/50'}
-                 p-4 sm:p-6 md:p-8 lg:p-12 relative 
+                 ${isMobile ? 'p-3' : 'p-4 sm:p-6 md:p-8 lg:p-12'} relative 
                  ${isMobile ? 'border border-gray-200' : 'border-2 border-white/60 backdrop-blur-xl'}`}
-      style={{ minHeight: isMobile ? '400px' : `${height}px` }}
+      style={{ minHeight: isMobile ? '500px' : '700px' }}
     >
 
 
@@ -290,7 +290,7 @@ export default function RoadmapScene({ phases = [] }) {
         />
       )}
       
-      <div className="w-full h-full relative overflow-x-auto" style={{ minHeight: isMobile ? '400px' : `${height}px` }}>
+      <div className="w-full h-full relative" style={{ minHeight: isMobile ? '450px' : '600px' }}>
         <RoadPath width={width} height={height} isMobile={isMobile} />
         {/* Milestones */}
         {phases.map((phase, idx) => {
@@ -303,39 +303,39 @@ export default function RoadmapScene({ phases = [] }) {
               key={idx}
               className="absolute flex flex-col items-center z-10 group"
               style={{ 
-                left: `calc(${(x / width) * 100}% - ${isMobile ? '60' : '90'}px)`, 
-                top: `${y - (isMobile ? 100 : 140)}px`,
-                width: isMobile ? '120px' : '180px'
+                left: `calc(${(x / width) * 100}% - ${isMobile ? '50' : '90'}px)`, 
+                top: `${y - (isMobile ? 80 : 140)}px`,
+                width: isMobile ? '100px' : '180px'
               }}
             >
               {/* Phase name above pin */}
-              <div className={`mb-2 sm:mb-3 text-gray-800 ${isMobile ? 'text-sm' : 'text-xl'} font-black text-center drop-shadow-sm`}>
+              <div className={`mb-2 sm:mb-3 text-gray-800 ${isMobile ? 'text-xs font-bold' : 'text-xl font-black'} text-center drop-shadow-sm`}>
                 {phase.name}
               </div>
 
               {/* Location Pin Marker - Responsive Size */}
               <div className="relative">
                 {/* Outer circle */}
-                <div className={`${isMobile ? 'w-[60px] h-[60px]' : 'w-[90px] h-[90px]'} rounded-full bg-gradient-to-br ${colorScheme.bg} flex items-center justify-center shadow-[0_15px_40px_rgba(0,0,0,0.5)] ${isMobile ? 'border-[3px]' : 'border-[5px]'} border-white ${isMobile ? 'ring-2' : 'ring-4'} ${colorScheme.ring} relative`}>
+                <div className={`${isMobile ? 'w-[45px] h-[45px]' : 'w-[90px] h-[90px]'} rounded-full bg-gradient-to-br ${colorScheme.bg} flex items-center justify-center shadow-[0_15px_40px_rgba(0,0,0,0.5)] ${isMobile ? 'border-[2px]' : 'border-[5px]'} border-white ${isMobile ? 'ring-1' : 'ring-4'} ${colorScheme.ring} relative`}>
                   {/* Inner white circle */}
-                  <div className={`${isMobile ? 'w-[34px] h-[34px]' : 'w-[50px] h-[50px]'} rounded-full bg-white flex items-center justify-center shadow-inner`}>
-                    <div className={`${isMobile ? 'w-[24px] h-[24px]' : 'w-[35px] h-[35px]'} rounded-full bg-gradient-to-br ${colorScheme.bg}`}></div>
+                  <div className={`${isMobile ? 'w-[26px] h-[26px]' : 'w-[50px] h-[50px]'} rounded-full bg-white flex items-center justify-center shadow-inner`}>
+                    <div className={`${isMobile ? 'w-[18px] h-[18px]' : 'w-[35px] h-[35px]'} rounded-full bg-gradient-to-br ${colorScheme.bg}`}></div>
                   </div>
                 </div>
                 {/* Pin point triangle - Responsive Size */}
-                <div className={`absolute left-1/2 ${isMobile ? '-bottom-2' : '-bottom-4'} -translate-x-1/2 w-0 h-0 ${isMobile ? 'border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-t-[14px]' : 'border-l-[15px] border-l-transparent border-r-[15px] border-r-transparent border-t-[20px]'} bg-gradient-to-br ${colorScheme.bg}`} style={{ borderTopColor: 'inherit' }}>
-                  <div className={`absolute ${isMobile ? '-top-3.5' : '-top-5'} left-1/2 -translate-x-1/2 w-0 h-0 ${isMobile ? 'border-l-[8px] border-l-transparent border-r-[8px] border-r-transparent border-t-[12px]' : 'border-l-[12px] border-l-transparent border-r-[12px] border-r-transparent border-t-[16px]'} bg-gradient-to-br ${colorScheme.bg}`} style={{ filter: `hue-rotate(${idx * 30}deg)` }}></div>
+                <div className={`absolute left-1/2 ${isMobile ? '-bottom-1.5' : '-bottom-4'} -translate-x-1/2 w-0 h-0 ${isMobile ? 'border-l-[8px] border-l-transparent border-r-[8px] border-r-transparent border-t-[10px]' : 'border-l-[15px] border-l-transparent border-r-[15px] border-r-transparent border-t-[20px]'} bg-gradient-to-br ${colorScheme.bg}`} style={{ borderTopColor: 'inherit' }}>
+                  <div className={`absolute ${isMobile ? '-top-2.5' : '-top-5'} left-1/2 -translate-x-1/2 w-0 h-0 ${isMobile ? 'border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[8px]' : 'border-l-[12px] border-l-transparent border-r-[12px] border-r-transparent border-t-[16px]'} bg-gradient-to-br ${colorScheme.bg}`} style={{ filter: `hue-rotate(${idx * 30}deg)` }}></div>
                 </div>
               </div>
               
               {/* Year/Duration label below pin - Responsive Size */}
-              <div className={`${isMobile ? 'mt-4 text-xs px-3 py-1.5' : 'mt-8 text-base px-5 py-2.5'} text-white font-black text-center bg-gray-800 backdrop-blur-sm rounded-2xl border-2 border-gray-700 shadow-xl ${isMobile ? 'min-w-[80px]' : 'min-w-[120px]'}`}>
+              <div className={`${isMobile ? 'mt-3 text-[10px] px-2 py-1' : 'mt-8 text-base px-5 py-2.5'} text-white font-black text-center bg-gray-800 backdrop-blur-sm rounded-2xl border-2 border-gray-700 shadow-xl ${isMobile ? 'min-w-[65px]' : 'min-w-[120px]'}`}>
                 {phase.duration}
               </div>
               
               {/* Skill badges below - Responsive Layout */}
               {phase.skills && phase.skills.length > 0 ? (
-                <div className={`${isMobile ? 'mt-3' : 'mt-6'} flex flex-wrap justify-center gap-1.5 sm:gap-2 ${isMobile ? 'w-[140px]' : 'w-[220px]'}`}>
+                <div className={`${isMobile ? 'mt-2' : 'mt-6'} flex flex-wrap justify-center gap-1 sm:gap-2 ${isMobile ? 'w-[90px]' : 'w-[220px]'}`}>
                   {phase.skills.map((skill, skillIdx) => {
                     const isCompleted = completedSkills.includes(skill);
                     const isLoading = loading[skill];
@@ -360,14 +360,14 @@ export default function RoadmapScene({ phases = [] }) {
                             whileTap: { scale: 0.95 }
                           } : {})}
                           onClick={openYouTubeCourse}
-                          className={`flex items-center gap-1 ${isMobile ? 'px-2 py-1 text-[10px]' : 'px-2.5 py-1.5 text-xs'} rounded-lg font-bold ${isMobile ? 'shadow-md' : 'shadow-lg'} border-2 cursor-pointer ${
+                          className={`flex items-center gap-0.5 ${isMobile ? 'px-1.5 py-0.5 text-[8px]' : 'px-2.5 py-1.5 text-xs'} rounded-lg font-bold ${isMobile ? 'shadow-md' : 'shadow-lg'} border-2 cursor-pointer ${
                             isCompleted 
                               ? 'bg-green-500 text-white border-green-600 hover:border-green-400' 
                               : 'bg-white text-gray-900 border-gray-300 hover:border-blue-400'
                           } ${isMobile ? '' : 'hover:shadow-xl'}`}
                           title={`Click to find ${skill} full courses on YouTube`}
                         >
-                          <TechLogo name={skill} size={isMobile ? 14 : 18} />
+                          <TechLogo name={skill} size={isMobile ? 10 : 18} />
                           <span className="whitespace-nowrap">{skill}</span>
                         </motion.button>
                         
@@ -382,15 +382,15 @@ export default function RoadmapScene({ phases = [] }) {
                             whileHover: { scale: 1.2 },
                             whileTap: { scale: 0.9 }
                           } : {})}
-                          className={`absolute ${isMobile ? '-top-1 -right-1' : '-top-2 -right-2'} z-20 rounded-full bg-white ${isMobile ? 'shadow' : 'shadow-lg'} border-2 ${
+                          className={`absolute ${isMobile ? '-top-0.5 -right-0.5' : '-top-2 -right-2'} z-20 rounded-full bg-white ${isMobile ? 'shadow' : 'shadow-lg'} border-2 ${
                             isCompleted ? 'border-green-500' : 'border-gray-300'
                           } ${isLoading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} ${isMobile ? '' : 'hover:shadow-xl transition-all'}`}
                           title={isCompleted ? 'Mark as incomplete' : 'Mark as complete'}
                         >
                           {isCompleted ? (
-                            <CheckCircle style={{ fontSize: isMobile ? 16 : 20 }} className="text-green-500" />
+                            <CheckCircle style={{ fontSize: isMobile ? 12 : 20 }} className="text-green-500" />
                           ) : (
-                            <RadioButtonUnchecked style={{ fontSize: isMobile ? 16 : 20 }} className="text-gray-400" />
+                            <RadioButtonUnchecked style={{ fontSize: isMobile ? 12 : 20 }} className="text-gray-400" />
                           )}
                         </motion.button>
                       </div>
