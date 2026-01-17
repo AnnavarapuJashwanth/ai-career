@@ -106,7 +106,7 @@ const Sidebar = ({ user, onSignOut }) => {
       {/* Sidebar */}
       <motion.aside
         initial={{ x: -288 }}
-        animate={{ x: isOpen || window.innerWidth >= 1024 ? 0 : -288 }}
+        animate={{ x: (isOpen && window.innerWidth < 1024) || window.innerWidth >= 1024 ? 0 : -288 }}
         transition={{ type: 'spring', damping: 20 }}
         className="fixed lg:relative w-72 min-h-screen flex flex-col bg-gradient-to-b from-indigo-950 via-purple-950 to-slate-950 border-r-2 border-purple-500/20 shadow-2xl z-50"
       >
