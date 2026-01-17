@@ -20,24 +20,25 @@ import {
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslate } from '../../utils/translate';
 
-const useDesktopBreakpoint = (breakpoint = 1024) => {
-  const [isDesktop, setIsDesktop] = React.useState(false);
+const useViewportWidth = () => {
+  const [width, setWidth] = React.useState(() => (
+    typeof window === 'undefined' ? 0 : window.innerWidth
+  ));
 
   React.useLayoutEffect(() => {
     if (typeof window === 'undefined') {
       return undefined;
     }
 
-    const update = () => {
-      setIsDesktop(window.innerWidth >= breakpoint);
+    const handleResize = () => {
+      setWidth(window.innerWidth);
     };
 
-    update();
-    window.addEventListener('resize', update);
-    return () => window.removeEventListener('resize', update);
-  }, [breakpoint]);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
-  return isDesktop;
+  return width;
 };
 
 const Sidebar = ({ user, onSignOut }) => {
@@ -46,17 +47,27 @@ const Sidebar = ({ user, onSignOut }) => {
   const location = useLocation();
   const { t } = useTranslate();
 
-  const isDesktop = useDesktopBreakpoint();
+  const viewportWidth = useViewportWidth();
+  const isDesktop = viewportWidth >= 1024;
+  const isPhone = viewportWidth <= 650;
   const isMobile = !isDesktop;
 
   React.useEffect(() => {
-    if (!isMobile) {
+    if (isDesktop) {
       setIsOpen(true);
       return;
     }
 
-    setIsOpen(false);
-  }, [location.pathname, isMobile]);
+    if (isPhone) {
+      setIsOpen(false);
+    }
+  }, [isDesktop, isPhone]);
+
+  React.useEffect(() => {
+    if (!isDesktop) {
+      setIsOpen(false);
+    }
+  }, [location.pathname, isDesktop]);
 
   // Navigation items with translated labels
   const navItems = [
@@ -114,14 +125,14 @@ const Sidebar = ({ user, onSignOut }) => {
       {/* Mobile Menu Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="lg:hidden fixed top-20 left-4 z-50 p-3 bg-gradient-to-br from-indigo-600 to-purple-600 text-white rounded-xl shadow-lg hover:shadow-xl transition-all"
+        className={`${isDesktop ? 'hidden' : 'fixed top-20 left-4 z-50 p-3 bg-gradient-to-br from-indigo-600 to-purple-600 text-white rounded-xl shadow-lg hover:shadow-xl transition-all'}`}
         aria-label="Toggle menu"
       >
         {isOpen ? <Close /> : <Menu />}
       </button>
 
       {/* Mobile Overlay */}
-      {isMobile && isOpen && (
+      {!isDesktop && isOpen && (
         <div
           onClick={() => setIsOpen(false)}
           className="lg:hidden fixed inset-0 bg-black/50 z-40"
