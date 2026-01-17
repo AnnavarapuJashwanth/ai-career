@@ -23,10 +23,33 @@ import { useTranslate } from '../../utils/translate';
 const Sidebar = ({ user, onSignOut }) => {
   const [activeItem, setActiveItem] = useState('Overview');
   const [isOpen, setIsOpen] = useState(false);
+  const [viewportWidth, setViewportWidth] = useState(
+    typeof window !== 'undefined' ? window.innerWidth : 1024
+  );
   const location = useLocation();
   const { t } = useTranslate();
 
-  const isMobile = typeof window !== 'undefined' && window.innerWidth < 1024;
+  const isDesktop = viewportWidth >= 1024;
+  const isMobile = !isDesktop;
+
+  React.useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    const handleResize = () => {
+      setViewportWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  React.useEffect(() => {
+    if (isMobile) {
+      setIsOpen(false);
+    }
+  }, [location.pathname, isMobile]);
 
   // Navigation items with translated labels
   const navItems = [
@@ -92,7 +115,7 @@ const Sidebar = ({ user, onSignOut }) => {
 
       {/* Mobile Overlay */}
       <AnimatePresence>
-        {isOpen && (
+        {isOpen && isMobile && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -106,7 +129,7 @@ const Sidebar = ({ user, onSignOut }) => {
       {/* Sidebar */}
       <motion.aside
         initial={{ x: -288 }}
-        animate={{ x: (isOpen && window.innerWidth < 1024) || window.innerWidth >= 1024 ? 0 : -288 }}
+        animate={{ x: isDesktop || (isMobile && isOpen) ? 0 : -288 }}
         transition={{ type: 'spring', damping: 20 }}
         className="fixed lg:relative w-72 min-h-screen flex flex-col bg-gradient-to-b from-indigo-950 via-purple-950 to-slate-950 border-r-2 border-purple-500/20 shadow-2xl z-50"
       >
