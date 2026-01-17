@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { 
   Dashboard, 
   Timeline, 
@@ -114,25 +114,28 @@ const Sidebar = ({ user, onSignOut }) => {
       </button>
 
       {/* Mobile Overlay */}
-      <AnimatePresence>
-        {isOpen && isMobile && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setIsOpen(false)}
-            className="lg:hidden fixed inset-0 bg-black/50 z-40"
-          />
-        )}
-      </AnimatePresence>
+      {isMobile && isOpen && (
+        <div
+          onClick={() => setIsOpen(false)}
+          className="lg:hidden fixed inset-0 bg-black/50 z-40"
+        />
+      )}
 
       {/* Sidebar */}
-      <motion.aside
-        initial={{ x: -288 }}
-        animate={{ x: isDesktop || (isMobile && isOpen) ? 0 : -288 }}
-        transition={{ type: 'spring', damping: 20 }}
-        className="fixed lg:relative w-72 min-h-screen flex flex-col bg-gradient-to-b from-indigo-950 via-purple-950 to-slate-950 border-r-2 border-purple-500/20 shadow-2xl z-50"
+      <aside
+        className={`fixed lg:relative w-72 min-h-screen flex flex-col bg-gradient-to-b from-indigo-950 via-purple-950 to-slate-950 border-r-2 border-purple-500/20 shadow-2xl z-50 transform transition-transform duration-300 ease-out ${
+          isDesktop ? 'translate-x-0' : (isOpen ? 'translate-x-0' : '-translate-x-full')
+        }`}
       >
+      {!isDesktop && (
+        <button
+          onClick={() => setIsOpen(false)}
+          className="absolute top-4 right-4 z-50 p-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-all"
+          aria-label="Close menu"
+        >
+          <Close fontSize="small" />
+        </button>
+      )}
       {/* Animated Background */}
       <div className="absolute inset-0 overflow-hidden">
         <motion.div
@@ -299,7 +302,7 @@ const Sidebar = ({ user, onSignOut }) => {
           </div>
         </div>
       </div>
-    </motion.aside>
+    </aside>
     </>
   );
 };
