@@ -20,35 +20,42 @@ import {
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslate } from '../../utils/translate';
 
+const useDesktopBreakpoint = (breakpoint = 1024) => {
+  const [isDesktop, setIsDesktop] = React.useState(false);
+
+  React.useLayoutEffect(() => {
+    if (typeof window === 'undefined') {
+      return undefined;
+    }
+
+    const update = () => {
+      setIsDesktop(window.innerWidth >= breakpoint);
+    };
+
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, [breakpoint]);
+
+  return isDesktop;
+};
+
 const Sidebar = ({ user, onSignOut }) => {
   const [activeItem, setActiveItem] = useState('Overview');
   const [isOpen, setIsOpen] = useState(false);
-  const [viewportWidth, setViewportWidth] = useState(
-    typeof window !== 'undefined' ? window.innerWidth : 1024
-  );
   const location = useLocation();
   const { t } = useTranslate();
 
-  const isDesktop = viewportWidth >= 1024;
+  const isDesktop = useDesktopBreakpoint();
   const isMobile = !isDesktop;
 
   React.useEffect(() => {
-    if (typeof window === 'undefined') {
+    if (!isMobile) {
+      setIsOpen(true);
       return;
     }
 
-    const handleResize = () => {
-      setViewportWidth(window.innerWidth);
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  React.useEffect(() => {
-    if (isMobile) {
-      setIsOpen(false);
-    }
+    setIsOpen(false);
   }, [location.pathname, isMobile]);
 
   // Navigation items with translated labels
