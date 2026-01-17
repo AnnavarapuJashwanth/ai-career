@@ -23,45 +23,10 @@ import { useTranslate } from '../../utils/translate';
 const Sidebar = ({ user, onSignOut }) => {
   const [activeItem, setActiveItem] = useState('Overview');
   const [isOpen, setIsOpen] = useState(false);
-  // Initialize isDesktop properly - check immediately
-  const [isDesktop, setIsDesktop] = useState(typeof window !== 'undefined' ? window.innerWidth >= 1024 : false);
   const location = useLocation();
   const { t } = useTranslate();
 
-  // Track window size for responsive behavior
-  React.useEffect(() => {
-    const checkDesktop = () => {
-      const desktop = window.innerWidth >= 1024;
-      setIsDesktop(desktop);
-      // Force close on mobile on mount and resize
-      if (!desktop && isOpen) {
-        setIsOpen(false);
-      }
-    };
-    
-    // Check on mount
-    checkDesktop();
-    
-    // Listen for resize with debounce to avoid flickering
-    let timeoutId;
-    const handleResize = () => {
-      clearTimeout(timeoutId);
-      timeoutId = setTimeout(checkDesktop, 100);
-    };
-    
-    window.addEventListener('resize', handleResize);
-    return () => {
-      clearTimeout(timeoutId);
-      window.removeEventListener('resize', handleResize);
-    };
-  }, [isOpen]);
-
-  // Close sidebar when route changes on mobile
-  React.useEffect(() => {
-    if (!isDesktop) {
-      setIsOpen(false);
-    }
-  }, [location.pathname, isDesktop]);
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 1024;
 
   // Navigation items with translated labels
   const navItems = [
@@ -83,7 +48,9 @@ const Sidebar = ({ user, onSignOut }) => {
 
   const handleNavClick = (e, label, path) => {
     setActiveItem(label);
-    setIsOpen(false); // Close mobile menu after click
+    if (isMobile) {
+      setIsOpen(false); // Close mobile menu after click
+    }
     if (path === '#chatbot') {
       e.preventDefault();
       // Trigger chatbot open by dispatching custom event
@@ -96,7 +63,9 @@ const Sidebar = ({ user, onSignOut }) => {
   };
 
   const handleBottomNavClick = (e, item) => {
-    setIsOpen(false);
+    if (isMobile) {
+      setIsOpen(false);
+    }
     if (item.scrollTo) {
       e.preventDefault();
       // Navigate to landing page first if not already there
@@ -123,33 +92,23 @@ const Sidebar = ({ user, onSignOut }) => {
 
       {/* Mobile Overlay */}
       <AnimatePresence>
-        {isOpen && !isDesktop && (
+        {isOpen && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
             onClick={() => setIsOpen(false)}
-            className="lg:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-40 cursor-pointer"
-            aria-label="Close menu"
+            className="lg:hidden fixed inset-0 bg-black/50 z-40"
           />
         )}
       </AnimatePresence>
 
       {/* Sidebar */}
       <motion.aside
-        initial={false}
-        animate={{ 
-          x: isDesktop ? 0 : (isOpen ? 0 : -288)
-        }}
-        transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-        className="w-72 min-h-screen max-h-screen overflow-y-auto flex flex-col bg-gradient-to-b from-indigo-950 via-purple-950 to-slate-950 border-r-2 border-purple-500/20 shadow-2xl z-50"
-        style={{
-          position: isDesktop ? 'relative' : 'fixed',
-          top: 0,
-          left: 0,
-          transform: isDesktop ? 'none' : (isOpen ? 'translateX(0)' : 'translateX(-288px)')
-        }}
+        initial={{ x: -288 }}
+        animate={{ x: isOpen || window.innerWidth >= 1024 ? 0 : -288 }}
+        transition={{ type: 'spring', damping: 20 }}
+        className="fixed lg:relative w-72 min-h-screen flex flex-col bg-gradient-to-b from-indigo-950 via-purple-950 to-slate-950 border-r-2 border-purple-500/20 shadow-2xl z-50"
       >
       {/* Animated Background */}
       <div className="absolute inset-0 overflow-hidden">
@@ -182,17 +141,6 @@ const Sidebar = ({ user, onSignOut }) => {
       </div>
 
       <div className="relative z-10 flex flex-col h-full">
-        {/* Close Button for Mobile - Inside Sidebar */}
-        {!isDesktop && (
-          <button
-            onClick={() => setIsOpen(false)}
-            className="absolute top-4 right-4 z-50 p-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-all"
-            aria-label="Close menu"
-          >
-            <Close fontSize="small" />
-          </button>
-        )}
-
         {/* Logo & Sign Out */}
         <div className="px-6 py-6">
           <div className="flex flex-col items-center justify-center mb-6 gap-3">
