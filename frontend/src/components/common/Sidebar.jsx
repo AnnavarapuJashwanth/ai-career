@@ -51,11 +51,10 @@ const Sidebar = ({ user, onSignOut }) => {
   const isPhone = viewportWidth <= 650;
   const isMobile = !isDesktop;
 
-  // Initialize isOpen based on screen size - closed on mobile, open on desktop
-  const [isOpen, setIsOpen] = useState(isDesktop);
+  // Always start closed; open only when viewport is desktop-sized
+  const [isOpen, setIsOpen] = useState(false);
 
   React.useEffect(() => {
-    // Always close on mobile, always open on desktop
     setIsOpen(isDesktop);
   }, [isDesktop]);
 
@@ -65,6 +64,16 @@ const Sidebar = ({ user, onSignOut }) => {
       setIsOpen(false);
     }
   }, [location.pathname, isDesktop]);
+
+  React.useEffect(() => {
+    // Prevent background scroll when the mobile drawer is open
+    if (!isDesktop) {
+      document.body.style.overflow = isOpen ? 'hidden' : '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isDesktop, isOpen]);
 
   // Navigation items with translated labels
   const navItems = [
@@ -142,7 +151,7 @@ const Sidebar = ({ user, onSignOut }) => {
 
       {/* Sidebar */}
       <aside
-        className={`fixed lg:relative w-72 min-h-screen flex flex-col bg-gradient-to-b from-indigo-950 via-purple-950 to-slate-950 border-r-2 border-purple-500/20 shadow-2xl z-50 transform transition-transform duration-300 ease-out ${
+        className={`fixed lg:relative w-[90vw] sm:w-80 lg:w-72 max-w-sm min-h-screen flex flex-col bg-gradient-to-b from-indigo-950 via-purple-950 to-slate-950 border-r-2 border-purple-500/20 shadow-2xl z-50 transform transition-transform duration-300 ease-out ${
           isDesktop ? 'translate-x-0' : (isOpen ? 'translate-x-0' : '-translate-x-full')
         }`}
       >
