@@ -157,14 +157,20 @@ const Sidebar = ({ user, onSignOut }) => {
       >
       {!isDesktop && (
         <button
+          type="button"
           onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setIsOpen(false);
+          }}
+          onTouchStart={(e) => {
             e.preventDefault();
             e.stopPropagation();
             setIsOpen(false);
           }}
           className="absolute top-4 right-4 z-[60] p-2 bg-red-500/80 hover:bg-red-600 active:bg-red-700 text-white rounded-lg transition-all shadow-lg active:scale-95"
           aria-label="Close menu"
-          style={{ touchAction: 'manipulation', minWidth: '40px', minHeight: '40px' }}
+          style={{ touchAction: 'manipulation', minWidth: '40px', minHeight: '40px', pointerEvents: 'auto' }}
         >
           <Close fontSize="medium" />
         </button>
