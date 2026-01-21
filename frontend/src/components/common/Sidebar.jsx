@@ -43,7 +43,6 @@ const useViewportWidth = () => {
 
 const Sidebar = ({ user, onSignOut }) => {
   const [activeItem, setActiveItem] = useState('Overview');
-  const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
   const { t } = useTranslate();
 
@@ -52,18 +51,16 @@ const Sidebar = ({ user, onSignOut }) => {
   const isPhone = viewportWidth <= 650;
   const isMobile = !isDesktop;
 
-  React.useEffect(() => {
-    if (isDesktop) {
-      setIsOpen(true);
-      return;
-    }
-
-    if (isPhone) {
-      setIsOpen(false);
-    }
-  }, [isDesktop, isPhone]);
+  // Initialize isOpen based on screen size - closed on mobile, open on desktop
+  const [isOpen, setIsOpen] = useState(isDesktop);
 
   React.useEffect(() => {
+    // Always close on mobile, always open on desktop
+    setIsOpen(isDesktop);
+  }, [isDesktop]);
+
+  React.useEffect(() => {
+    // Close sidebar when navigating on mobile
     if (!isDesktop) {
       setIsOpen(false);
     }
