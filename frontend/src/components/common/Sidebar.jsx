@@ -48,15 +48,23 @@ const Sidebar = ({ user, onSignOut }) => {
 
   const viewportWidth = useViewportWidth();
   const isDesktop = viewportWidth >= 1024;
-  const isPhone = viewportWidth <= 650;
+  const isNarrowMobile = viewportWidth > 0 && viewportWidth < 645;
   const isMobile = !isDesktop;
 
   // Always start closed; open only when viewport is desktop-sized
   const [isOpen, setIsOpen] = useState(false);
 
+  // Desktop stays open; mobile stays closed until user toggles
   React.useEffect(() => {
     setIsOpen(isDesktop);
   }, [isDesktop]);
+
+  // Force-close if viewport is narrow (<645px) to avoid auto-open on small devices
+  React.useEffect(() => {
+    if (isNarrowMobile) {
+      setIsOpen(false);
+    }
+  }, [isNarrowMobile]);
 
   React.useEffect(() => {
     // Close sidebar when navigating on mobile
@@ -143,7 +151,16 @@ const Sidebar = ({ user, onSignOut }) => {
       {/* Mobile Overlay */}
       {!isDesktop && isOpen && (
         <div
-          onClick={() => setIsOpen(false)}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setIsOpen(false);
+          }}
+          onTouchStart={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setIsOpen(false);
+          }}
           className="fixed inset-0 bg-black/50 z-40 backdrop-blur-sm"
           style={{ touchAction: 'manipulation' }}
         />
