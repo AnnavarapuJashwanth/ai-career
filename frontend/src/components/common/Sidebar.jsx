@@ -123,19 +123,23 @@ const Sidebar = ({ user, onSignOut }) => {
   return (
     <>
       {/* Mobile Menu Button */}
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className={`${isDesktop ? 'hidden' : 'fixed top-20 left-4 z-50 p-3 bg-gradient-to-br from-indigo-600 to-purple-600 text-white rounded-xl shadow-lg hover:shadow-xl transition-all'}`}
-        aria-label="Toggle menu"
-      >
-        {isOpen ? <Close /> : <Menu />}
-      </button>
+      {!isDesktop && (
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="fixed top-20 left-4 z-[60] p-3 bg-gradient-to-br from-indigo-600 to-purple-600 text-white rounded-xl shadow-lg hover:shadow-xl transition-all active:scale-95"
+          aria-label="Toggle menu"
+          style={{ touchAction: 'manipulation' }}
+        >
+          {isOpen ? <Close /> : <Menu />}
+        </button>
+      )}
 
       {/* Mobile Overlay */}
       {!isDesktop && isOpen && (
         <div
           onClick={() => setIsOpen(false)}
-          className="lg:hidden fixed inset-0 bg-black/50 z-40"
+          className="fixed inset-0 bg-black/50 z-40 backdrop-blur-sm"
+          style={{ touchAction: 'manipulation' }}
         />
       )}
 
@@ -147,11 +151,16 @@ const Sidebar = ({ user, onSignOut }) => {
       >
       {!isDesktop && (
         <button
-          onClick={() => setIsOpen(false)}
-          className="absolute top-4 right-4 z-50 p-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-all"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setIsOpen(false);
+          }}
+          className="absolute top-4 right-4 z-[60] p-2 bg-red-500/80 hover:bg-red-600 active:bg-red-700 text-white rounded-lg transition-all shadow-lg active:scale-95"
           aria-label="Close menu"
+          style={{ touchAction: 'manipulation', minWidth: '40px', minHeight: '40px' }}
         >
-          <Close fontSize="small" />
+          <Close fontSize="medium" />
         </button>
       )}
       {/* Animated Background */}
