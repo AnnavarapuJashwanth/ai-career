@@ -168,9 +168,10 @@ const Sidebar = ({ user, onSignOut }) => {
 
       {/* Sidebar */}
       <aside
-        className={`fixed lg:relative w-[78vw] sm:w-[70vw] md:w-80 lg:w-72 max-w-[320px] min-h-screen flex flex-col bg-gradient-to-b from-indigo-950 via-purple-950 to-slate-950 border-r-2 border-purple-500/20 shadow-2xl z-50 transform transition-transform duration-300 ease-out ${
-          isDesktop ? 'translate-x-0' : (isOpen ? 'translate-x-0' : '-translate-x-full')
-        }`}
+        className={`fixed top-0 left-0 h-full z-[100] bg-gradient-to-b from-indigo-950 via-purple-950 to-slate-950 border-r-2 border-purple-500/20 shadow-2xl transform transition-transform duration-300 ease-out 
+          w-[75vw] sm:w-80 lg:w-72 lg:static lg:translate-x-0
+          ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+        `}
       >
       {!isDesktop && (
         <button
