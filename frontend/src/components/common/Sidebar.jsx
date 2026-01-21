@@ -66,6 +66,13 @@ const Sidebar = ({ user, onSignOut }) => {
     }
   }, [isNarrowMobile]);
 
+  // Extra guard: whenever viewport changes and is not desktop, keep it closed
+  React.useEffect(() => {
+    if (!isDesktop) {
+      setIsOpen(false);
+    }
+  }, [viewportWidth, isDesktop]);
+
   React.useEffect(() => {
     // Close sidebar when navigating on mobile
     if (!isDesktop) {
@@ -170,6 +177,7 @@ const Sidebar = ({ user, onSignOut }) => {
       <aside
         className={`fixed top-0 left-0 h-full z-[100] bg-gradient-to-b from-indigo-950 via-purple-950 to-slate-950 border-r-2 border-purple-500/20 shadow-2xl transform transition-transform duration-300 ease-out 
           w-[75vw] sm:w-80 lg:w-72 lg:static lg:translate-x-0
+          flex flex-col h-full
           ${isOpen ? 'translate-x-0' : '-translate-x-full'}
         `}
       >
