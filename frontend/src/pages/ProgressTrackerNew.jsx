@@ -149,7 +149,7 @@ export default function ProgressTrackerNew() {
         className="relative cursor-pointer"
         onClick={() => setSelectedPhase(selectedPhase === phase.key ? null : phase.key)}
       >
-        <div className={`bg-gradient-to-br ${phase.bgGradient} rounded-3xl p-8 hover:shadow-2xl transition-all duration-300 ${selectedPhase === phase.key ? 'ring-4 ring-offset-4' : ''}`}
+        <div className={`bg-gradient-to-br ${phase.bgGradient} rounded-3xl p-4 sm:p-6 lg:p-8 hover:shadow-2xl transition-all duration-300 ${selectedPhase === phase.key ? 'ring-4 ring-offset-4' : ''}`}
              style={{ ringColor: selectedPhase === phase.key ? phase.ringColor : 'transparent' }}>
           
           {/* Circle SVG */}
@@ -262,7 +262,7 @@ export default function ProgressTrackerNew() {
     return (
       <div className="flex min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50">
         <Sidebar user={user} onSignOut={handleSignOut} />
-        <div className="flex-1 ml-64 flex items-center justify-center">
+        <div className="min-w-0 flex-1 flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin rounded-full h-16 w-16 border-4 border-purple-500 border-t-transparent mx-auto mb-4"></div>
             <p className="text-gray-600 font-medium">Loading your progress...</p>
@@ -281,15 +281,15 @@ export default function ProgressTrackerNew() {
     <div className="flex min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50">
       <Sidebar user={user} onSignOut={handleSignOut} />
       
-      <main className="flex-1 ml-64 p-8 overflow-y-auto">
+      <main className="min-w-0 flex-1 p-3 sm:p-4 md:p-6 lg:p-8 overflow-y-auto">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:gap-4">
               <button 
                 onClick={fetchProgress}
                 className="px-6 py-3 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-lg font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 flex items-center gap-2"
@@ -415,7 +415,7 @@ export default function ProgressTrackerNew() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8 }}
-            className="bg-white rounded-3xl shadow-lg p-8"
+            className="bg-white rounded-3xl shadow-lg p-4 sm:p-6 lg:p-8"
           >
             <h3 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
               <AutoAwesome className="text-purple-500" />
@@ -454,7 +454,7 @@ export default function ProgressTrackerNew() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.9 }}
-            className="bg-gradient-to-br from-purple-500 via-purple-600 to-blue-600 rounded-3xl shadow-lg p-8 text-white"
+            className="bg-gradient-to-br from-purple-500 via-purple-600 to-blue-600 rounded-3xl shadow-lg p-4 sm:p-6 lg:p-8 text-white"
           >
             <div className="flex items-center gap-3 mb-4">
               <EmojiEvents className="text-yellow-300" fontSize="large" />

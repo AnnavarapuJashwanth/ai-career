@@ -762,7 +762,7 @@ export default function Dashboard() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.55 }}
-            className="relative bg-gradient-to-br from-emerald-500/10 via-cyan-500/10 to-blue-500/10 backdrop-blur-3xl rounded-3xl p-10 shadow-2xl border-2 border-emerald-500/20 overflow-hidden"
+            className="relative bg-gradient-to-br from-emerald-500/10 via-cyan-500/10 to-blue-500/10 backdrop-blur-3xl rounded-3xl p-4 sm:p-6 lg:p-10 shadow-2xl border-2 border-emerald-500/20 overflow-hidden"
           >
             <motion.div
               animate={{
@@ -903,7 +903,7 @@ export default function Dashboard() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.7 }}
-          className="relative bg-gradient-to-br from-white/5 via-white/10 to-white/5 backdrop-blur-3xl rounded-3xl p-10 shadow-2xl mb-8 border-2 border-white/20 overflow-hidden"
+          className="relative bg-gradient-to-br from-white/5 via-white/10 to-white/5 backdrop-blur-3xl rounded-3xl p-4 sm:p-6 lg:p-10 shadow-2xl mb-8 border-2 border-white/20 overflow-hidden"
           id="roadmap"
         >
           {/* Animated Corner Accents */}
@@ -968,7 +968,7 @@ export default function Dashboard() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.75 }}
-            className="relative bg-gradient-to-br from-white/5 via-white/10 to-white/5 backdrop-blur-3xl rounded-3xl p-10 shadow-2xl mb-8 border-2 border-white/20 overflow-hidden"
+            className="relative bg-gradient-to-br from-white/5 via-white/10 to-white/5 backdrop-blur-3xl rounded-3xl p-4 sm:p-6 lg:p-10 shadow-2xl mb-8 border-2 border-white/20 overflow-hidden"
           >
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-2xl font-bold text-white flex items-center gap-2">
@@ -1194,7 +1194,7 @@ export default function Dashboard() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 1.2 }}
-          className="bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-2xl rounded-3xl p-10 border-2 border-white/20 shadow-2xl mb-8"
+          className="bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-2xl rounded-3xl p-4 sm:p-6 lg:p-10 border-2 border-white/20 shadow-2xl mb-8"
         >
           <h3 className="text-3xl font-bold text-white mb-8 flex items-center gap-3">
             <span className="text-4xl">🏆</span>

@@ -146,9 +146,12 @@ const Sidebar = ({ user, onSignOut }) => {
       {/* Mobile Menu Button */}
       {!isDesktop && (
         <button
+          type="button"
           onClick={() => setIsOpen(!isOpen)}
-          className="fixed top-20 left-4 z-[60] p-3 bg-gradient-to-br from-indigo-600 to-purple-600 text-white rounded-xl shadow-lg hover:shadow-xl transition-all active:scale-95"
+          className="fixed top-20 left-4 z-[110] p-3 bg-gradient-to-br from-indigo-600 to-purple-600 text-white rounded-xl shadow-lg hover:shadow-xl transition-all active:scale-95"
           aria-label="Toggle menu"
+          aria-expanded={isOpen}
+          aria-controls="app-sidebar"
           style={{ touchAction: 'manipulation' }}
         >
           {isOpen ? <Close /> : <Menu />}
@@ -157,26 +160,20 @@ const Sidebar = ({ user, onSignOut }) => {
 
       {/* Mobile Overlay */}
       {!isDesktop && isOpen && (
-        <div
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            setIsOpen(false);
-          }}
-          onTouchStart={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            setIsOpen(false);
-          }}
-          className="fixed inset-0 bg-black/50 z-40 backdrop-blur-sm"
-          style={{ touchAction: 'manipulation' }}
+        <button
+          type="button"
+          aria-label="Close navigation menu"
+          onClick={() => setIsOpen(false)}
+          className="fixed inset-0 z-[110] cursor-default border-0 bg-black/50 p-0 backdrop-blur-sm"
         />
       )}
 
       {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 h-full z-[100] bg-gradient-to-b from-indigo-950 via-purple-950 to-slate-950 border-r-2 border-purple-500/20 shadow-2xl transform transition-transform duration-300 ease-out 
-          w-[75vw] sm:w-80 lg:w-72 lg:static lg:translate-x-0
+        id="app-sidebar"
+        aria-label="Primary navigation"
+        className={`fixed top-0 left-0 h-full z-[120] bg-gradient-to-b from-indigo-950 via-purple-950 to-slate-950 border-r-2 border-purple-500/20 shadow-2xl transform transition-transform duration-300 ease-out
+          w-[75vw] sm:w-80 lg:w-72 lg:sticky lg:top-0 lg:h-screen lg:translate-x-0
           flex flex-col h-full
           ${isOpen ? 'translate-x-0' : '-translate-x-full'}
         `}
@@ -185,11 +182,6 @@ const Sidebar = ({ user, onSignOut }) => {
         <button
           type="button"
           onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            setIsOpen(false);
-          }}
-          onTouchStart={(e) => {
             e.preventDefault();
             e.stopPropagation();
             setIsOpen(false);

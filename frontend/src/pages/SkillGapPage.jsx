@@ -117,7 +117,7 @@ export default function SkillGapPage() {
         />
       </div>
       <Sidebar user={user} onSignOut={handleSignOut} />
-      <main className="relative z-10 flex-1 p-8 overflow-auto">
+      <main className="relative z-10 min-w-0 flex-1 p-3 sm:p-4 md:p-6 lg:p-8 overflow-auto">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -125,17 +125,17 @@ export default function SkillGapPage() {
           transition={{ duration: 0.7, type: "spring" }}
           className="mb-8"
         >
-          <h1 className="text-6xl font-bold bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-400 text-transparent bg-clip-text flex items-center gap-4 mb-3">
+          <h1 className="text-3xl sm:text-4xl lg:text-6xl font-bold bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-400 text-transparent bg-clip-text flex flex-wrap items-center gap-3 sm:gap-4 mb-3">
             <motion.span
               animate={{ scale: [1, 1.1, 1], rotate: [0, -5, 0] }}
               transition={{ duration: 3, repeat: Infinity }}
-              className="text-7xl"
+              className="text-4xl sm:text-5xl lg:text-7xl"
             >
               📊
             </motion.span>
             Skill Gap Analysis
           </h1>
-          <p className="text-gray-400 text-xl">
+          <p className="text-gray-400 text-base sm:text-xl">
             {isLoading ? 'Loading...' : `Comprehensive analysis for ${userRole} - Current skills vs market demand`}
           </p>
         </motion.div>
@@ -146,7 +146,7 @@ export default function SkillGapPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.2, type: "spring" }}
           whileHover={{ scale: 1.01 }}
-          className="bg-gradient-to-br from-blue-500/10 to-cyan-500/10 backdrop-blur-xl rounded-3xl p-10 border-2 border-blue-500/30 shadow-[0_20px_70px_rgba(59,130,246,0.3)] mb-8 overflow-hidden"
+          className="min-w-0 bg-gradient-to-br from-blue-500/10 to-cyan-500/10 backdrop-blur-xl rounded-3xl p-4 sm:p-6 lg:p-10 border-2 border-blue-500/30 shadow-[0_20px_70px_rgba(59,130,246,0.3)] mb-8 overflow-hidden"
         >
           <motion.div
             animate={{
@@ -157,9 +157,9 @@ export default function SkillGapPage() {
             className="absolute -top-10 -right-10 w-40 h-40 bg-gradient-to-br from-cyan-400/20 to-blue-400/20 rounded-full blur-3xl"
           />
           <div className="relative z-10">
-            <div className="flex items-center justify-between mb-8">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-8">
               <div>
-                <h2 className="text-3xl font-bold text-white mb-2">Your Skills Overview - {userRole}</h2>
+                <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2 break-words">Your Skills Overview - {userRole}</h2>
                 <p className="text-blue-200">Compare your current expertise with {userRole} market requirements</p>
               </div>
               <div className="px-5 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-xl text-white text-sm font-bold shadow-lg">
@@ -180,7 +180,7 @@ export default function SkillGapPage() {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
-            className="bg-gradient-to-br from-emerald-500/10 to-teal-500/10 backdrop-blur-xl rounded-2xl p-6 border border-emerald-500/30"
+            className="min-w-0 bg-gradient-to-br from-emerald-500/10 to-teal-500/10 backdrop-blur-xl rounded-2xl p-4 sm:p-6 border border-emerald-500/30"
           >
             <h3 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
               <span className="text-3xl">✅</span> Your Strengths
@@ -201,7 +201,7 @@ export default function SkillGapPage() {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.4 }}
-            className="bg-gradient-to-br from-orange-500/10 to-red-500/10 backdrop-blur-xl rounded-2xl p-6 border border-orange-500/30"
+            className="min-w-0 bg-gradient-to-br from-orange-500/10 to-red-500/10 backdrop-blur-xl rounded-2xl p-4 sm:p-6 border border-orange-500/30"
           >
             <h3 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
               <span className="text-3xl">🎯</span> Skills to Develop
@@ -224,7 +224,7 @@ export default function SkillGapPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.5 }}
-          className="bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 rounded-3xl p-8 shadow-2xl"
+          className="min-w-0 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 rounded-3xl p-4 sm:p-6 lg:p-8 shadow-2xl"
         >
           <h3 className="text-3xl font-bold text-white mb-4">Recommended Actions</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -233,7 +233,7 @@ export default function SkillGapPage() {
               { icon: '💼', title: 'Build Projects', desc: 'Apply your new skills' },
               { icon: '🎓', title: 'Get Certified', desc: 'Validate your expertise' }
             ].map((action, idx) => (
-              <div key={idx} className="bg-white/20 backdrop-blur-sm rounded-2xl p-6 border border-white/30">
+              <div key={idx} className="min-w-0 bg-white/20 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-white/30">
                 <div className="text-4xl mb-3">{action.icon}</div>
                 <h4 className="text-xl font-bold text-white mb-2">{action.title}</h4>
                 <p className="text-white/80">{action.desc}</p>

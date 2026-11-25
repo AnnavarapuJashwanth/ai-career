@@ -84,7 +84,7 @@ export default function CoursesPage() {
     <div className="flex min-h-screen bg-gray-50">
       <Sidebar user={user} onSignOut={handleSignOut} />
       
-      <main className="flex-1 ml-64 p-8 bg-gradient-to-br from-gray-50 to-blue-50">
+      <main className="min-w-0 flex-1 p-3 sm:p-4 md:p-6 lg:p-8 bg-gradient-to-br from-gray-50 to-blue-50">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}

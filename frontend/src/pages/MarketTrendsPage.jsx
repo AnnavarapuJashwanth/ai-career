@@ -78,7 +78,7 @@ export default function MarketTrendsPage() {
       </div>
 
       <Sidebar user={user} onSignOut={handleSignOut} />
-      <main className="relative z-10 flex-1 p-8 overflow-auto">
+      <main className="relative z-10 min-w-0 flex-1 p-3 sm:p-4 md:p-6 lg:p-8 overflow-auto">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -86,8 +86,8 @@ export default function MarketTrendsPage() {
           transition={{ duration: 0.5 }}
           className="mb-8"
         >
-          <h1 className="text-5xl font-bold bg-gradient-to-r from-green-400 via-emerald-400 to-teal-400 text-transparent bg-clip-text flex items-center gap-4 mb-3">
-            <span className="text-6xl">📈</span>
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-green-400 via-emerald-400 to-teal-400 text-transparent bg-clip-text flex flex-wrap items-center gap-3 sm:gap-4 mb-3">
+            <span className="text-4xl sm:text-5xl lg:text-6xl">📈</span>
             Market Insights
           </h1>
           <p className="text-gray-400 text-lg">
@@ -100,9 +100,9 @@ export default function MarketTrendsPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-2xl rounded-3xl p-10 border-2 border-white/20 shadow-2xl mb-8"
+          className="bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-2xl rounded-3xl p-4 sm:p-6 lg:p-10 border-2 border-white/20 shadow-2xl mb-8"
         >
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-8">
             <div>
               <h2 className="text-3xl font-bold text-white mb-2">Job Market Demand</h2>
               <p className="text-gray-400">{isLoading ? 'Loading...' : `Monthly trends for ${userRole} roles`}</p>
@@ -208,7 +208,7 @@ export default function MarketTrendsPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.7 }}
-          className="bg-gradient-to-br from-purple-900/40 via-indigo-900/40 to-blue-900/40 backdrop-blur-2xl rounded-3xl p-10 border-2 border-purple-500/30 shadow-2xl"
+          className="bg-gradient-to-br from-purple-900/40 via-indigo-900/40 to-blue-900/40 backdrop-blur-2xl rounded-3xl p-4 sm:p-6 lg:p-10 border-2 border-purple-500/30 shadow-2xl"
         >
           <h3 className="text-3xl font-bold text-white mb-8 flex items-center gap-3">
             <span className="text-4xl">💡</span>

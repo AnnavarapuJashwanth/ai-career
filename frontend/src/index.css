@@ -37,12 +37,6 @@ body {
   /* Optimize for mobile touch scrolling */
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: none;
-  /* Hardware acceleration for smoother scrolling */
-  transform: translate3d(0, 0, 0);
-  -webkit-transform: translate3d(0, 0, 0);
-  will-change: auto;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
 }
 
 * {
@@ -269,18 +263,6 @@ body {
     width: 100% !important;
   }
   
-  /* DISABLE ALL ANIMATIONS ON MOBILE - Prevent flickering */
-  *, *::before, *::after {
-    animation: none !important;
-    transition: none !important;
-    transform: none !important;
-  }
-  
-  /* Allow only opacity transitions for smooth UI */
-  button, a {
-    transition: opacity 0.15s ease !important;
-  }
-  
   /* Disable backdrop blur on mobile - performance issue */
   .backdrop-blur-xl,
   .backdrop-blur-lg,
@@ -295,6 +277,15 @@ body {
   .shadow-2xl,
   .shadow-xl {
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
   }
 }
 
